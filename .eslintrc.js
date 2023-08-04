@@ -1,7 +1,14 @@
 module.exports = {
     parser: '@typescript-eslint/parser',
     plugins: ['prettier', 'import', '@typescript-eslint'],
-    extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended', 'prettier'],
+    extends: [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:prettier/recommended",
+        "prettier",
+        "airbnb-base",
+        "airbnb-typescript/base"
+    ],
     parserOptions: {
         project: './tsconfig.json',
         ecmaVersion: 'latest',
@@ -31,6 +38,7 @@ module.exports = {
                 },
             },
         ],
+        "prettier/prettier" : "error",
         'max-lines-per-function': [2, 40],
         '@typescript-eslint/explicit-function-return-type': 2,
         '@typescript-eslint/no-unnecessary-type-assertion': 2,
