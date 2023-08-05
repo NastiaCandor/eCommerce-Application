@@ -1,62 +1,68 @@
-
 const path = require('path');
+const { merge } = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
-const devServer = (isDev) => !isDev ? {} : {
-  devServer: {
-    open: true,
-    hot: true,
-    port: 5500,
-    historyApiFallback: true,
-  },
-};
-
-module.exports = ({develop}) => ({
-  mode: develop ? 'development' : 'production',
-  entry: './src/index.ts',
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js',
-    assetModuleFilename: 'assets/[name][ext]',
-  },
+const config = {
+  entry: path.resolve(__dirname, './src/index'),
   module: {
     rules: [
       {
-        test: /\.[tj]s$/,
-        use: 'ts-loader',
-        exclude: /node_modules/,
+        test: /\.s[ac]ss$/i,
+        use: ['style-loader', 'css-loader', "sass-loader"],
       },
       {
-        test: /\.(?:ico|gif|png|jpg|jpeg|svg)$/i,
+          test: /\.css$/i,
+          use: ['style-loader', 'css-loader'],
+      },
+      {
+          test: /\.ts$/i, use: 'ts-loader'
+      },
+      {
+        test: /\.(png|jpg|jpeg|gif|ico)$/i, 
         type: 'asset/resource',
       },
       {
-        test: /\.css$/i,
-        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+        test: /\.(svg)$/i,
+        type: 'asset/source',
       },
       {
-        test: /\.s[ac]ss$/i,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
-      },
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        type: 'asset/resource',
+    }
     ],
   },
   resolve: {
-    extensions: ['.ts', '.js'],
+      extensions: ['.js', '.ts'],
+  },
+  output: {
+    filename: 'app.js',
+    path: path.resolve(__dirname, 'dist'),
+    clean: true,
+    assetModuleFilename: (ext) => ext === 'ico' ? 'assets/[name][ext]' : 'assets/img/[name][ext]',
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      title: '',
-    }),
-    new FaviconsWebpackPlugin(''),
-    new MiniCssExtractPlugin({
-      filename: '[name].css',
-    }),
-    new ESLintPlugin({ extensions: 'ts' }),
-    new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
+      new HtmlWebpackPlugin({
+          template: path.resolve(__dirname, './src/index.html'),
+          filename: 'index.html',
+          title: 'Vinil Vibe Store',
+      }),
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: path.resolve(__dirname, 'src/assets/favicon.ico'),
+            to: path.resolve(__dirname, 'dist/assets/favicon.ico'), 
+          }
+        ]
+      }),
+      new ESLintPlugin({ extensions: 'ts' }),
   ],
-  ...devServer(develop),
-});
+}
+
+module.exports = ({ mode }) => {
+  const isProductionMode = mode === 'prod';
+  const envConfig = isProductionMode ? require('./webpack.prod.config') : require('./webpack.dev.config');
+
+  return merge(config, envConfig);
+};
