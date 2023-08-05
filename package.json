@@ -49,5 +49,8 @@
   "bugs": {
     "url": "https://github.com/NastiaCandor/eCommerce-Application/issues"
   },
-  "homepage": "https://github.com/NastiaCandor/eCommerce-Application#readme"
+  "homepage": "https://github.com/NastiaCandor/eCommerce-Application#readme",
+  "dependencies": {
+    "postcode-validator": "^3.8.14"
+  }
 }
