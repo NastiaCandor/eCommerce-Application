@@ -23,7 +23,8 @@
     "no-console": 0,
     "class-methods-use-this": "off",
     "@typescript-eslint/no-explicit-any": 2,
-    "prettier/prettier" : "error"
+    "prettier/prettier" : "error",
+    "linebreak-style": ["error", "windows"]
   },
   "parser": "@typescript-eslint/parser"
 }
