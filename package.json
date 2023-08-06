@@ -56,6 +56,6 @@
   },
   "homepage": "https://github.com/NastiaCandor/eCommerce-Application#readme",
   "dependencies": {
-    "@jest/globals": "^29.6.2"
+    "postcode-validator": "^3.8.14"
   }
 }

@@ -24,10 +24,8 @@
     "linebreak-style": 0,
     "class-methods-use-this": "off",
     "@typescript-eslint/no-explicit-any": 2,
-    "prettier/prettier" : [
-      "error",
-      { "endOfLine": "auto" }
-    ]
+    "prettier/prettier" : "error",
+    "linebreak-style": ["error", "windows"]
   },
   "parser": "@typescript-eslint/parser"
 }
