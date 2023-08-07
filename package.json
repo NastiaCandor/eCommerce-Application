@@ -7,8 +7,8 @@
     "serve": "webpack serve --open --config ./webpack.config.js",
     "build": "webpack --config ./webpack.config.js --env mode=prod",
     "lint": "eslint . --ext .ts",
+    "test": "jest --collect-coverage",
     "fix": "npm run lint -- --fix",
-    "test": "jest",
     "prepare": "husky install"
   },
   "keywords": [],
