@@ -8,8 +8,8 @@
     "build": "webpack --config ./webpack.config.js --env mode=prod",
     "lint": "eslint . --ext .ts",
     "deploy": "npm run build && npx gh-pages -d dist -e ecommerce-app",
+    "test": "jest --collect-coverage"
     "fix": "npm run lint -- --fix",
-    "test": "jest",
     "prepare": "husky install"
   },
   "keywords": [],
