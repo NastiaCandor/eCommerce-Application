@@ -46,7 +46,7 @@ const config = {
       new HtmlWebpackPlugin({
           template: path.resolve(__dirname, './src/index.html'),
           filename: 'index.html',
-          title: 'Vinil Vibe Store',
+          title: 'Vinyl Vibe Store',
       }),
       new CopyWebpackPlugin({
         patterns: [
