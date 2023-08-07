@@ -1,8 +1,9 @@
 > # Welcome to Vinyl Records E-Commerce Shop project! 
-## This is a study project aimed at providing music fans and collectors around the certain countries with a platform to easily discover and purchase rare records of their favorite performers. Our project utilizes the commercetools.com API to fetch and display vinyl records, which can be sorted by rarity, price, band, year, and other criteria.  
+### This is a study project aimed at providing music fans and collectors around the certain countries with a platform to easily discover and purchase rare or regular vinyl records of their favorite performers. Our project utilizes the commercetools.com API to fetch and display vinyl records, which user can sort by rarity, price, band, year, and other criteria.  
 ___
 > # Technology Stack:
 - ### Vanilla TypeScript
+- ### SCSS
 - ### Webpack
 - ### Jest
 - ### Husky
@@ -21,7 +22,7 @@ ___
 ```bash
   npm install
 ```
-3. Set up the commercetools.com API credentials in your environment.
+3. Set up the commercetools.com API credentials in your environment. Visit [www.docs.commercetools.com](https://docs.commercetools.com/) for detailed information.
 
 4. Run the development server:
 ```bash
@@ -34,7 +35,7 @@ ___
 > # Project Scripts
 ## Here goes the list of terminal commands:
 
-#### Note: In case you're using `yarn`, just use word `yarn` instead of `npm`.
+#### _Note: In case you're using `yarn`, just use word `yarn` instead of `npm`._
 
 ```js
 
@@ -62,12 +63,16 @@ npm run fix
 
 npm run test
 
+//-----------To re-initialize Husky hooks, run:
+
+npm run prepare
+
 //----------------------------------------------------------------------
 
 ```
 ___
 > # Contributing
-We welcome contributions from the community! If you would like to contribute to the project, please follow these steps:
+## We welcome contributions from the community! If you would like to contribute to the project, please follow these steps:
 
 1. Fork the repository on GitHub.
 
@@ -87,4 +92,3 @@ We welcome contributions from the community! If you would like to contribute to 
 5. Create a pull request on GitHub to merge your changes into the main repository.We will review your pull request and provide feedback or merge it if everything looks good. 
 ___ 
 > ## Thank you for interest to our Vinyl Records E-Commerce Shop project and may the Code be with you!
-
