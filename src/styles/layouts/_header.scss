@@ -1,0 +1,18 @@
+header {
+  background-color: $sample-darken-color;
+}
+
+.header__wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header__wrapper_logo {
+  display: block;
+  height: 3rem;
+  width: 3rem;
+  background: no-repeat url('../assets/img/icons8-cheburashka-48.svg');
+  background-size: 100%;
+}
+

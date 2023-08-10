@@ -24,6 +24,8 @@ export default class ElementCreator {
     if (params.mouseEvent) this.setMouseEvent(params.mouseEvent);
 
     if (params.link) this.setLink(params.link);
+
+    if (params.src && params.alt) this.setImageLink(params.src, params.alt);
   }
 
   public addInnerElement(element: ElementOrCreator | ArrayOfElementsOrCreators): void {
@@ -41,8 +43,13 @@ export default class ElementCreator {
     array.forEach((element) => {
       if (element instanceof ElementCreator) {
         this.addInnerElement(element.getElement());
-      } else {
+      } else if (element instanceof HTMLElement) {
         this.addInnerElement(element);
+      } else {
+        throw new Error(
+          `Instance of ${element} - ${Object.getPrototypeOf(element).constructor} 
+          which is not a correct type!`
+        );
       }
     });
   }
@@ -74,6 +81,17 @@ export default class ElementCreator {
   private setLink(link: string): void {
     /* set the provided href link from passed string, if any. */
     this.element.setAttribute('href', link);
+  }
+
+  public setImageLink(src: string, alt: string): void {
+    /* add the new method what can assign links to images.
+    method takes two arguments: link to src image and alt for 'alt' attribute */
+    if (this.element.tagName === 'IMG') {
+      this.element.setAttribute('src', src);
+      this.element.setAttribute('alt', alt);
+    } else {
+      throw new Error('Element use the img tag!');
+    }
   }
 }
 

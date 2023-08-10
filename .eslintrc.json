@@ -24,6 +24,20 @@
     "class-methods-use-this": "off",
     "@typescript-eslint/no-explicit-any": 2,
     "prettier/prettier" : "error",
+    "comma-dangle": ["error", {
+      "arrays": "never",
+      "objects": "always",
+      "imports": "never",
+      "exports": "never",
+      "functions": "never"
+    }],
+    "@typescript-eslint/comma-dangle": ["error", {
+      "arrays": "never",
+      "objects": "always",
+      "imports": "never",
+      "exports": "never",
+      "functions": "never"
+    }],
     "linebreak-style": ["error", "windows"]
   },
   "parser": "@typescript-eslint/parser"

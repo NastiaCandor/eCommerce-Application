@@ -1,0 +1,23 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  &::-webkit-scrollbar {
+    width: 0;}
+  }
+  
+html {
+  font-size: 10px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-size: 1.6rem;
+  background-color: $sample-primary-color;
+  font-family: "Poppins", sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
