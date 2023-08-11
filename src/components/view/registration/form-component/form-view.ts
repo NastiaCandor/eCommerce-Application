@@ -13,25 +13,46 @@ export default class FormView extends View {
   }
 
   protected configure(): void {
-    this.insertInputItems();
+    this.insertFormItems();
+    this.setAttribute('novalidate', 'true');
+    // this.validateEmail();
   }
 
-  private insertInputItems(): void {
-    const inputsArray = this.createInputItems(formParams.labelNames);
-    this.addInnerElement(inputsArray);
-    console.log('form1');
+  private insertFormItems(): void {
+    // const inputsArray = this.createInputItems(formParams.labelNames);
+    // this.addInnerElement(inputsArray);
+    const submitBtn = this.createSubmitBtn();
+    this.addInnerElement(submitBtn);
   }
 
-  private createInputItems(items: string[]): ElementCreator[] {
-    const inputsArray: ElementCreator[] = [];
-    items.forEach((item, i) => {
-      const label = new ElementCreator(formParams.label);
-      const input = new ElementCreator(formParams.input);
-      label.setTextContent(item);
-      label.addInnerElement(input);
-      input.setInputType(formParams.inputTypes[i]);
-      inputsArray.push(label);
-    });
-    return inputsArray;
+  // private createInputItems(items: string[]): ElementCreator[] {
+  //   const inputsArray: ElementCreator[] = [];
+  //   items.forEach((item, i) => {
+  //     const label = new ElementCreator(formParams.label);
+  //     const input = new ElementCreator(formParams.input);
+  //     label.setTextContent(item);
+  //     label.addInnerElement(input);
+  //     input.setType(formParams.inputTypes[i]);
+  //     // input.setPatternAttr(formParams.input.pattern);
+  //     input.setRequiredAttr(formParams.input.required); // ??????????
+  //     inputsArray.push(label);
+  //   });
+  //   return inputsArray;
+  // }
+
+  // private validateEmail() {
+  //   const emailLabel = this.createInputItems(formParams.labelNames)[0];
+  //   const emailInput = emailLabel.getElement().firstElementChild as HTMLInputElement;
+  //   // emailInput.addEventListener('input', () => {
+  //   //   if (emailInput.validity)
+  //   // })
+  //   console.log(emailInput);
+  // }
+
+  private createSubmitBtn(): ElementCreator {
+    const btn = new ElementCreator(formParams.button);
+    btn.setType(formParams.button.type);
+    btn.setTextContent(formParams.button.textContent);
+    return btn;
   }
 }

@@ -7,4 +7,6 @@ export type ElementParamsType = {
   value?: string;
   link?: string;
   type?: string;
+  required?: string;
+  pattern?: string;
 };

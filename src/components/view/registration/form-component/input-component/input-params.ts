@@ -1,8 +1,9 @@
-const formParams = {
-  form: {
-    tag: 'form',
-    cssClasses: ['reg-form'],
+const inputParams = {
+  fieldset: {
+    tag: 'fieldset',
+    cssClasses: ['reg-form__fieldset'],
   },
+
   input: {
     tag: 'input',
     cssClasses: ['reg-form__input'],
@@ -12,6 +13,11 @@ const formParams = {
   label: {
     tag: 'label',
     cssClasses: ['reg-form__label'],
+  },
+
+  errorSpan: {
+    tag: 'span',
+    cssClasses: ['reg-form__error'],
   },
 
   button: {
@@ -25,5 +31,4 @@ const formParams = {
   inputTypes: ['email', 'Text', 'Text', 'Date', 'Text', 'Text', 'Text', 'Text'],
   // inputPatterns: ['', '[A-Za-z]', '[A-Za-z]', '', 'Text', 'Text', 'Text', 'Text'],
 };
-
-export default formParams;
+export default inputParams;

@@ -78,8 +78,16 @@ export default class ElementCreator {
     this.element.setAttribute('href', link);
   }
 
-  public setInputType(type: string): void {
+  public setType(type: string): void {
     this.element.setAttribute('type', type);
+  }
+
+  public setRequiredAttr(required: string): void {
+    this.element.setAttribute('required', required);
+  }
+
+  public setAttribute(attr: string, attrValue: string): void {
+    this.element.setAttribute(attr, attrValue);
   }
 }
 

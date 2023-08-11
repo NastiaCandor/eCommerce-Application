@@ -1,5 +1,7 @@
 
-$font-stack:    Helvetica, sans-serif;
+
+
+// $font-stack: 'Death Star';
 
 html {
   scroll-behavior: smooth;
@@ -13,7 +15,7 @@ html {
 body {
   display: flex;
   flex-direction: column;
-  font-family: $font-stack;
+  // font-family: 'Death Star';
 }
 
 * {
@@ -28,7 +30,7 @@ body {
 }
 
 button {
-  background-color: none;
+  background-color:unset;
   border: none;
   cursor: pointer;
 }

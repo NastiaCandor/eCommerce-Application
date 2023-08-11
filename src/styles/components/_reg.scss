@@ -1,8 +1,5 @@
-
-// $primary-color: #333;
 $form-width: 35rem;
 $percent: 50;
-
 
 .reg-wrapper {
   position: fixed;
@@ -16,12 +13,12 @@ $percent: 50;
 
 .reg-form {
   display: flex;
-    flex-direction: row;
-    width: $form-width;
-    gap: 2rem;
-    padding: 1rem;
-    font-size: 1.5rem;
-    flex-wrap: wrap;
+  flex-direction: row;
+  width: $form-width;
+  gap: 2rem;
+  padding: 1rem;
+  font-size: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .reg-form__label {
@@ -30,6 +27,7 @@ $percent: 50;
   gap: 0.5rem;
   width: 100%;
 }
+
 .reg-form__label:nth-child(2),
 .reg-form__label:nth-child(3) {
   width: calc(($form-width - 4rem) / 2);
@@ -44,3 +42,14 @@ $percent: 50;
   caret-color: darkslategray;
   border: 2px solid darkblue;
 }
+
+.reg-form__btn {
+  width: 11rem;
+  height: 3rem;
+  font-size: 2rem;
+  background-color: darkblue;
+  color: white;
+  border-radius: 5px;
+  margin: 0 auto;
+}
+
