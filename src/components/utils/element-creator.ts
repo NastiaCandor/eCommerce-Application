@@ -24,6 +24,8 @@ export default class ElementCreator {
     if (params.mouseEvent) this.setMouseEvent(params.mouseEvent);
 
     if (params.link) this.setLink(params.link);
+
+    if (params.type) this.setLink(params.type);
   }
 
   public addInnerElement(element: ElementOrCreator | ArrayOfElementsOrCreators): void {
@@ -74,6 +76,10 @@ export default class ElementCreator {
   private setLink(link: string): void {
     /* set the provided href link from passed string, if any. */
     this.element.setAttribute('href', link);
+  }
+
+  public setInputType(type: string): void {
+    this.element.setAttribute('type', type);
   }
 }
 

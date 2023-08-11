@@ -24,11 +24,12 @@ export default class FormView extends View {
 
   private createInputItems(items: string[]): ElementCreator[] {
     const inputsArray: ElementCreator[] = [];
-    items.forEach((item) => {
+    items.forEach((item, i) => {
       const label = new ElementCreator(formParams.label);
       const input = new ElementCreator(formParams.input);
       label.setTextContent(item);
       label.addInnerElement(input);
+      input.setInputType(formParams.inputTypes[i]);
       inputsArray.push(label);
     });
     return inputsArray;

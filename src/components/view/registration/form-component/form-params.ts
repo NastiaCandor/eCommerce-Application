@@ -14,6 +14,7 @@ const formParams = {
   },
 
   labelNames: ['Email', 'First name', 'Last name', 'Date of birth', 'Street', 'City', 'Postcode', 'Country'],
+  inputTypes: ['email', 'Text', 'Text', 'Date', 'Text', 'Text', 'Text', 'Country'],
 };
 
 export default formParams;
