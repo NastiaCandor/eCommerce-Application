@@ -1,0 +1,46 @@
+
+// $primary-color: #333;
+$form-width: 35rem;
+$percent: 50;
+
+
+.reg-wrapper {
+  position: fixed;
+  margin: 0 auto;
+  // top: 50%;
+  top: 0;
+  left: calc(50% - 25rem);
+  border: 1px solid black;
+  display: flex;
+}
+
+.reg-form {
+  display: flex;
+    flex-direction: row;
+    width: $form-width;
+    gap: 2rem;
+    padding: 1rem;
+    font-size: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.reg-form__label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+.reg-form__label:nth-child(2),
+.reg-form__label:nth-child(3) {
+  width: calc(($form-width - 4rem) / 2);
+}
+
+.reg-form__input {
+  outline: none;
+  padding: 1px 2px;
+  font-size: 1rem;
+  height: 2.5rem;
+  border-radius: 5px;
+  caret-color: darkslategray;
+  border: 2px solid darkblue;
+}

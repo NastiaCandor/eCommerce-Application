@@ -19,11 +19,8 @@ export default class RegView extends View {
   }
 
   private renderForm(): void {
-    // this.insertForm(wrapper);
     const wrapper = new ElementCreator(wrapperParams);
-    const innerWrapper = new ElementCreator(regParams.innerWrapper);
-    this.insertForm(innerWrapper);
-    wrapper.addInnerElement(innerWrapper);
+    this.insertForm(wrapper);
     this.addInnerElement(wrapper);
   }
 

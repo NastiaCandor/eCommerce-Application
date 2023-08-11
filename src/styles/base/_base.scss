@@ -1,5 +1,19 @@
+
+$font-stack:    Helvetica, sans-serif;
+
 html {
   scroll-behavior: smooth;
+}
+
+// body {
+//   background: rgb(8, 12, 65);
+//   background-image: linear-gradient(90deg, rgba(8, 12, 65, 1) 4%, rgba(15, 3, 8, 1) 71%, rgba(71, 48, 36, 1) 100%);
+// }
+
+body {
+  display: flex;
+  flex-direction: column;
+  font-family: $font-stack;
 }
 
 * {
@@ -26,8 +40,3 @@ a {
   font-family: inherit;
 }
 
-.reg-wrapper {
-  width: 50%;
-  height: 50%;
-  border: 1px solid black;
-}
