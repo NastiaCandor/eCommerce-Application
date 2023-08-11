@@ -10,7 +10,7 @@ const navigationParams = {
     link: '#',
   },
 
-  navItemsNames: ['Home', 'About', 'Contacts'],
+  navItemsNames: ['Catalog', 'About us', 'Shipping', 'Contact us'],
 };
 
 export default navigationParams;

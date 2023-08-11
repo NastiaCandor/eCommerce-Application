@@ -23,22 +23,10 @@
     "no-console": 0,
     "class-methods-use-this": "off",
     "@typescript-eslint/no-explicit-any": 2,
+    "comma-dangle": ["error", "always-multiline"],
     "prettier/prettier" : "error",
-    "comma-dangle": ["error", {
-      "arrays": "never",
-      "objects": "always",
-      "imports": "never",
-      "exports": "never",
-      "functions": "never"
-    }],
-    "@typescript-eslint/comma-dangle": ["error", {
-      "arrays": "never",
-      "objects": "always",
-      "imports": "never",
-      "exports": "never",
-      "functions": "never"
-    }],
     "linebreak-style": ["error", "windows"]
   },
+  "root": true,
   "parser": "@typescript-eslint/parser"
 }

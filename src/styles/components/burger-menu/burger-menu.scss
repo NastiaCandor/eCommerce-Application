@@ -1,0 +1,54 @@
+@import './burger-btn.scss';
+
+.header__menu {
+  position: absolute;
+  padding: 2em;
+  justify-content: space-around;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  background-color: $sample-darken-color;
+  max-width: 50%;
+  height: 100%;
+  top: 0;
+  right: 0;
+
+  z-index: -1;
+  opacity: 1;
+  transition: all 0.3s ease-in-out;
+
+  @media screen and (width > $tablet) {
+    opacity: 0;
+  }
+
+  .header__user-icons {
+    justify-content: space-around;
+    max-width: none;
+
+    .user-icon_item {
+      justify-content: center;
+    }
+    .item_text {
+      display: none;
+    }
+  }
+
+  .header__nav {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 50%;
+
+    .nav_item {
+      font-size: 2rem;
+    }
+    
+    @media screen and (max-width: $tablet) {
+      display: flex;
+    }
+  }
+}
+
+.header__menu.hidden {
+  opacity: 0;
+}

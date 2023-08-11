@@ -46,10 +46,8 @@ export default class ElementCreator {
       } else if (element instanceof HTMLElement) {
         this.addInnerElement(element);
       } else {
-        throw new Error(
-          `Instance of ${element} - ${Object.getPrototypeOf(element).constructor} 
-          which is not a correct type!`
-        );
+        throw new Error(`Instance of ${element} - ${Object.getPrototypeOf(element).constructor}, 
+        which is not a correct type!`);
       }
     });
   }

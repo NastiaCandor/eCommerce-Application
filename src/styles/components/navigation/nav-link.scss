@@ -1,4 +1,6 @@
 .nav_item {
+  display: inline-block;
   color: $sample-primary-color;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
+  white-space: nowrap;
 }
