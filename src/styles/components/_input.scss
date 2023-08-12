@@ -1,5 +1,3 @@
-
-
 .reg-form__input {
   outline: none;
   width: 100%;
@@ -11,13 +9,15 @@
   border: 2px solid darkblue;
 }
 
-.reg-form__input:invalid {
-  border-color: #900;
-  background-color: #fdd;
+.reg-form__input:valid {
+  border-color: darkgreen;
+  background-color: rgb(221, 241, 221);
 }
 
-.reg-form__input:focus:invalid {
-  outline: none;
+.reg-form__input:invalid:focus,
+.reg-form__input-invalid:focus {
+  border-color: #900;
+  background-color: #fdd;
 }
 
 .reg-form__error {
@@ -26,8 +26,4 @@
   color: white;
   background-color: #900;
   border-radius: 0 0 5px 5px;
- }
-
- .reg-form__error.active {
-  padding: 0.3em;
 }
