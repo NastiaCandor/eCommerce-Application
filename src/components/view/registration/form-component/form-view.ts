@@ -1,10 +1,14 @@
 import ElementCreator from '../../../utils/element-creator';
 import View from '../../view';
 import formParams from './form-params';
+import EmailInputView from './input-component/email-input-view.ts/email-input-view';
 
 export default class FormView extends View {
+  private emailInput: EmailInputView;
+
   constructor() {
     super(formParams.form);
+    this.emailInput = new EmailInputView();
     this.render();
   }
 
@@ -15,14 +19,32 @@ export default class FormView extends View {
   protected configure(): void {
     this.insertFormItems();
     this.setAttribute('novalidate', 'true');
-    // this.validateEmail();
+    this.validateInput();
   }
 
   private insertFormItems(): void {
-    // const inputsArray = this.createInputItems(formParams.labelNames);
-    // this.addInnerElement(inputsArray);
+    this.addInnerElement(this.emailInput);
     const submitBtn = this.createSubmitBtn();
     this.addInnerElement(submitBtn);
+  }
+
+  private validateInput(): void {
+    const formEl = this.getElement();
+    const input = this.emailInput.getElement().children[1] as HTMLInputElement;
+    const errorSpan = this.emailInput.getElement().children[2] as HTMLElement;
+    formEl.addEventListener('submit', (event) => {
+      if (!input.validity.valid) {
+        this.emailInput.showError(input, errorSpan);
+        event.preventDefault();
+      }
+    });
+  }
+
+  private createSubmitBtn(): ElementCreator {
+    const btn = new ElementCreator(formParams.button);
+    btn.setType(formParams.button.type);
+    btn.setTextContent(formParams.button.textContent);
+    return btn;
   }
 
   // private createInputItems(items: string[]): ElementCreator[] {
@@ -39,20 +61,4 @@ export default class FormView extends View {
   //   });
   //   return inputsArray;
   // }
-
-  // private validateEmail() {
-  //   const emailLabel = this.createInputItems(formParams.labelNames)[0];
-  //   const emailInput = emailLabel.getElement().firstElementChild as HTMLInputElement;
-  //   // emailInput.addEventListener('input', () => {
-  //   //   if (emailInput.validity)
-  //   // })
-  //   console.log(emailInput);
-  // }
-
-  private createSubmitBtn(): ElementCreator {
-    const btn = new ElementCreator(formParams.button);
-    btn.setType(formParams.button.type);
-    btn.setTextContent(formParams.button.textContent);
-    return btn;
-  }
 }

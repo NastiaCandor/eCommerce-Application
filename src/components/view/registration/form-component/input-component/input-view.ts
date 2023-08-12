@@ -1,10 +1,10 @@
 import ElementCreator from '../../../../utils/element-creator';
 import View from '../../../view';
-import inputParams from './input-params';
+import fieldsetParams from './input-params';
 
 export default class InputView extends View {
   constructor() {
-    super(inputParams.fieldset);
+    super(fieldsetParams.fieldset);
     this.render();
   }
 
@@ -15,10 +15,9 @@ export default class InputView extends View {
   protected configure(): void {
     this.insertFieldsetItems();
     // this.setAttribute('novalidate', 'true');
-    // this.validateEmail();
   }
 
-  private insertFieldsetItems(): void {
+  public insertFieldsetItems(): void {
     const input = this.createInput();
     this.addInnerElement(input);
     const label = this.createLabel();
@@ -28,35 +27,19 @@ export default class InputView extends View {
   }
 
   private createInput(): ElementCreator {
-    const input = new ElementCreator(inputParams.input);
-
-    input.setRequiredAttr(inputParams.input.required);
+    const input = new ElementCreator(fieldsetParams.input);
+    // input.setAttribute('type', type);
+    input.setRequiredAttr(fieldsetParams.input.required);
     return input;
   }
 
   private createLabel(): ElementCreator {
-    const label = new ElementCreator(inputParams.label);
+    const label = new ElementCreator(fieldsetParams.label);
     return label;
   }
 
   private createErrorText(): ElementCreator {
-    const label = new ElementCreator(inputParams.label);
+    const label = new ElementCreator(fieldsetParams.label);
     return label;
   }
-
-  // private validateEmail() {
-  //   const emailLabel = this.createInputItems(formParams.labelNames)[0];
-  //   const emailInput = emailLabel.getElement().firstElementChild as HTMLInputElement;
-  //   // emailInput.addEventListener('input', () => {
-  //   //   if (emailInput.validity)
-  //   // })
-  //   console.log(emailInput);
-  // }
-
-  // private createSubmitBtn(): ElementCreator {
-  //   const btn = new ElementCreator(formParams.button);
-  //   btn.setType(formParams.button.type);
-  //   btn.setTextContent(formParams.button.textContent);
-  //   return btn;
-  // }
 }

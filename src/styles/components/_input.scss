@@ -1,0 +1,33 @@
+
+
+.reg-form__input {
+  outline: none;
+  width: 100%;
+  padding: 1px 2px;
+  font-size: 1rem;
+  height: 2.5rem;
+  border-radius: 5px;
+  caret-color: darkslategray;
+  border: 2px solid darkblue;
+}
+
+.reg-form__input:invalid {
+  border-color: #900;
+  background-color: #fdd;
+}
+
+.reg-form__input:focus:invalid {
+  outline: none;
+}
+
+.reg-form__error {
+  padding: 0;
+  font-size: 80%;
+  color: white;
+  background-color: #900;
+  border-radius: 0 0 5px 5px;
+ }
+
+ .reg-form__error.active {
+  padding: 0.3em;
+}

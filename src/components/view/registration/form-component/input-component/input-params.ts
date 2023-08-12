@@ -1,4 +1,4 @@
-const inputParams = {
+const fieldsetParams = {
   fieldset: {
     tag: 'fieldset',
     cssClasses: ['reg-form__fieldset'],
@@ -31,4 +31,4 @@ const inputParams = {
   inputTypes: ['email', 'Text', 'Text', 'Date', 'Text', 'Text', 'Text', 'Text'],
   // inputPatterns: ['', '[A-Za-z]', '[A-Za-z]', '', 'Text', 'Text', 'Text', 'Text'],
 };
-export default inputParams;
+export default fieldsetParams;

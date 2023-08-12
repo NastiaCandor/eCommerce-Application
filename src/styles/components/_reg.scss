@@ -21,6 +21,11 @@ $percent: 50;
   flex-wrap: wrap;
 }
 
+.reg-form__fieldset {
+  border: none;
+  width: 100%;
+}
+
 .reg-form__label {
   display: flex;
   flex-direction: column;
@@ -28,20 +33,10 @@ $percent: 50;
   width: 100%;
 }
 
-.reg-form__label:nth-child(2),
-.reg-form__label:nth-child(3) {
-  width: calc(($form-width - 4rem) / 2);
-}
-
-.reg-form__input {
-  outline: none;
-  padding: 1px 2px;
-  font-size: 1rem;
-  height: 2.5rem;
-  border-radius: 5px;
-  caret-color: darkslategray;
-  border: 2px solid darkblue;
-}
+// .reg-form__label:nth-child(2),
+// .reg-form__label:nth-child(3) {
+//   width: calc(($form-width - 4rem) / 2);
+// }
 
 .reg-form__btn {
   width: 11rem;
@@ -52,4 +47,3 @@ $percent: 50;
   border-radius: 5px;
   margin: 0 auto;
 }
-
