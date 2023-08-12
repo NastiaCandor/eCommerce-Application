@@ -1,9 +1,9 @@
-import ElementCreator from '../../../../../utils/element-creator';
-import View from '../../../../view';
-import fieldsetParams from '../input-params';
-import firstNameInputParams from './firstName-params';
+import ElementCreator from '../../../../../../utils/element-creator';
+import View from '../../../../../view';
+import fieldsetParams from '../../input-params';
+import nameInputParams from '../name-input-params';
 
-export default class FirstNameInputView extends View {
+export default class LastNameInputView extends View {
   constructor() {
     super(fieldsetParams.fieldset);
     this.render();
@@ -19,9 +19,9 @@ export default class FirstNameInputView extends View {
 
   public insertFieldsetItems(): void {
     // eslint-disable-next-line max-len
-    const label = this.createLabel(firstNameInputParams.label.for, firstNameInputParams.label.textContent);
+    const label = this.createLabel(nameInputParams.label.lastName.for, nameInputParams.label.lastName.textContent);
     this.addInnerElement(label);
-    const input = this.createInput(firstNameInputParams.input.type, firstNameInputParams.input.id);
+    const input = this.createInput(nameInputParams.input.type, nameInputParams.input.lastName.id);
     this.addInnerElement(input);
     const errorSpan = this.createErrorText();
     this.addInnerElement(errorSpan);
@@ -33,9 +33,9 @@ export default class FirstNameInputView extends View {
     const input = new ElementCreator(fieldsetParams.input).getElement() as HTMLInputElement;
     input.setAttribute('type', type);
     input.setAttribute('id', id);
-    input.setAttribute('minLength', firstNameInputParams.input.minLength);
+    input.setAttribute('minLength', nameInputParams.input.minLength);
     input.setAttribute('required', fieldsetParams.input.required);
-    input.setAttribute('pattern', firstNameInputParams.input.pattern);
+    input.setAttribute('pattern', nameInputParams.input.pattern);
     return input;
   }
 
@@ -56,7 +56,7 @@ export default class FirstNameInputView extends View {
     element.addEventListener('input', () => {
       if (element.validity.valid) {
         errorSpan.textContent = '';
-        errorSpan.classList.add(firstNameInputParams.errorSpan.cssClasses);
+        errorSpan.classList.add(nameInputParams.errorSpan.cssClasses);
       } else {
         this.showError(element, errorMessage);
       }
@@ -66,12 +66,12 @@ export default class FirstNameInputView extends View {
   public showError(input: HTMLInputElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
     if (input.validity.valueMissing) {
-      errorSpan.textContent = 'Enter your first name';
+      errorSpan.textContent = 'Enter your last name';
     } else if (input.validity.tooShort) {
-      errorSpan.textContent = `First name should be at least ${input.minLength} characters long; you entered ${input.value.length}`;
+      errorSpan.textContent = `Last name should be at least ${input.minLength} characters long; you entered ${input.value.length}`;
     } else if (input.validity.patternMismatch) {
-      errorSpan.textContent = 'First name should contain only letters';
+      errorSpan.textContent = 'Last name should contain only letters';
     }
-    errorSpan.classList.add(firstNameInputParams.errorSpan.cssClassesActive);
+    errorSpan.classList.add(nameInputParams.errorSpan.cssClassesActive);
   }
 }

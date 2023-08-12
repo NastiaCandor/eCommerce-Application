@@ -2,17 +2,21 @@ import ElementCreator from '../../../utils/element-creator';
 import View from '../../view';
 import formParams from './form-params';
 import EmailInputView from './input-component/email-input-view/email-input-view';
-import FirstNameInputView from './input-component/firstName-input-view/firstName-input-view';
+import FirstNameInputView from './input-component/name-input-views/firstName-input-view/firstName-input-view';
+import LastNameInputView from './input-component/name-input-views/lastName-input-view/lastName-input-view';
 
 export default class FormView extends View {
   private emailInput: EmailInputView;
 
   private firstNameInput: FirstNameInputView;
 
+  private lastNameInput: LastNameInputView;
+
   constructor() {
     super(formParams.form);
     this.emailInput = new EmailInputView();
     this.firstNameInput = new FirstNameInputView();
+    this.lastNameInput = new LastNameInputView();
     this.render();
   }
 
@@ -29,6 +33,7 @@ export default class FormView extends View {
   private insertFormItems(): void {
     this.addInnerElement(this.emailInput);
     this.addInnerElement(this.firstNameInput);
+    this.addInnerElement(this.lastNameInput);
     const submitBtn = this.createSubmitBtn();
     this.addInnerElement(submitBtn);
   }
@@ -46,8 +51,10 @@ export default class FormView extends View {
     const inputsArr = [];
     const inputEmail = this.emailInput.getElement().children[1] as HTMLInputElement;
     const inputFirstName = this.firstNameInput.getElement().children[1] as HTMLInputElement;
+    const inputLastName = this.lastNameInput.getElement().children[1] as HTMLInputElement;
     inputsArr.push(inputEmail);
     inputsArr.push(inputFirstName);
+    inputsArr.push(inputLastName);
     return inputsArr;
   }
 
@@ -55,8 +62,10 @@ export default class FormView extends View {
     const spansArr = [];
     const errorSpanEmail = this.emailInput.getElement().children[2] as HTMLElement;
     const errorSpanFName = this.firstNameInput.getElement().children[2] as HTMLElement;
+    const errorSpanLName = this.lastNameInput.getElement().children[2] as HTMLElement;
     spansArr.push(errorSpanEmail);
     spansArr.push(errorSpanFName);
+    spansArr.push(errorSpanLName);
     return spansArr;
   }
 
