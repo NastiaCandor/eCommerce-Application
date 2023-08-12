@@ -1,14 +1,18 @@
 import ElementCreator from '../../../utils/element-creator';
 import View from '../../view';
 import formParams from './form-params';
-import EmailInputView from './input-component/email-input-view.ts/email-input-view';
+import EmailInputView from './input-component/email-input-view/email-input-view';
+import FirstNameInputView from './input-component/firstName-input-view/firstName-input-view';
 
 export default class FormView extends View {
   private emailInput: EmailInputView;
 
+  private firstNameInput: FirstNameInputView;
+
   constructor() {
     super(formParams.form);
     this.emailInput = new EmailInputView();
+    this.firstNameInput = new FirstNameInputView();
     this.render();
   }
 
@@ -24,18 +28,44 @@ export default class FormView extends View {
 
   private insertFormItems(): void {
     this.addInnerElement(this.emailInput);
+    this.addInnerElement(this.firstNameInput);
     const submitBtn = this.createSubmitBtn();
     this.addInnerElement(submitBtn);
   }
 
   private validateInput(): void {
     const formEl = this.getElement();
-    const input = this.emailInput.getElement().children[1] as HTMLInputElement;
-    const errorSpan = this.emailInput.getElement().children[2] as HTMLElement;
-    formEl.addEventListener('submit', (event) => {
+    const inputsArr = this.getInputsArr();
+    const spansArr = this.getSpansArr();
+    for (let i = 0; i < inputsArr.length; i += 1) {
+      this.submitInvalid(formEl, inputsArr[i], spansArr[i]);
+    }
+  }
+
+  private getInputsArr(): HTMLInputElement[] {
+    const inputsArr = [];
+    const inputEmail = this.emailInput.getElement().children[1] as HTMLInputElement;
+    const inputFirstName = this.firstNameInput.getElement().children[1] as HTMLInputElement;
+    inputsArr.push(inputEmail);
+    inputsArr.push(inputFirstName);
+    return inputsArr;
+  }
+
+  private getSpansArr(): HTMLElement[] {
+    const spansArr = [];
+    const errorSpanEmail = this.emailInput.getElement().children[2] as HTMLElement;
+    const errorSpanFName = this.firstNameInput.getElement().children[2] as HTMLElement;
+    spansArr.push(errorSpanEmail);
+    spansArr.push(errorSpanFName);
+    return spansArr;
+  }
+
+  private submitInvalid(el: HTMLElement, input: HTMLInputElement, errorMessage: HTMLElement): void {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    el.addEventListener('submit', (el) => {
       if (!input.validity.valid) {
-        this.emailInput.showError(input, errorSpan);
-        event.preventDefault();
+        this.emailInput.showError(input, errorMessage);
+        el.preventDefault();
       }
     });
   }
@@ -62,3 +92,9 @@ export default class FormView extends View {
   //   return inputsArray;
   // }
 }
+// formEl.addEventListener('submit', (event) => {
+//   if (!input.validity.valid) {
+//     this.emailInput.showError(input, errorSpan);
+//     event.preventDefault();
+//   }
+// });

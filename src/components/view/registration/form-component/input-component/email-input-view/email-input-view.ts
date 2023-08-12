@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/comma-dangle */
 import ElementCreator from '../../../../../utils/element-creator';
 import View from '../../../../view';
-import EmailInputParams from './email-params';
 import fieldsetParams from '../input-params';
+import EmailInputParams from './email-params';
 
 export default class EmailInputView extends View {
   constructor() {
@@ -16,7 +16,6 @@ export default class EmailInputView extends View {
 
   protected configure(): void {
     this.insertFieldsetItems();
-    // this.validateEmail();
   }
 
   public insertFieldsetItems(): void {
