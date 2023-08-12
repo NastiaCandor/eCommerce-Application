@@ -9,6 +9,9 @@
 //LAYOUTS
 @import './layouts/wrapper';
 @import './layouts/header';
+@import './layouts/main';
 @import './layouts/footer';
-
 // COMPONENTS
+@import './components/user-icons/user-icons-wrapper.scss';
+@import './components/navigation/nav-wrapper.scss';
+@import './components/burger-menu/burger-menu.scss';

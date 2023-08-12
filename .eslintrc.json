@@ -23,8 +23,10 @@
     "no-console": 0,
     "class-methods-use-this": "off",
     "@typescript-eslint/no-explicit-any": 2,
+    "comma-dangle": ["error", "always-multiline"],
     "prettier/prettier" : "error",
     "linebreak-style": ["error", "windows"]
   },
+  "root": true,
   "parser": "@typescript-eslint/parser"
 }
