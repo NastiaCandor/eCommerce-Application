@@ -1,7 +1,6 @@
 const passwordInputParams = {
   input: {
     type: 'password',
-    minLength: '8',
     cssClassesInvalid: 'reg-form__input-invalid',
   },
 

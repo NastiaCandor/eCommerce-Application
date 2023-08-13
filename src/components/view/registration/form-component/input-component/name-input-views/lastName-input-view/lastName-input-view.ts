@@ -25,7 +25,7 @@ export default class LastNameInputView extends View {
     this.addInnerElement(input);
     const errorSpan = this.createErrorText();
     this.addInnerElement(errorSpan);
-    this.validateEmail(input, errorSpan);
+    this.validateName(input, errorSpan);
     this.showError(input, errorSpan);
   }
 
@@ -51,7 +51,7 @@ export default class LastNameInputView extends View {
     return errorSpan;
   }
 
-  private validateEmail(element: HTMLInputElement, errorMessage: HTMLElement) {
+  private validateName(element: HTMLInputElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
     element.addEventListener('input', () => {
       if (element.validity.valid) {

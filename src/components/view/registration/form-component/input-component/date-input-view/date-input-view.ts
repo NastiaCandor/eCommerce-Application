@@ -1,9 +1,9 @@
 import ElementCreator from '../../../../../utils/element-creator';
 import View from '../../../../view';
 import fieldsetParams from '../input-params';
-import passwordInputParams from './password-params';
+import DateInputParams from './date-params';
 
-export default class PasswordInputView extends View {
+export default class DateInputView extends View {
   constructor() {
     super(fieldsetParams.fieldset);
     this.render();
@@ -18,22 +18,39 @@ export default class PasswordInputView extends View {
   }
 
   public insertFieldsetItems(): void {
-    // eslint-disable-next-line max-len
-    const label = this.createLabel(passwordInputParams.label.for, passwordInputParams.label.textContent);
+    const label = this.createLabel(DateInputParams.label.for, DateInputParams.label.textContent);
     this.addInnerElement(label);
-    const input = this.createInput(passwordInputParams.input.type);
+    const input = this.createInput(DateInputParams.input.type);
     this.addInnerElement(input);
     const errorSpan = this.createErrorText();
     this.addInnerElement(errorSpan);
-    this.validatePassword(input, errorSpan);
+    this.validateDate(input, errorSpan);
     this.showError(input, errorSpan);
+  }
+
+  private getDate18yo(): string {
+    const today = new Date();
+    let day = today.getDate().toString();
+    let month = (today.getMonth() + 1).toString();
+    const year = today.getFullYear() - 18;
+
+    if (Number(day) < 10) {
+      day = `0${day}`;
+    }
+    if (Number(month) < 10) {
+      month = `0${month}`;
+    }
+    const todayDate = `${year}-${month}-${day}`;
+    return todayDate;
   }
 
   private createInput(type: string): HTMLInputElement {
     const input = new ElementCreator(fieldsetParams.input).getElement() as HTMLInputElement;
     input.setAttribute('type', type);
     input.setAttribute('id', type);
+    input.setAttribute('max', this.getDate18yo());
     input.setAttribute('required', fieldsetParams.input.required);
+    input.setAttribute('value', this.getDate18yo());
     return input;
   }
 
@@ -49,36 +66,26 @@ export default class PasswordInputView extends View {
     return errorSpan;
   }
 
-  private validatePassword(element: HTMLInputElement, errorMessage: HTMLElement) {
+  private validateDate(element: HTMLInputElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
     element.addEventListener('input', () => {
-      if (element.validity.valid && this.checkPassword(element.value)) {
+      if (element.validity.valid) {
         errorSpan.textContent = '';
-        errorSpan.classList.add(passwordInputParams.errorSpan.cssClasses);
-        element.classList.remove(passwordInputParams.input.cssClassesInvalid);
+        errorSpan.classList.add(DateInputParams.errorSpan.cssClasses);
       } else {
         this.showError(element, errorMessage);
       }
     });
   }
 
-  public checkPassword(str: string) {
-    const reg = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-    const result = reg.test(str);
-    return result;
-  }
-
-  public showError(password: HTMLInputElement, errorMessage: HTMLElement) {
+  public showError(date: HTMLInputElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
-    if (password.validity.valueMissing) {
-      errorSpan.textContent = 'Enter your password';
+    if (date.validity.valueMissing) {
+      errorSpan.textContent = 'Enter your date of birth';
     }
-    if (!this.checkPassword(password.value)) {
-      // eslint-disable-next-line operator-linebreak
-      errorSpan.textContent =
-        'Password should contain minimum 8 characters, at least 1 uppercase letter, 1 lowercase letter, and 1 number';
+    if (!date.validity.valid) {
+      errorSpan.textContent = 'You have to be at least 18 years old to register';
     }
-    errorSpan.classList.add(passwordInputParams.errorSpan.cssClassesActive);
-    password.classList.add(passwordInputParams.input.cssClassesInvalid);
+    errorSpan.classList.add(DateInputParams.errorSpan.cssClassesActive);
   }
 }
