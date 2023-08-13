@@ -1,7 +1,8 @@
 const DateInputParams = {
   input: {
-    type: 'date',
-    // max: ''
+    type: 'text',
+    id: 'date',
+    cssClassesValid: 'reg-form__input-valid',
   },
 
   label: {

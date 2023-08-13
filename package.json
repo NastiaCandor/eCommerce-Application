@@ -55,6 +55,7 @@
   },
   "homepage": "https://github.com/NastiaCandor/eCommerce-Application#readme",
   "dependencies": {
+    "flatpickr": "^4.6.13",
     "postcode-validator": "^3.8.14"
   }
 }

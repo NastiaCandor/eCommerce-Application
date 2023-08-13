@@ -1,3 +1,4 @@
+import flatpickr from 'flatpickr';
 import ElementCreator from '../../../../../utils/element-creator';
 import View from '../../../../view';
 import fieldsetParams from '../input-params';
@@ -20,7 +21,12 @@ export default class DateInputView extends View {
   public insertFieldsetItems(): void {
     const label = this.createLabel(DateInputParams.label.for, DateInputParams.label.textContent);
     this.addInnerElement(label);
-    const input = this.createInput(DateInputParams.input.type);
+    const input = this.createInput(DateInputParams.input.type, DateInputParams.input.id);
+    flatpickr(input, {
+      maxDate: this.getDate18yo(),
+      dateFormat: 'd-m-Y',
+    });
+
     this.addInnerElement(input);
     const errorSpan = this.createErrorText();
     this.addInnerElement(errorSpan);
@@ -44,13 +50,13 @@ export default class DateInputView extends View {
     return todayDate;
   }
 
-  private createInput(type: string): HTMLInputElement {
+  private createInput(type: string, id: string): HTMLInputElement {
     const input = new ElementCreator(fieldsetParams.input).getElement() as HTMLInputElement;
     input.setAttribute('type', type);
-    input.setAttribute('id', type);
-    input.setAttribute('max', this.getDate18yo());
+    input.setAttribute('id', id);
     input.setAttribute('required', fieldsetParams.input.required);
-    input.setAttribute('value', this.getDate18yo());
+    // input.setAttribute('value', this.getDate18yo());
+    // leave this code for standart date input here in case smth goes wrong with flatpickr
     return input;
   }
 
@@ -66,12 +72,20 @@ export default class DateInputView extends View {
     return errorSpan;
   }
 
+  private checkDate(str: string) {
+    const reg = /(0[1-9]|[12][0-9]|3[01])(\/|-)(0[1-9]|1[1,2])(\/|-)(19|20)\d{2}/;
+    const result = reg.test(str);
+    return result;
+  }
+
   private validateDate(element: HTMLInputElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
     element.addEventListener('input', () => {
-      if (element.validity.valid) {
+      const checkRes = this.checkDate(element.value);
+      if (element.validity.valid || checkRes) {
         errorSpan.textContent = '';
         errorSpan.classList.add(DateInputParams.errorSpan.cssClasses);
+        element.classList.add(DateInputParams.input.cssClassesValid);
       } else {
         this.showError(element, errorMessage);
       }
@@ -80,11 +94,8 @@ export default class DateInputView extends View {
 
   public showError(date: HTMLInputElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
-    if (date.validity.valueMissing) {
-      errorSpan.textContent = 'Enter your date of birth';
-    }
-    if (!date.validity.valid) {
-      errorSpan.textContent = 'You have to be at least 18 years old to register';
+    if (!date.value) {
+      errorSpan.textContent = 'Enter your date of birth. You have to be at least 18 years old to register';
     }
     errorSpan.classList.add(DateInputParams.errorSpan.cssClassesActive);
   }
