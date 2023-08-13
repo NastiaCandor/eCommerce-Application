@@ -10,6 +10,12 @@ const fieldsetParams = {
     required: 'true',
   },
 
+  select: {
+    tag: 'select',
+    cssClasses: ['reg-form__select'],
+    required: 'true',
+  },
+
   label: {
     tag: 'label',
     cssClasses: ['reg-form__label'],
@@ -26,8 +32,5 @@ const fieldsetParams = {
     type: 'submit',
     textContent: 'Sign Up',
   },
-
-  labelNames: ['Email', 'First name', 'Last name', 'Date of birth', 'Street', 'City', 'Country', 'Postcode'],
-  inputTypes: ['email', 'Text', 'Text', 'Date', 'Text', 'Text', 'Text', 'Text'],
 };
 export default fieldsetParams;

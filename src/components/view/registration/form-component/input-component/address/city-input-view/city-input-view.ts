@@ -25,7 +25,7 @@ export default class CityInputView extends View {
     this.addInnerElement(input);
     const errorSpan = this.createErrorText();
     this.addInnerElement(errorSpan);
-    this.validateName(input, errorSpan);
+    this.validateCity(input, errorSpan);
     this.showError(input, errorSpan);
   }
 
@@ -51,7 +51,7 @@ export default class CityInputView extends View {
     return errorSpan;
   }
 
-  private validateName(element: HTMLInputElement, errorMessage: HTMLElement) {
+  private validateCity(element: HTMLInputElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
     element.addEventListener('input', () => {
       if (element.validity.valid) {

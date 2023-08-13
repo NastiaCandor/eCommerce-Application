@@ -2,7 +2,8 @@ const nameInputParams = {
   input: {
     type: 'text',
     minLength: '1',
-    pattern: '^[a-zA-Z]+$',
+    // eslint-disable-next-line prettier/prettier, no-useless-escape
+    pattern: '/^p{L}+$/u',
     firstName: {
       id: 'firstName',
     },

@@ -8,6 +8,7 @@ import PasswordInputView from './input-component/password-input-view/password-in
 import DateInputView from './input-component/date-input-view/date-input-view';
 import StreetInputView from './input-component/address/street-input-view/street-input-view';
 import CityInputView from './input-component/address/city-input-view/city-input-view';
+import CountryInputView from './input-component/address/country-input-view/country-input-view';
 
 export default class FormView extends View {
   private emailInput: EmailInputView;
@@ -24,6 +25,8 @@ export default class FormView extends View {
 
   private cityInput: CityInputView;
 
+  private countrySelect: CountryInputView;
+
   constructor() {
     super(formParams.form);
     this.emailInput = new EmailInputView();
@@ -33,6 +36,7 @@ export default class FormView extends View {
     this.dateInput = new DateInputView();
     this.streetInput = new StreetInputView();
     this.cityInput = new CityInputView();
+    this.countrySelect = new CountryInputView();
     this.render();
   }
 
@@ -54,6 +58,7 @@ export default class FormView extends View {
     this.addInnerElement(this.dateInput);
     this.addInnerElement(this.streetInput);
     this.addInnerElement(this.cityInput);
+    this.addInnerElement(this.countrySelect);
     const submitBtn = this.createSubmitBtn();
     this.addInnerElement(submitBtn);
   }
@@ -76,6 +81,7 @@ export default class FormView extends View {
     const inputDate = this.dateInput.getElement().children[1] as HTMLInputElement;
     const inputStreet = this.streetInput.getElement().children[1] as HTMLInputElement;
     const inputCity = this.cityInput.getElement().children[1] as HTMLInputElement;
+    const selectCountry = this.countrySelect.getElement().children[1] as HTMLInputElement;
     inputsArr.push(inputEmail);
     inputsArr.push(inputFirstName);
     inputsArr.push(inputLastName);
@@ -83,6 +89,7 @@ export default class FormView extends View {
     inputsArr.push(inputDate);
     inputsArr.push(inputStreet);
     inputsArr.push(inputCity);
+    inputsArr.push(selectCountry);
     return inputsArr;
   }
 
@@ -95,6 +102,7 @@ export default class FormView extends View {
     const errorSpanDate = this.dateInput.getElement().children[2] as HTMLElement;
     const errorSpanStreet = this.streetInput.getElement().children[2] as HTMLElement;
     const errorSpanCity = this.cityInput.getElement().children[2] as HTMLElement;
+    const errorSpanCountry = this.countrySelect.getElement().children[2] as HTMLElement;
     spansArr.push(errorSpanEmail);
     spansArr.push(errorSpanFName);
     spansArr.push(errorSpanLName);
@@ -102,6 +110,7 @@ export default class FormView extends View {
     spansArr.push(errorSpanDate);
     spansArr.push(errorSpanStreet);
     spansArr.push(errorSpanCity);
+    spansArr.push(errorSpanCountry);
     return spansArr;
   }
 
