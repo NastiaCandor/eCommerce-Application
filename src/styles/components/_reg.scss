@@ -2,11 +2,7 @@ $form-width: 35rem;
 $percent: 50;
 
 .reg-wrapper {
-  position: fixed;
   margin: 0 auto;
-  // top: 50%;
-  top: 0;
-  left: calc(50% - 25rem);
   border: 1px solid black;
   display: flex;
 }
