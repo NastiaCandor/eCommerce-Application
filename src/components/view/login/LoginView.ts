@@ -32,12 +32,12 @@ const loginParams: LoginParamsType = {
   },
   passwordInput: {
     tag: 'input',
-    cssClasses: ['login__passward-input'],
+    cssClasses: ['login__password-input'],
   },
   passwordTitle: {
     tag: 'label',
-    cssClasses: ['login__passward-label', 'login__form-label'],
-    textContent: 'passward',
+    cssClasses: ['login__password-label', 'login__form-label'],
+    textContent: 'password',
   },
   loginBtn: {
     tag: 'button',
@@ -52,7 +52,7 @@ const loginParams: LoginParamsType = {
   newCustomerLink: {
     tag: 'a',
     cssClasses: ['login__new-customer-link'],
-    textContent: 'Creat Your Account',
+    textContent: 'Creat one!',
     link: '#',
   },
 };
@@ -139,10 +139,24 @@ export default class LoginView extends View {
     return passwordInput;
   }
 
-  private checkLogin(emailInput: HTMLElement, passwordInput: HTMLElement): void {
+  private async checkLogin(emailInput: HTMLElement, passwordInput: HTMLElement): Promise<void> {
     const email = (emailInput as HTMLInputElement).value;
     const password = (passwordInput as HTMLInputElement).value;
-    console.log(email, password);
+
+    const loginAPI = this.clientAPI.loginClient(email, password);
+    loginAPI()
+      .then((data) => {
+        if (data.statusCode === 200) {
+          console.log(`Hello ${data.body.customer.firstName} ${data.body.customer.lastName}!`);
+        }
+      })
+      .catch((error) => {
+        if (error.status === 400) {
+          console.log('Wrong email address or password');
+        } else {
+          console.log(error.status);
+        }
+      });
   }
 
   private appendToDom(): void {
