@@ -21,6 +21,12 @@
   background-color: #fdd;
 }
 
+.reg-form__input:invalid:not(:focus),
+.reg-form__input-invalid:not(:focus) {
+  border-color: #900;
+  background-color: white;
+}
+
 .reg-form__error {
   padding: 0;
   font-size: 80%;

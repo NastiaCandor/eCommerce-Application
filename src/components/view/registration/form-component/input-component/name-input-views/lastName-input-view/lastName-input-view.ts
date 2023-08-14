@@ -70,7 +70,7 @@ export default class LastNameInputView extends View {
     } else if (input.validity.tooShort) {
       errorSpan.textContent = `Last name should be at least ${input.minLength} characters long; you entered ${input.value.length}`;
     } else if (input.validity.patternMismatch) {
-      errorSpan.textContent = 'Last name should contain only letters';
+      errorSpan.textContent = 'Last name should contain only english letters';
     }
     errorSpan.classList.add(nameInputParams.errorSpan.cssClassesActive);
   }

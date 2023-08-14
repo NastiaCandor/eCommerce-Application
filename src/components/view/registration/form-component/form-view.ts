@@ -1,6 +1,8 @@
+import { postcodeValidator } from 'postcode-validator';
 import ElementCreator from '../../../utils/element-creator';
 import View from '../../view';
 import formParams from './form-params';
+import PostcodeInputParams from './input-component/address/postcode-input-view/postcode-params';
 import EmailInputView from './input-component/email-input-view/email-input-view';
 import FirstNameInputView from './input-component/name-input-views/firstName-input-view/firstName-input-view';
 import LastNameInputView from './input-component/name-input-views/lastName-input-view/lastName-input-view';
@@ -9,6 +11,7 @@ import DateInputView from './input-component/date-input-view/date-input-view';
 import StreetInputView from './input-component/address/street-input-view/street-input-view';
 import CityInputView from './input-component/address/city-input-view/city-input-view';
 import CountryInputView from './input-component/address/country-input-view/country-input-view';
+import PostcodeInputView from './input-component/address/postcode-input-view/postcode-input-view';
 
 export default class FormView extends View {
   private emailInput: EmailInputView;
@@ -27,6 +30,8 @@ export default class FormView extends View {
 
   private countrySelect: CountryInputView;
 
+  private postcodeInput: PostcodeInputView;
+
   constructor() {
     super(formParams.form);
     this.emailInput = new EmailInputView();
@@ -37,6 +42,7 @@ export default class FormView extends View {
     this.streetInput = new StreetInputView();
     this.cityInput = new CityInputView();
     this.countrySelect = new CountryInputView();
+    this.postcodeInput = new PostcodeInputView();
     this.render();
   }
 
@@ -48,6 +54,7 @@ export default class FormView extends View {
     this.insertFormItems();
     this.setAttribute('novalidate', 'true');
     this.validateInput();
+    this.checkPostcode();
   }
 
   private insertFormItems(): void {
@@ -59,6 +66,7 @@ export default class FormView extends View {
     this.addInnerElement(this.streetInput);
     this.addInnerElement(this.cityInput);
     this.addInnerElement(this.countrySelect);
+    this.addInnerElement(this.postcodeInput);
     const submitBtn = this.createSubmitBtn();
     this.addInnerElement(submitBtn);
   }
@@ -81,7 +89,7 @@ export default class FormView extends View {
     const inputDate = this.dateInput.getElement().children[1] as HTMLInputElement;
     const inputStreet = this.streetInput.getElement().children[1] as HTMLInputElement;
     const inputCity = this.cityInput.getElement().children[1] as HTMLInputElement;
-    const selectCountry = this.countrySelect.getElement().children[1] as HTMLInputElement;
+    const inputPostcode = this.postcodeInput.getElement().children[1] as HTMLInputElement;
     inputsArr.push(inputEmail);
     inputsArr.push(inputFirstName);
     inputsArr.push(inputLastName);
@@ -89,8 +97,35 @@ export default class FormView extends View {
     inputsArr.push(inputDate);
     inputsArr.push(inputStreet);
     inputsArr.push(inputCity);
-    inputsArr.push(selectCountry);
+    inputsArr.push(inputPostcode);
     return inputsArr;
+  }
+
+  private checkPostcode() {
+    const selectCountry = this.countrySelect.getElement().children[1] as HTMLSelectElement;
+    const inputPostcode = this.postcodeInput.getElement().children[1] as HTMLInputElement;
+    const errorSpanPostcode = this.postcodeInput.getElement().children[2] as HTMLElement;
+    inputPostcode.addEventListener('input', () => {
+      // eslint-disable-next-line max-len
+      this.checkPostcodeFunc(inputPostcode.value, selectCountry.value, errorSpanPostcode, inputPostcode);
+    });
+    selectCountry.addEventListener('change', () => {
+      // eslint-disable-next-line max-len
+      this.checkPostcodeFunc(inputPostcode.value, selectCountry.value, errorSpanPostcode, inputPostcode);
+    });
+  }
+
+  // eslint-disable-next-line max-len
+  private checkPostcodeFunc(postcode: string, country: string, errorEl: HTMLElement, input: HTMLInputElement) {
+    const errorSpan = errorEl;
+    if (postcodeValidator(postcode, country)) {
+      console.log('ok!');
+      errorSpan.textContent = '';
+      errorSpan.classList.add(PostcodeInputParams.errorSpan.cssClasses);
+      input.classList.remove(PostcodeInputParams.input.cssClassesInvalid);
+    } else {
+      this.postcodeInput.showError(input, errorSpan);
+    }
   }
 
   private getSpansArr(): HTMLElement[] {
@@ -102,7 +137,7 @@ export default class FormView extends View {
     const errorSpanDate = this.dateInput.getElement().children[2] as HTMLElement;
     const errorSpanStreet = this.streetInput.getElement().children[2] as HTMLElement;
     const errorSpanCity = this.cityInput.getElement().children[2] as HTMLElement;
-    const errorSpanCountry = this.countrySelect.getElement().children[2] as HTMLElement;
+    const errorSpanPostcode = this.postcodeInput.getElement().children[2] as HTMLElement;
     spansArr.push(errorSpanEmail);
     spansArr.push(errorSpanFName);
     spansArr.push(errorSpanLName);
@@ -110,7 +145,7 @@ export default class FormView extends View {
     spansArr.push(errorSpanDate);
     spansArr.push(errorSpanStreet);
     spansArr.push(errorSpanCity);
-    spansArr.push(errorSpanCountry);
+    spansArr.push(errorSpanPostcode);
     return spansArr;
   }
 

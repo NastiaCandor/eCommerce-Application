@@ -4,7 +4,7 @@ const CityInputParams = {
     id: 'city',
     minLength: '1',
     // eslint-disable-next-line prettier/prettier, no-useless-escape
-    pattern: '/^p{L}+$/u',
+    pattern: '^[a-zA-Z]+$',
   },
 
   label: {

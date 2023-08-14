@@ -70,7 +70,7 @@ export default class CityInputView extends View {
     } else if (input.validity.tooShort) {
       errorSpan.textContent = `City name should be at least ${input.minLength} characters long; you entered ${input.value.length}`;
     } else if (input.validity.patternMismatch) {
-      errorSpan.textContent = 'City name should contain only letters';
+      errorSpan.textContent = 'City name should contain only english letters';
     }
     errorSpan.classList.add(CityInputParams.errorSpan.cssClassesActive);
   }

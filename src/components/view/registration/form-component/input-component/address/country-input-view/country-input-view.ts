@@ -2,11 +2,8 @@ import ElementCreator from '../../../../../../utils/element-creator';
 import View from '../../../../../view';
 import fieldsetParams from '../../input-params';
 import CountryInputParams from './country-params';
-// import ApiRequests from '../../../../../../utils/ctpClient';
 
 export default class CountryInputView extends View {
-  // private countriesList;
-
   constructor() {
     super(fieldsetParams.fieldset);
     this.render();
@@ -20,29 +17,33 @@ export default class CountryInputView extends View {
     this.insertFieldsetItems();
   }
 
-  public async insertFieldsetItems(): Promise<void> {
+  public insertFieldsetItems(): void {
     // eslint-disable-next-line max-len
     const label = this.createLabel(CountryInputParams.label.for, CountryInputParams.label.textContent);
     this.addInnerElement(label);
-    const input = await this.createInput(CountryInputParams.input.id);
+    const input = this.createInput(CountryInputParams.input.id);
     this.addInnerElement(input);
+    this.getValue(input);
     const errorSpan = this.createErrorText();
     this.addInnerElement(errorSpan);
     this.validateCountry(input, errorSpan);
     this.showError(input, errorSpan);
   }
 
-  private async createInput(id: string): Promise<HTMLInputElement> {
+  private createInput(id: string): HTMLInputElement {
     const input = new ElementCreator(fieldsetParams.select).getElement() as HTMLInputElement;
     input.setAttribute('id', id);
     input.setAttribute('required', fieldsetParams.input.required);
-    // const codesArr = await this.getCountriesCodes();
-    // const countriesArr = await this.getCountriesNames();
     const countriesObj = CountryInputParams.countries;
     countriesObj.forEach((element, i: number) => {
       input.append(this.createOption(countriesObj[i].code, countriesObj[i].countryName));
     });
     return input;
+  }
+
+  public getValue(element: HTMLInputElement): string {
+    // console.log(element.value);
+    return element.value;
   }
 
   private createOption(value: string, text: string): HTMLElement {
@@ -66,7 +67,8 @@ export default class CountryInputView extends View {
 
   private validateCountry(element: HTMLInputElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
-    element.addEventListener('input', () => {
+    element.addEventListener('change', () => {
+      this.getValue(element);
       if (element.validity.valid) {
         errorSpan.textContent = '';
         errorSpan.classList.add(CountryInputParams.errorSpan.cssClasses);

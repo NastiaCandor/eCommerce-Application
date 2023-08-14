@@ -1,9 +1,9 @@
 import ElementCreator from '../../../../../../utils/element-creator';
 import View from '../../../../../view';
 import fieldsetParams from '../../input-params';
-import nameInputParams from '../name-input-params';
+import PostcodeInputParams from './postcode-params';
 
-export default class FirstNameInputView extends View {
+export default class PostcodeInputView extends View {
   constructor() {
     super(fieldsetParams.fieldset);
     this.render();
@@ -19,23 +19,22 @@ export default class FirstNameInputView extends View {
 
   public insertFieldsetItems(): void {
     // eslint-disable-next-line max-len
-    const label = this.createLabel(nameInputParams.label.firstName.for, nameInputParams.label.firstName.textContent);
+    const label = this.createLabel(PostcodeInputParams.label.for, PostcodeInputParams.label.textContent);
     this.addInnerElement(label);
-    const input = this.createInput(nameInputParams.input.type, nameInputParams.input.firstName.id);
+    const input = this.createInput(PostcodeInputParams.input.type, PostcodeInputParams.input.id);
     this.addInnerElement(input);
     const errorSpan = this.createErrorText();
     this.addInnerElement(errorSpan);
-    this.validateName(input, errorSpan);
-    this.showError(input, errorSpan);
+    this.validationEvent(input, errorSpan);
+    // this.showError(input, errorSpan);
   }
 
   private createInput(type: string, id: string): HTMLInputElement {
     const input = new ElementCreator(fieldsetParams.input).getElement() as HTMLInputElement;
     input.setAttribute('type', type);
     input.setAttribute('id', id);
-    input.setAttribute('minLength', nameInputParams.input.minLength);
+    input.setAttribute('minLength', PostcodeInputParams.input.minLength);
     input.setAttribute('required', fieldsetParams.input.required);
-    input.setAttribute('pattern', nameInputParams.input.pattern);
     return input;
   }
 
@@ -51,27 +50,44 @@ export default class FirstNameInputView extends View {
     return errorSpan;
   }
 
-  private validateName(element: HTMLInputElement, errorMessage: HTMLElement) {
+  private validationEvent(element: HTMLInputElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
     element.addEventListener('input', () => {
       if (element.validity.valid) {
         errorSpan.textContent = '';
-        errorSpan.classList.add(nameInputParams.errorSpan.cssClasses);
+        errorSpan.classList.add(PostcodeInputParams.errorSpan.cssClasses);
       } else {
-        this.showError(element, errorMessage);
+        // this.showError(element, errorMessage);
       }
     });
   }
 
+  public getValuePostcode(element: HTMLInputElement): string {
+    console.log(element.value);
+    return element.value;
+  }
+
+  // public validateP(element: HTMLInputElement, country: string) {
+  //   element.addEventListener('input', () => {
+  //     if (element.value === country) {
+  //       // errorSpan.textContent = '';
+  //       // errorSpan.classList.add(PostcodeInputParams.errorSpan.cssClasses);
+  //       console.log('valid!');
+  //     } else {
+  //       console.log('no');
+  //       // this.showError(element, errorMessage);
+  //     }
+  //   });
+  // }
+
   public showError(input: HTMLInputElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
     if (input.validity.valueMissing) {
-      errorSpan.textContent = 'Enter your first name';
+      errorSpan.textContent = 'Enter postcode';
     } else if (input.validity.tooShort) {
-      errorSpan.textContent = `First name should be at least ${input.minLength} characters long; you entered ${input.value.length}`;
-    } else if (input.validity.patternMismatch) {
-      errorSpan.textContent = 'First name should contain only english letters';
+      errorSpan.textContent = `Postcode should be at least ${input.minLength} characters long; you entered ${input.value.length}`;
     }
-    errorSpan.classList.add(nameInputParams.errorSpan.cssClassesActive);
+    errorSpan.classList.add(PostcodeInputParams.errorSpan.cssClassesActive);
+    input.classList.add(PostcodeInputParams.input.cssClassesInvalid);
   }
 }
