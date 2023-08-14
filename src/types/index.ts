@@ -13,10 +13,14 @@ export type LoginParamsType = {
   innerWrapper: ElementParamsType;
   title: ElementParamsType;
   form: ElementParamsType;
+  loginBox: ElementParamsType;
+  inputBox: ElementParamsType;
+  inputIcon: ElementParamsType;
   emailTitle: ElementParamsType;
   emailInput: ElementParamsType;
   passwordTitle: ElementParamsType;
   passwordInput: ElementParamsType;
+  passwordEyeIcon: ElementParamsType;
   loginBtn: ElementParamsType;
   newCustomerText: ElementParamsType;
   newCustomerLink: ElementParamsType;

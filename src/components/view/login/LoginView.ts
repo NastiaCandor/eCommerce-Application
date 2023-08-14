@@ -1,61 +1,8 @@
-import { LoginParamsType, wrapperParams } from '../../../types';
+import { wrapperParams } from '../../../types';
 import ClientAPI from '../../utils/Client';
 import ElementCreator from '../../utils/element-creator';
 import View from '../View';
-
-const loginParams: LoginParamsType = {
-  section: {
-    tag: 'section',
-    cssClasses: ['login'],
-  },
-  innerWrapper: {
-    tag: 'div',
-    cssClasses: ['login__section'],
-  },
-  title: {
-    tag: 'h2',
-    cssClasses: ['login__title'],
-    textContent: 'Sign In',
-  },
-  form: {
-    tag: 'form',
-    cssClasses: ['login__form'],
-  },
-  emailInput: {
-    tag: 'input',
-    cssClasses: ['login__email-input'],
-  },
-  emailTitle: {
-    tag: 'label',
-    cssClasses: ['login__mail-label', 'login__form-label'],
-    textContent: 'Email Address',
-  },
-  passwordInput: {
-    tag: 'input',
-    cssClasses: ['login__password-input'],
-  },
-  passwordTitle: {
-    tag: 'label',
-    cssClasses: ['login__password-label', 'login__form-label'],
-    textContent: 'password',
-  },
-  loginBtn: {
-    tag: 'button',
-    cssClasses: ['login__form-btn', 'button'],
-    textContent: 'Sign In',
-  },
-  newCustomerText: {
-    tag: 'p',
-    cssClasses: ['login__new-customer-text'],
-    textContent: 'Don`t have an account? ',
-  },
-  newCustomerLink: {
-    tag: 'a',
-    cssClasses: ['login__new-customer-link'],
-    textContent: 'Creat one!',
-    link: '#',
-  },
-};
+import loginParams from './login-params';
 
 export default class LoginView extends View {
   clientAPI: ClientAPI;
@@ -105,24 +52,55 @@ export default class LoginView extends View {
   }
 
   private fillLoginForm(form: ElementCreator): void {
+    const emailBox = new ElementCreator(loginParams.loginBox);
+    const emailInputBox = new ElementCreator(loginParams.inputBox);
+    const emailIcon = new ElementCreator(loginParams.inputIcon).getElement();
+    emailIcon.classList.add('login__icon_user');
     const emailTitle = new ElementCreator(loginParams.emailTitle);
     const emailInput = this.getEmailInput();
+    emailInputBox.addInnerElement([emailInput, emailTitle]);
+    emailBox.addInnerElement([emailIcon, emailInputBox]);
+
+    const passwordBox = new ElementCreator(loginParams.loginBox);
+    const passwordInputBox = new ElementCreator(loginParams.inputBox);
+    const passwordIcon = new ElementCreator(loginParams.inputIcon).getElement();
+    passwordIcon.classList.add('login__icon_lock');
     const passwordTitle = new ElementCreator(loginParams.passwordTitle);
     const passwordInput = this.getPasswordInput();
+    const passwordEyeIcon = new ElementCreator(loginParams.passwordEyeIcon);
+    this.showPasswordFunctionality(passwordEyeIcon, passwordInput as HTMLInputElement);
+    passwordInputBox.addInnerElement([passwordInput, passwordTitle, passwordEyeIcon]);
+    passwordBox.addInnerElement([passwordIcon, passwordInputBox]);
+
     const loginBtn = new ElementCreator(loginParams.loginBtn);
 
     form.getElement().addEventListener('submit', (e: Event) => {
       e.preventDefault();
       this.checkLogin(emailInput, passwordInput);
     });
+    form.addInnerElement([emailBox, passwordBox, loginBtn]);
+  }
 
-    form.addInnerElement([emailTitle, emailInput, passwordTitle, passwordInput, loginBtn]);
+  private showPasswordFunctionality(eyeIcon: ElementCreator, input: HTMLInputElement): void {
+    const icon = eyeIcon.getElement();
+    icon.addEventListener('click', () => {
+      if (input.type === 'password') {
+        input.setAttribute('type', 'text');
+        icon.classList.add('login__password-eye_open');
+        icon.classList.remove('login__password-eye_closed');
+      } else {
+        input.setAttribute('type', 'password');
+        icon.classList.add('login__password-eye_closed');
+        icon.classList.remove('login__password-eye_open');
+      }
+    });
+    console.log(input);
   }
 
   private getEmailInput(): HTMLElement {
     const emailInput = new ElementCreator(loginParams.emailInput).getElement();
     emailInput.setAttribute('required', '');
-    emailInput.setAttribute('placeholder', 'email address');
+    emailInput.setAttribute('placeholder', ' ');
     emailInput.setAttribute('type', 'email');
     emailInput.setAttribute('autocomplete', 'username');
 
@@ -132,7 +110,7 @@ export default class LoginView extends View {
   private getPasswordInput(): HTMLElement {
     const passwordInput = new ElementCreator(loginParams.passwordInput).getElement();
     passwordInput.setAttribute('required', '');
-    passwordInput.setAttribute('placeholder', 'password');
+    passwordInput.setAttribute('placeholder', ' ');
     passwordInput.setAttribute('type', 'password');
     passwordInput.setAttribute('autocomplete', 'current-password');
 

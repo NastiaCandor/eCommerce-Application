@@ -25,7 +25,7 @@ const config = {
       },
       {
         test: /\.(svg)$/i,
-        type: 'asset/source',
+        type: 'asset/resource',
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,

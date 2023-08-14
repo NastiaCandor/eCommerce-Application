@@ -11,18 +11,84 @@
   margin: 0 auto;
   background-color: $sample-darken-color;
   color: $sample-secondary-color;
-  padding: 2rem;
+  padding: 3rem 2rem;
+  position: relative;
+  row-gap: 2.5rem;
+}
+
+.login__box {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  align-items: center;
+  column-gap: 0.75rem;
+  border-bottom: solid 3px $sample-primary-color;
+  padding: 0.5rem 0;
+}
+
+.login__icon {
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  &_user {
+    background: no-repeat url('../assets/img/user-login-svgrepo-com.svg');
+    background-size: 100% 100%;
+  }
+  &_lock {
+    background: no-repeat url('../assets/img/lock-on-svgrepo-com.svg');
+    background-size: 100% 100%;
+  }
+}
+
+.login__input-box {
+  position: relative;
 }
 
 .login__form-label {
   padding: 0.5rem 0;
   text-transform: capitalize;
-  font-size: 2.3rem;
+  font-size: 2rem;
+  position: absolute;
+  left: 0rem;
+  top: 0;
+  transition: top 0.3s, font-size 0.3s;
 }
 
-.login__email-input, .login__password-input {
-  padding: 0.3rem;
+.login__input {
+  padding-block: 0.5rem;
   font-size: 1.8rem;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  background: none;
+  border: none;
+  color: $sample-primary-color;
+  &:focus {
+    outline: none;
+  }
+}
+
+.login__password-input {
+  padding-right: 3rem;
+}
+
+.login__password-eye {
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  position: absolute;
+  right: 0.5rem;
+  top: 0.5rem;
+  z-index: 10;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  &_closed {
+    background: no-repeat url('../assets/img/eye-closed.svg');
+    background-size: 100% 100%;
+  }
+  &_open {
+    background: no-repeat url('../assets/img/eye-open.svg');
+    background-size: 100% 100%;
+  }
 }
 
 .login__form-btn {
@@ -34,4 +100,16 @@
 .login__new-customer-text {
   text-align: center;
   padding: 1rem 0;
+}
+
+// LABEL MOVING
+
+.login__input:focus + .login__form-label {
+  top: -2.5rem;
+  font-size: 1.5rem;
+}
+
+.login__input:not(:placeholder-shown).login__input:not(:focus) + .login__form-label {
+  top: -2.5rem;
+  font-size: 1.5rem;
 }
