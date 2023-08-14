@@ -4,15 +4,31 @@ import { ctpClient } from './BuildClient';
 
 const projectKeyValue = 'ecommerce-quantum';
 
-// eslint-disable-next-line max-len
-const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: projectKeyValue });
+export default class ApiRequests {
+  // public apiRoot
+  static apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+    projectKey: projectKeyValue,
+  });
 
-// eslint-disable-next-line import/prefer-default-export
-export async function getProjectDetails() {
-  try {
-    const message = await apiRoot.get().execute();
-    return console.log(message);
-  } catch (message_1) {
-    return console.error(message_1);
+  static async getCountries(): Promise<void | string[]> {
+    try {
+      const message = await this.apiRoot.get().execute();
+      const { countries } = message.body;
+      console.log(countries);
+      return countries;
+    } catch (message_1) {
+      return console.log(message_1);
+    }
   }
+
+  // public async getCountries(): Promise<void | string[]> {
+  //   try {
+  //     const message = await this.apiRoot.get().execute();
+  //     const { countries } = message.body;
+  //     console.log(countries);
+  //     return countries;
+  //   } catch (message_1) {
+  //     return console.log(message_1);
+  //   }
+  // }
 }

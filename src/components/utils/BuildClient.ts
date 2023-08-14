@@ -13,12 +13,12 @@ const authMiddlewareOptions: AuthMiddlewareOptions = {
     clientId: 'keVo9CyFCe8ttWKCQE5zZOr6',
     clientSecret: '63HNzyYWKWMSK2Hxnvjs4MpA25SVUWY7',
   },
-  scopes: ['manage_my_shopping_lists:ecommerce-quantum'],
+  scopes: ['view_project_settings:ecommerce-quantum'],
   fetch,
 };
 
 const httpMiddlewareOptions: HttpMiddlewareOptions = {
-  host: 'https://auth.europe-west1.gcp.commercetools.com',
+  host: 'https://api.europe-west1.gcp.commercetools.com',
   fetch,
 };
 
