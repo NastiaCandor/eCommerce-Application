@@ -69,7 +69,7 @@ const loginParams: LoginParamsType = {
     link: '#',
   },
   inputError: {
-    tag: 'span',
+    tag: 'div',
     cssClasses: ['login__input-error'],
   },
 };

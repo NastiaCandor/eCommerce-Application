@@ -1,4 +1,4 @@
-import { EMAIL_VALIDATION_TEXT, wrapperParams } from '../../../types';
+import { EMAIL_VALIDATION_TEXT, PASSWORD_VALIDATION_TEXT, wrapperParams } from '../../../types';
 import ClientAPI from '../../utils/Client';
 import ElementCreator from '../../utils/element-creator';
 import View from '../View';
@@ -72,7 +72,9 @@ export default class LoginView extends View {
     const passwordEyeIcon = new ElementCreator(loginParams.passwordEyeIcon);
     this.showPasswordFunctionality(passwordEyeIcon, passwordInput as HTMLInputElement);
     passwordInputBox.addInnerElement([passwordInput, passwordTitle, passwordEyeIcon]);
-    passwordBox.addInnerElement([passwordIcon, passwordInputBox]);
+    const passwordError = new ElementCreator(loginParams.inputError);
+    passwordBox.addInnerElement([passwordIcon, passwordInputBox, passwordError]);
+    this.tracePasswordInput(passwordInput, passwordError);
 
     const loginBtn = new ElementCreator(loginParams.loginBtn);
 
@@ -112,19 +114,52 @@ export default class LoginView extends View {
     const errorText = errorElement.getElement();
     input.addEventListener('keyup', () => {
       const email = (input as HTMLInputElement).value;
-      if (this.validateEmailInput(email)) {
+      if (this.validateEmail(email)) {
         errorText.textContent = '';
         input.classList.remove('_invalid');
       } else {
-        errorText.textContent = this.validateEmailInput(email) ? '' : EMAIL_VALIDATION_TEXT;
+        errorText.textContent = EMAIL_VALIDATION_TEXT;
         input.classList.add('_invalid');
       }
     });
   }
 
-  private validateEmailInput(email: string): boolean {
+  private validateEmail(email: string): boolean {
     const pattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
     return !!email.match(pattern);
+  }
+
+  private tracePasswordInput(input: HTMLElement, errorElement: ElementCreator): void {
+    const errorText = errorElement.getElement();
+    input.addEventListener('keyup', () => {
+      const password = (input as HTMLInputElement).value;
+      const validation = this.validatePassword(password);
+      if (validation.length === 0) {
+        errorText.textContent = '';
+        input.classList.remove('_invalid');
+      } else {
+        // errorText.textContent = PASSWORD_VALIDATION_TEXT;
+        let display = '';
+        validation.forEach((rule) => {
+          display += `<br>${rule}`;
+        });
+        errorText.innerHTML = `${PASSWORD_VALIDATION_TEXT}${display}`;
+        input.classList.add('_invalid');
+      }
+    });
+  }
+
+  private validatePassword(password: string): string[] {
+    const result = [];
+    if (password.length < 7) result.push('- At least 8 caracters');
+    if (!password.match(/[A-Z]/g)) result.push('- At least one uppercase letter');
+    if (!password.match(/[a-z]/g)) result.push('- At least one lowercase letter');
+    if (!password.match(/[0-9]/g)) result.push('- At least one digit');
+    if (!password.match(/\)|!|@|#|\$|%|\(|\^|&|\*/gi)) result.push('- At least one special character (e.g., !@#$%^&*)');
+    if (password[0] === ' ' || password[password.length - 1] === ' ') {
+      result.push('- No leading or trailing whitespace');
+    }
+    return result;
   }
 
   private getPasswordInput(): HTMLElement {

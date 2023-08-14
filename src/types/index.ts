@@ -37,3 +37,5 @@ export const wrapperParams: ElementParamsType = {
 };
 
 export const EMAIL_VALIDATION_TEXT = 'Please Enter Valid Email Address';
+
+export const PASSWORD_VALIDATION_TEXT = 'Please Enter Valid Password:';

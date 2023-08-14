@@ -13,7 +13,8 @@
   color: $sample-secondary-color;
   padding: 3rem 2rem;
   position: relative;
-  row-gap: 2.5rem;
+  row-gap: 2rem;
+  transition: all 0.4s ease-in-out;
 }
 
 .login__box {
@@ -21,9 +22,10 @@
   grid-template-columns: max-content 1fr;
   align-items: center;
   column-gap: 0.75rem;
-  border-bottom: solid 3px $sample-primary-color;
+  // border-bottom: solid 3px $sample-primary-color;
   padding: 0.5rem 0;
   position: relative;
+  transition: all 0.4s ease-in-out;
 }
 
 .login__icon {
@@ -42,6 +44,16 @@
 
 .login__input-box {
   position: relative;
+  &::after {
+    content: '';
+    width: 107%;
+    position: absolute;
+    // bottom: -0.5rem;
+    left: -2.5rem;
+    display: block;
+    height: 3px;
+    border-bottom: solid 3px $sample-primary-color;
+  }
 }
 
 .login__form-label {
@@ -121,8 +133,11 @@
 // INPUT ERROR
 
 .login__input-error {
-  position: absolute;
-  bottom: -2.5rem;
-  font-size: 1.5rem;
+  // position: absolute;
+  // top: 5rem;
+  margin-top: 1rem;
+  font-size: 1.3rem;
   color: $sample-color-login-input-error;
+  grid-row: 2;
+  grid-column: 1 / 3;
 }
