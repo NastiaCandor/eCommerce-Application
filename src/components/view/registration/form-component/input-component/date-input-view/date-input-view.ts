@@ -55,8 +55,6 @@ export default class DateInputView extends View {
     input.setAttribute('type', type);
     input.setAttribute('id', id);
     input.setAttribute('required', fieldsetParams.input.required);
-    // input.setAttribute('value', this.getDate18yo());
-    // leave this code for standart date input here in case smth goes wrong with flatpickr
     return input;
   }
 

@@ -1,3 +1,7 @@
+select {
+  outline: none;
+  }
+
 .reg-form__input {
   outline: none;
   width: 100%;
@@ -12,6 +16,7 @@
 .reg-form__input:valid,
 .reg-form__input-valid {
   border-color: darkgreen;
+  border-width: 2px;
   background-color: rgb(221, 241, 221);
 }
 

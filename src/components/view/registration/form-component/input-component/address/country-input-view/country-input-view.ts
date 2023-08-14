@@ -72,6 +72,7 @@ export default class CountryInputView extends View {
       if (element.validity.valid) {
         errorSpan.textContent = '';
         errorSpan.classList.add(CountryInputParams.errorSpan.cssClasses);
+        element.classList.add(CountryInputParams.input.cssClassesValid);
       } else {
         this.showError(element, errorMessage);
       }

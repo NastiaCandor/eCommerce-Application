@@ -26,7 +26,7 @@ export default class PostcodeInputView extends View {
     const errorSpan = this.createErrorText();
     this.addInnerElement(errorSpan);
     this.validationEvent(input, errorSpan);
-    // this.showError(input, errorSpan);
+    this.showError(input, errorSpan);
   }
 
   private createInput(type: string, id: string): HTMLInputElement {
@@ -57,7 +57,7 @@ export default class PostcodeInputView extends View {
         errorSpan.textContent = '';
         errorSpan.classList.add(PostcodeInputParams.errorSpan.cssClasses);
       } else {
-        // this.showError(element, errorMessage);
+        this.showError(element, errorMessage);
       }
     });
   }
@@ -67,26 +67,9 @@ export default class PostcodeInputView extends View {
     return element.value;
   }
 
-  // public validateP(element: HTMLInputElement, country: string) {
-  //   element.addEventListener('input', () => {
-  //     if (element.value === country) {
-  //       // errorSpan.textContent = '';
-  //       // errorSpan.classList.add(PostcodeInputParams.errorSpan.cssClasses);
-  //       console.log('valid!');
-  //     } else {
-  //       console.log('no');
-  //       // this.showError(element, errorMessage);
-  //     }
-  //   });
-  // }
-
   public showError(input: HTMLInputElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
-    if (input.validity.valueMissing) {
-      errorSpan.textContent = 'Enter postcode';
-    } else if (input.validity.tooShort) {
-      errorSpan.textContent = `Postcode should be at least ${input.minLength} characters long; you entered ${input.value.length}`;
-    }
+    errorSpan.textContent = 'Enter valid postcode for chosen country';
     errorSpan.classList.add(PostcodeInputParams.errorSpan.cssClassesActive);
     input.classList.add(PostcodeInputParams.input.cssClassesInvalid);
   }

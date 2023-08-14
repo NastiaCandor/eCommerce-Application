@@ -2,6 +2,7 @@ const CountryInputParams = {
   input: {
     type: 'text',
     id: 'country',
+    cssClassesValid: 'reg-form__input-valid',
   },
 
   option: {
