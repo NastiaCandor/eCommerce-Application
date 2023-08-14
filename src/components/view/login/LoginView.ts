@@ -80,7 +80,9 @@ export default class LoginView extends View {
 
     form.getElement().addEventListener('submit', (e: Event) => {
       e.preventDefault();
-      this.checkLogin(emailInput, passwordInput);
+      if (this.checkInputValidation(emailInput, passwordInput)) {
+        this.checkLogin(emailInput, passwordInput);
+      }
     });
     form.addInnerElement([emailBox, passwordBox, loginBtn]);
   }
@@ -138,7 +140,6 @@ export default class LoginView extends View {
         errorText.textContent = '';
         input.classList.remove('_invalid');
       } else {
-        // errorText.textContent = PASSWORD_VALIDATION_TEXT;
         let display = '';
         validation.forEach((rule) => {
           display += `<br>${rule}`;
@@ -160,6 +161,10 @@ export default class LoginView extends View {
       result.push('- No leading or trailing whitespace');
     }
     return result;
+  }
+
+  private checkInputValidation(emailInput: HTMLElement, passwordInput: HTMLElement): boolean {
+    return !emailInput.classList.contains('_invalid') && !passwordInput.classList.contains('_invalid');
   }
 
   private getPasswordInput(): HTMLElement {
