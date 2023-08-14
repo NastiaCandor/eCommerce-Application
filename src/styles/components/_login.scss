@@ -23,6 +23,7 @@
   column-gap: 0.75rem;
   border-bottom: solid 3px $sample-primary-color;
   padding: 0.5rem 0;
+  position: relative;
 }
 
 .login__icon {
@@ -64,6 +65,9 @@
   color: $sample-primary-color;
   &:focus {
     outline: none;
+  }
+  &._invalid {
+    color: $sample-color-login-input-error;
   }
 }
 
@@ -112,4 +116,13 @@
 .login__input:not(:placeholder-shown).login__input:not(:focus) + .login__form-label {
   top: -2.5rem;
   font-size: 1.5rem;
+}
+
+// INPUT ERROR
+
+.login__input-error {
+  position: absolute;
+  bottom: -2.5rem;
+  font-size: 1.5rem;
+  color: $sample-color-login-input-error;
 }

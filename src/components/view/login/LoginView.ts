@@ -1,4 +1,4 @@
-import { wrapperParams } from '../../../types';
+import { EMAIL_VALIDATION_TEXT, wrapperParams } from '../../../types';
 import ClientAPI from '../../utils/Client';
 import ElementCreator from '../../utils/element-creator';
 import View from '../View';
@@ -58,8 +58,10 @@ export default class LoginView extends View {
     emailIcon.classList.add('login__icon_user');
     const emailTitle = new ElementCreator(loginParams.emailTitle);
     const emailInput = this.getEmailInput();
+    const emailError = new ElementCreator(loginParams.inputError);
     emailInputBox.addInnerElement([emailInput, emailTitle]);
-    emailBox.addInnerElement([emailIcon, emailInputBox]);
+    emailBox.addInnerElement([emailIcon, emailInputBox, emailError]);
+    this.traceEmailInput(emailInput, emailError);
 
     const passwordBox = new ElementCreator(loginParams.loginBox);
     const passwordInputBox = new ElementCreator(loginParams.inputBox);
@@ -94,7 +96,6 @@ export default class LoginView extends View {
         icon.classList.remove('login__password-eye_open');
       }
     });
-    console.log(input);
   }
 
   private getEmailInput(): HTMLElement {
@@ -105,6 +106,25 @@ export default class LoginView extends View {
     emailInput.setAttribute('autocomplete', 'username');
 
     return emailInput;
+  }
+
+  private traceEmailInput(input: HTMLElement, errorElement: ElementCreator): void {
+    const errorText = errorElement.getElement();
+    input.addEventListener('keyup', () => {
+      const email = (input as HTMLInputElement).value;
+      if (this.validateEmailInput(email)) {
+        errorText.textContent = '';
+        input.classList.remove('_invalid');
+      } else {
+        errorText.textContent = this.validateEmailInput(email) ? '' : EMAIL_VALIDATION_TEXT;
+        input.classList.add('_invalid');
+      }
+    });
+  }
+
+  private validateEmailInput(email: string): boolean {
+    const pattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+    return !!email.match(pattern);
   }
 
   private getPasswordInput(): HTMLElement {

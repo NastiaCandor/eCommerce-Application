@@ -68,6 +68,10 @@ const loginParams: LoginParamsType = {
     textContent: 'Creat one!',
     link: '#',
   },
+  inputError: {
+    tag: 'span',
+    cssClasses: ['login__input-error'],
+  },
 };
 
 export default loginParams;

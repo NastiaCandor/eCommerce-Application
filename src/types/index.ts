@@ -1,3 +1,5 @@
+// TYPES
+
 export type ElementParamsType = {
   tag: string;
   cssClasses?: string[];
@@ -24,6 +26,7 @@ export type LoginParamsType = {
   loginBtn: ElementParamsType;
   newCustomerText: ElementParamsType;
   newCustomerLink: ElementParamsType;
+  inputError: ElementParamsType;
 };
 
 // CONST
@@ -32,3 +35,5 @@ export const wrapperParams: ElementParamsType = {
   tag: 'div',
   cssClasses: ['wrapper'],
 };
+
+export const EMAIL_VALIDATION_TEXT = 'Please Enter Valid Email Address';
