@@ -5,6 +5,10 @@ import headerParams from './header-params';
 import NavigationView from './nav-component/nav-view';
 import '../../../assets/img/icons8-cheburashka-48.svg';
 import wrapperParams from '../wrapper-params';
+import Router from '../../router/router';
+import { PagesAccountInterface, PagesContentInterface } from '../../../types';
+import PAGES from '../../router/pages';
+import navigationParams from './nav-component/nav-params';
 
 export default class HeaderView extends View {
   private navigationView: NavigationView;
@@ -13,18 +17,32 @@ export default class HeaderView extends View {
 
   private burgerMenu: HTMLElement;
 
-  constructor() {
+  private router: Router;
+
+  private linksCollection: Map<string, HTMLElement>;
+
+  private burgerNavCollection: Map<string, HTMLElement>;
+
+  constructor(router: Router) {
     super(headerParams.header);
+    this.router = router;
     this.navigationView = new NavigationView();
     this.userIconsView = new UserIconsView();
+    this.burgerNavCollection = this.navigationView.getBurgerNavCollection;
+    this.linksCollection = new Map([
+      ...this.userIconsView.getIconsCollection,
+      ...this.navigationView.getNavCollection,
+      ...this.burgerNavCollection,
+    ]);
     this.burgerMenu = this.createBurgerMenu();
   }
 
   public render(): void {
-    this.configure();
+    this.configure(this.router);
   }
 
-  protected configure(): void {
+  protected configure(router: Router): void {
+    console.log(router);
     this.renderInnerWrapper();
     this.appendToDOM();
   }
@@ -35,6 +53,7 @@ export default class HeaderView extends View {
     this.injectLogoLink(innerWrapper);
     this.injectNavigationLinks(innerWrapper);
     this.injectUserLinks(innerWrapper);
+    this.linksCallbackHandler(this.linksCollection);
     this.injectBurgerMenuButton(innerWrapper);
     this.injectBurgerMenu(innerWrapper);
     wrapper.addInnerElement(innerWrapper);
@@ -77,11 +96,11 @@ export default class HeaderView extends View {
   }
 
   private createBurgerMenu(): HTMLElement {
+    const navLinks = new ElementCreator(navigationParams.wrapper);
+    this.burgerNavCollection.forEach((item) => navLinks.addInnerElement(item));
     const menuWrapper = new ElementCreator(headerParams.burgerMenuWrapper).getElement();
-    const navLinks = this.navigationView.getElement().cloneNode(true);
-    // maybe need to store logo for better perfomance
     const logo = new ElementCreator(headerParams.logo).getElement();
-    menuWrapper.append(logo, navLinks);
+    menuWrapper.append(logo, navLinks.getElement());
     return menuWrapper;
   }
 
@@ -95,6 +114,49 @@ export default class HeaderView extends View {
     this.burgerMenuHandler(burgerButtonWrapper, this.burgerMenu);
 
     return burgerButtonWrapper;
+  }
+
+  private navigateToPage(page: keyof PagesContentInterface | keyof PagesAccountInterface): void {
+    const key = this.isBurgerItem(page) ? this.formatBurgerItemKey(page) : page;
+    if (key in PAGES.CONTENT) {
+      this.router.navigate(PAGES.CONTENT[key as keyof PagesContentInterface]);
+    } else if (key in PAGES.ACCOUNT) {
+      this.router.navigate(PAGES.ACCOUNT[key as keyof PagesAccountInterface]);
+    } else {
+      console.error(`Unable to handle ${key} path!`);
+    }
+  }
+
+  private linksCallbackHandler(collection: Map<string, HTMLElement>): void {
+    collection.forEach((value, key) => {
+      const page = key as keyof PagesContentInterface | keyof PagesAccountInterface;
+      value.addEventListener('click', () => {
+        this.updateLinksStatus(page);
+        this.navigateToPage(page);
+      });
+    });
+  }
+
+  private updateLinksStatus(page: string): void {
+    this.linksCollection.forEach((value, key) => {
+      value.classList.remove('active');
+      if (key === page || `${key}_BG` === page || this.formatBurgerItemKey(key) === page) {
+        value.classList.add('active');
+      }
+    });
+  }
+
+  private formatBurgerItemKey(key: string): string {
+    const lastIndex = key.lastIndexOf('_BG');
+    const formattedKey = key.slice(0, lastIndex);
+    return formattedKey;
+  }
+
+  private isBurgerItem(key: string): boolean {
+    if (key.includes('_BG')) {
+      return true;
+    }
+    return false;
   }
 
   private appendToDOM(): void {
