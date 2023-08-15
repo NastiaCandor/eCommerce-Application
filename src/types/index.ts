@@ -32,6 +32,15 @@ export type LoginParamsType = {
   loginError: ElementParamsType;
 };
 
+export type NotFoundType = {
+  section: ElementParamsType;
+  innerWrapper: ElementParamsType;
+  title: ElementParamsType;
+  subtitle: ElementParamsType;
+  errorNumber: ElementParamsType;
+  backToMainBtn: ElementParamsType;
+};
+
 // CONST
 
 export const wrapperParams: ElementParamsType = {

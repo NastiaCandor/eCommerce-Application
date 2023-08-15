@@ -5,7 +5,6 @@ export default class App {
 
   constructor() {
     this.header = new HeaderView();
-    this.start();
   }
 
   public start(): void {
