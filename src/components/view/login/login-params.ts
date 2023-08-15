@@ -72,6 +72,11 @@ const loginParams: LoginParamsType = {
     tag: 'div',
     cssClasses: ['login__input-error'],
   },
+  loginError: {
+    tag: 'span',
+    cssClasses: ['login__login-error'],
+    textContent: 'Wrong email address or password',
+  },
 };
 
 export default loginParams;

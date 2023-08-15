@@ -77,6 +77,7 @@ export default class LoginView extends View {
     this.tracePasswordInput(passwordInput, passwordError);
 
     const loginBtn = new ElementCreator(loginParams.loginBtn);
+    const loginError = new ElementCreator(loginParams.loginError);
 
     form.getElement().addEventListener('submit', (e: Event) => {
       e.preventDefault();
@@ -84,7 +85,7 @@ export default class LoginView extends View {
         this.checkLogin(emailInput, passwordInput);
       }
     });
-    form.addInnerElement([emailBox, passwordBox, loginBtn]);
+    form.addInnerElement([emailBox, passwordBox, loginBtn, loginError]);
   }
 
   private showPasswordFunctionality(eyeIcon: ElementCreator, input: HTMLInputElement): void {
@@ -177,6 +178,17 @@ export default class LoginView extends View {
     return passwordInput;
   }
 
+  private showLoginError(emailInput: HTMLElement, passwordInput: HTMLElement): void {
+    emailInput.classList.add('_invalid');
+    passwordInput.classList.add('_invalid');
+    const loginError = document.querySelector('.login__login-error');
+
+    loginError?.classList.add('_display');
+    setTimeout(() => {
+      loginError?.classList.remove('_display');
+    }, 2000);
+  }
+
   private async checkLogin(emailInput: HTMLElement, passwordInput: HTMLElement): Promise<void> {
     const email = (emailInput as HTMLInputElement).value;
     const password = (passwordInput as HTMLInputElement).value;
@@ -185,12 +197,13 @@ export default class LoginView extends View {
     loginAPI()
       .then((data) => {
         if (data.statusCode === 200) {
+          // TODO: impliment further functionality
           console.log(`Hello ${data.body.customer.firstName} ${data.body.customer.lastName}!`);
         }
       })
       .catch((error) => {
         if (error.status === 400) {
-          console.log('Wrong email address or password');
+          this.showLoginError(emailInput, passwordInput);
         } else {
           console.log(error.status);
         }

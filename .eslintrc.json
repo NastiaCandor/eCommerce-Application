@@ -25,6 +25,7 @@
     "@typescript-eslint/no-explicit-any": 2,
     "prettier/prettier" : "error",
     "linebreak-style": ["error", "windows"]
+    // "arrow-body-style": ["error", "always"]
   },
   "parser": "@typescript-eslint/parser"
 }

@@ -1,6 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable import/no-extraneous-dependencies */
-// import fetch from 'node-fetch';
 import { ClientBuilder, type AuthMiddlewareOptions, type HttpMiddlewareOptions } from '@commercetools/sdk-client-v2';
 
 // Configure authMiddlewareOptions
@@ -23,9 +20,11 @@ const httpMiddlewareOptions: HttpMiddlewareOptions = {
   fetch,
 };
 
-// Export the ClientBuilder
-export const ctpClient = new ClientBuilder()
+const ctpClient = new ClientBuilder()
   .withClientCredentialsFlow(authMiddlewareOptions)
   .withHttpMiddleware(httpMiddlewareOptions)
   // .withLoggerMiddleware() // view all responses and requests
   .build();
+
+// Export the ClientBuilder
+export default ctpClient;
