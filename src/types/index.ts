@@ -1,13 +1,15 @@
 // TYPES
 
 export type ElementParamsType = {
-  tag: string;
-  cssClasses?: string[];
   textContent?: string;
-  mouseEvent?: ((evt?: Event) => void) | null;
-  id?: string;
+  cssClasses?: string[];
   value?: string;
   link?: string;
+  src?: string;
+  alt?: string;
+  tag: string;
+  id?: string;
+  mouseEvent?: ((evt?: Event) => void) | null;
 };
 
 export type LoginParamsType = {

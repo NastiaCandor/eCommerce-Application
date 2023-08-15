@@ -1,13 +1,14 @@
-import LoginView from '../view/login/LoginView';
+import HeaderView from '../view/header/header-view';
 
 export default class App {
-  loginView: LoginView;
+  private header: HeaderView;
 
   constructor() {
-    this.loginView = new LoginView();
+    this.header = new HeaderView();
+    this.start();
   }
 
   public start(): void {
-    this.loginView.render();
+    this.header.render();
   }
 }

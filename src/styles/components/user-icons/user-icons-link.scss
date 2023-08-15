@@ -1,0 +1,47 @@
+.user-icon_item {
+  display: inline-flex;
+  flex-shrink: 1;
+  align-items: center;
+  font-size: 1.5rem;
+  gap: 0.5rem;
+  height: 100%;
+  color: $sample-primary-color;
+  transition: all 0.5s ease;
+
+  .item_text {
+    font-size: 0.8em;
+  }
+
+  img {
+    display: inline-block;
+    width: 20%;
+
+    transition: all 0.5s ease;
+  }
+
+  @media screen and (max-width: $tablet) {
+    justify-content: center;
+    .item_text {
+      display: none;
+    }
+    img {
+      width: 35%;
+    }
+  }
+
+  @media screen and (max-width: 500px) {
+    img {
+      width: 70%;
+    }
+  }
+}
+
+.user-icon_item:hover {
+  color: $sample-secondary-color;
+  filter: opacity(0.8) brightness(0.4);
+
+}
+
+.user-icon_item:hover > img {
+  filter: opacity(0.6) brightness(0.4);
+}
