@@ -1,7 +1,7 @@
 import { EMAIL_VALIDATION_TEXT, PASSWORD_VALIDATION_TEXT, wrapperParams } from '../../../types';
 import ClientAPI from '../../utils/Client';
 import ElementCreator from '../../utils/element-creator';
-import View from '../View';
+import View from '../view';
 import loginParams from './login-params';
 
 export default class LoginView extends View {

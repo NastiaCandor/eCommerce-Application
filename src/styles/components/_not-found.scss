@@ -1,0 +1,28 @@
+.not-found__section {
+  display: block;
+  // flex-direction: column;
+  // justify-content: center;
+}
+
+.not-found__error-number {
+  font-size: 8rem;
+  text-align: center;
+  margin: 3rem 0;
+}
+
+.not-found__title {
+  font-size: 3rem;
+  text-align: center;
+}
+
+.not-found__subtitle {
+  font-size: 2rem;
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.not-found__main-btn {
+  color: black;
+  display: table;
+  margin: 0 auto;
+}
