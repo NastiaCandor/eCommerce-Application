@@ -69,7 +69,7 @@ export default class PostcodeInputView extends View {
 
   public showError(input: HTMLInputElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
-    errorSpan.textContent = 'Enter valid postcode for chosen country';
+    errorSpan.textContent = 'Please enter a valid postcode';
     errorSpan.classList.add(PostcodeInputParams.errorSpan.cssClassesActive);
     input.classList.add(PostcodeInputParams.input.cssClassesInvalid);
   }

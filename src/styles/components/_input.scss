@@ -1,6 +1,6 @@
 select {
   outline: none;
-  }
+}
 
 .reg-form__input {
   outline: none;
@@ -14,7 +14,8 @@ select {
 }
 
 .reg-form__input:valid,
-.reg-form__input-valid {
+.reg-form__input-valid,
+.reg-form__select:valid {
   border-color: darkgreen;
   border-width: 2px;
   background-color: rgb(221, 241, 221);
@@ -40,6 +41,12 @@ select {
   border-radius: 0 0 5px 5px;
 }
 
+.checkbox-adrs__span {
+  background-color: transparent;
+  color: #900;
+  font-size: 1.1rem;
+}
+
 .reg-form__select {
   width: 100%;
   height: 30px;
@@ -50,4 +57,22 @@ select {
   width: 100%;
   height: 100%;
   background-color: #fff;
+}
+
+.checkbox-adrs {
+  width: 2rem;
+  height: 2rem;
+}
+
+.fieldset-chbx {
+  display: flex;
+  gap: 1rem;
+}
+
+.no-display {
+  display: none;
+}
+
+.show-display {
+  display: block;
 }

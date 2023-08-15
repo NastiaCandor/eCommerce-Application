@@ -7,7 +7,8 @@ $percent: 50;
   display: flex;
 }
 
-.reg-form {
+.reg-form,
+.adrs-wrapper {
   display: flex;
   flex-direction: row;
   width: $form-width;
@@ -15,6 +16,10 @@ $percent: 50;
   padding: 1rem;
   font-size: 1.5rem;
   flex-wrap: wrap;
+}
+
+.adrs-wrapper {
+  background-color: aliceblue;
 }
 
 .reg-form__fieldset {
@@ -29,10 +34,9 @@ $percent: 50;
   width: 100%;
 }
 
-// .reg-form__label:nth-child(2),
-// .reg-form__label:nth-child(3) {
-//   width: calc(($form-width - 4rem) / 2);
-// }
+.name-input {
+  width: calc(($form-width - 4rem) / 2);
+}
 
 .reg-form__btn {
   width: 11rem;

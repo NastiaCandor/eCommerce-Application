@@ -15,6 +15,7 @@ export default class LastNameInputView extends View {
 
   protected configure(): void {
     this.insertFieldsetItems();
+    this.setCssClasses(nameInputParams.fieldset.cssClasses);
   }
 
   public insertFieldsetItems(): void {

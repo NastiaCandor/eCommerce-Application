@@ -74,9 +74,7 @@ export default class PasswordInputView extends View {
       errorSpan.textContent = 'Enter your password';
     }
     if (!this.checkPassword(password.value)) {
-      // eslint-disable-next-line operator-linebreak
-      errorSpan.textContent =
-        'Password should contain minimum 8 characters, at least 1 uppercase letter, 1 lowercase letter, and 1 number';
+      errorSpan.textContent = 'Minimum 8 characters, at least 1 uppercase letter, 1 lowercase letter, and 1 number';
     }
     errorSpan.classList.add(passwordInputParams.errorSpan.cssClassesActive);
     password.classList.add(passwordInputParams.input.cssClassesInvalid);

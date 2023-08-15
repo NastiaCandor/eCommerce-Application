@@ -1,6 +1,6 @@
-const wrapper = {
+const WrapperParams = {
   tag: 'div',
   cssClasses: ['wrapper'],
 };
 
-export default wrapper;
+export default WrapperParams;

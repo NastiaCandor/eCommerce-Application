@@ -87,6 +87,10 @@ export default class ElementCreator {
   public setAttribute(attr: string, attrValue: string): void {
     this.element.setAttribute(attr, attrValue);
   }
+
+  public removeAttribute(attr: string): void {
+    this.element.removeAttribute(attr);
+  }
 }
 
 /* here's how params may look like

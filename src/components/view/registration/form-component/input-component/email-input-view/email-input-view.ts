@@ -67,7 +67,7 @@ export default class EmailInputView extends View {
     if (email.validity.valueMissing) {
       errorSpan.textContent = 'Enter your e-mail address';
     } else if (email.validity.typeMismatch) {
-      errorSpan.textContent = 'Entered value needs to be an e-mail address';
+      errorSpan.textContent = 'Email address is invalid. Please enter a valid email address';
     } else if (email.validity.tooShort) {
       errorSpan.textContent = `Email should be at least ${email.minLength} characters long; you entered ${email.value.length}`;
     }

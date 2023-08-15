@@ -1,8 +1,11 @@
 const nameInputParams = {
+  fieldset: {
+    cssClasses: ['name-input'],
+  },
+
   input: {
     type: 'text',
     minLength: '1',
-    // eslint-disable-next-line prettier/prettier, no-useless-escape
     pattern: '^[a-zA-Z]+$',
     firstName: {
       id: 'firstName',

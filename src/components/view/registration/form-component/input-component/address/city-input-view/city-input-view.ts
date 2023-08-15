@@ -53,6 +53,7 @@ export default class CityInputView extends View {
 
   private validateCity(element: HTMLInputElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
+
     element.addEventListener('input', () => {
       if (element.validity.valid) {
         errorSpan.textContent = '';
@@ -61,6 +62,14 @@ export default class CityInputView extends View {
         this.showError(element, errorMessage);
       }
     });
+    // element.addEventListener('change', () => {
+    //   if (element.validity.valid) {
+    //     errorSpan.textContent = '';
+    //     errorSpan.classList.add(CityInputParams.errorSpan.cssClasses);
+    //   } else {
+    //     this.showError(element, errorMessage);
+    //   }
+    // });
   }
 
   public showError(input: HTMLInputElement, errorMessage: HTMLElement) {

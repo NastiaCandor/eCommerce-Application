@@ -2,7 +2,7 @@ const CountryInputParams = {
   input: {
     type: 'text',
     id: 'country',
-    cssClassesValid: 'reg-form__input-valid',
+    // cssClassesValid: 'reg-form__input-valid',
   },
 
   option: {
@@ -22,6 +22,10 @@ const CountryInputParams = {
   },
 
   countries: [
+    {
+      countryName: 'Please choose a country',
+      code: '',
+    },
     {
       countryName: 'Russia (Россия)',
       code: 'RU',
