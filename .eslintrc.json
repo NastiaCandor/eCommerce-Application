@@ -26,6 +26,7 @@
     "comma-dangle": ["error", "always-multiline"],
     "prettier/prettier" : "error",
     "linebreak-style": ["error", "windows"]
+    // "arrow-body-style": ["error", "always"]
   },
   "root": true,
   "parser": "@typescript-eslint/parser"
