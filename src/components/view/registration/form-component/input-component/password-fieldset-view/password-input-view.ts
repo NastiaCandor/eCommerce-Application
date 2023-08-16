@@ -49,6 +49,12 @@ export default class PasswordInputView extends View {
     return errorSpan;
   }
 
+  private checkPassword(str: string) {
+    const reg = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+    const result = reg.test(str);
+    return result;
+  }
+
   private validatePassword(element: HTMLInputElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
     element.addEventListener('input', () => {
@@ -60,12 +66,6 @@ export default class PasswordInputView extends View {
         this.showError(element, errorMessage);
       }
     });
-  }
-
-  public checkPassword(str: string) {
-    const reg = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-    const result = reg.test(str);
-    return result;
   }
 
   public showError(password: HTMLInputElement, errorMessage: HTMLElement) {

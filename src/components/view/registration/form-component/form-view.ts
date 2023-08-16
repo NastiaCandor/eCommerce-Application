@@ -1,3 +1,4 @@
+/* eslint-disable comma-dangle */
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/comma-dangle */
 import { postcodeValidator } from 'postcode-validator';
@@ -55,6 +56,8 @@ export default class FormView extends View {
 
   private checkboxDefaultBill: CheckboxView;
 
+  public sameAdrs: boolean;
+
   constructor() {
     super(formParams.form);
     this.emailInput = new EmailInputView();
@@ -73,6 +76,7 @@ export default class FormView extends View {
     this.checkboxSameAdrs = new CheckboxView();
     this.checkboxDefaultShip = new CheckboxView();
     this.checkboxDefaultBill = new CheckboxView();
+    this.sameAdrs = false;
     this.render();
   }
 
@@ -87,6 +91,7 @@ export default class FormView extends View {
     this.checkShipPostcode();
     this.checkBillPostcode();
     this.callSameAdrs();
+    this.changeChecked();
   }
 
   private insertFormItems(): void {
@@ -197,43 +202,32 @@ export default class FormView extends View {
     const shipPostcode = this.postcodeShipInput.getElement().children[1] as HTMLInputElement;
     const errorShipPostcode = this.postcodeShipInput.getElement().children[2] as HTMLElement;
     shipPostcode.addEventListener('input', () => {
-      try {
-        this.checkPostcodeFunc(shipPostcode.value, shipCountry.value, errorShipPostcode, shipPostcode);
-      } catch (error) {
-        errorShipPostcode.textContent = 'Please choose a country';
-      }
+      this.checkPostcode(shipPostcode, shipCountry, errorShipPostcode);
     });
     shipCountry.addEventListener('change', () => {
-      try {
-        this.checkPostcodeFunc(shipPostcode.value, shipCountry.value, errorShipPostcode, shipPostcode);
-      } catch (error) {
-        errorShipPostcode.textContent = 'Please choose a country';
-      }
+      this.checkPostcode(shipPostcode, shipCountry, errorShipPostcode);
     });
+  }
+
+  private checkPostcode(postcode: HTMLInputElement, country: HTMLSelectElement, errorSpan: HTMLElement) {
+    try {
+      this.checkPostcodeFunc(postcode.value, country.value, errorSpan, postcode);
+    } catch (error) {
+      // eslint-disable-next-line no-param-reassign
+      errorSpan.textContent = 'Please choose a country';
+    }
   }
 
   private checkBillPostcode() {
     const billCountry = this.countryBillSelect.getElement().children[1] as HTMLSelectElement;
     const billPostcode = this.postcodeBillInput.getElement().children[1] as HTMLInputElement;
     const errorBillPostcode = this.postcodeBillInput.getElement().children[2] as HTMLElement;
-    try {
-      this.checkPostcodeFunc(billPostcode.value, billCountry.value, errorBillPostcode, billPostcode);
-    } catch (error) {
-      errorBillPostcode.textContent = 'Please choose a country';
-    }
+    this.checkPostcode(billPostcode, billCountry, errorBillPostcode);
     billPostcode.addEventListener('input', () => {
-      try {
-        this.checkPostcodeFunc(billPostcode.value, billCountry.value, errorBillPostcode, billPostcode);
-      } catch (error) {
-        errorBillPostcode.textContent = 'Please choose a country';
-      }
+      this.checkPostcode(billPostcode, billCountry, errorBillPostcode);
     });
     billCountry.addEventListener('change', () => {
-      try {
-        this.checkPostcodeFunc(billPostcode.value, billCountry.value, errorBillPostcode, billPostcode);
-      } catch (error) {
-        errorBillPostcode.textContent = 'Please choose a country';
-      }
+      this.checkPostcode(billPostcode, billCountry, errorBillPostcode);
     });
   }
 
@@ -248,9 +242,12 @@ export default class FormView extends View {
     }
   }
 
-  private sameAddress() {
-    const checked = this.checkboxSameAdrs.sameAdrs;
-    return checked;
+  private changeChecked() {
+    const checkbox = this.checkboxSameAdrs.getChildren()[0] as HTMLInputElement;
+    console.log(this.sameAdrs);
+    checkbox.addEventListener('change', () => {
+      this.sameAdrs = checkbox.checked;
+    });
   }
 
   private copyAdrsValues(
@@ -260,8 +257,9 @@ export default class FormView extends View {
     checkbox: HTMLInputElement
   ) {
     const inputBill = inputForBill;
+
     checkbox.addEventListener('change', () => {
-      if (this.sameAddress()) {
+      if (!this.sameAdrs) {
         inputBill.value = inputForShip.value;
         if (inputForBill instanceof HTMLInputElement) {
           this.streetBillInput.validateStreet(inputForBill, billError);
@@ -274,12 +272,15 @@ export default class FormView extends View {
       }
     });
     inputForShip.addEventListener('input', () => {
-      if (this.sameAddress()) {
+      if (this.sameAdrs) {
         inputBill.value = inputForShip.value;
         if (inputForBill instanceof HTMLInputElement) {
           this.streetBillInput.validateStreet(inputForBill, billError);
           this.cityBillInput.validateCity(inputForBill, billError);
           this.checkBillPostcode();
+        }
+        if (inputForBill instanceof HTMLSelectElement) {
+          this.countryBillSelect.validateCountry(inputForBill, billError);
         }
       }
     });

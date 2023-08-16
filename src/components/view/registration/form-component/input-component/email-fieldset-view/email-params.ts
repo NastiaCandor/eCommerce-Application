@@ -2,6 +2,9 @@ const EmailInputParams = {
   input: {
     type: 'email',
     minLength: '8',
+    cssClassesInvalid: 'reg-form__input-invalid',
+    // eslint-disable-next-line no-useless-escape, prettier/prettier
+    // pattern: '^[^ ]+@[^ ]+\.[a-z]{2,3}$',
   },
 
   label: {

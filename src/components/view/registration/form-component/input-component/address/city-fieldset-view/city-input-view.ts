@@ -18,7 +18,6 @@ export default class CityInputView extends View {
   }
 
   public insertFieldsetItems(): void {
-    // eslint-disable-next-line max-len
     const label = this.createLabel(CityInputParams.label.textContent);
     this.addInnerElement(label);
     const input = this.createInput();
