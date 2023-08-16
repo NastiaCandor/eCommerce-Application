@@ -1,0 +1,49 @@
+$form-width: 35rem;
+$percent: 50;
+
+.reg-wrapper {
+  margin: 0 auto;
+  border: 1px solid black;
+  display: flex;
+}
+
+.reg-form,
+.adrs-wrapper {
+  display: flex;
+  flex-direction: row;
+  width: $form-width;
+  gap: 2rem;
+  padding: 1rem;
+  font-size: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.adrs-wrapper {
+  background-color: aliceblue;
+}
+
+.reg-form__fieldset {
+  border: none;
+  width: 100%;
+}
+
+.reg-form__label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.name-input {
+  width: calc(($form-width - 4rem) / 2);
+}
+
+.reg-form__btn {
+  width: 11rem;
+  height: 3rem;
+  font-size: 2rem;
+  background-color: darkblue;
+  color: white;
+  border-radius: 5px;
+  margin: 0 auto;
+}

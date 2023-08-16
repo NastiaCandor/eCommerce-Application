@@ -1,3 +1,16 @@
+import RegView from '../view/registration/reg-view';
+
+export default class App {
+  private regWrapper: RegView;
+
+  constructor() {
+    this.regWrapper = new RegView();
+    this.start();
+  }
+
+  public start(): void {
+    this.regWrapper.render();
+
 import HeaderView from '../view/header/header-view';
 
 export default class App {
@@ -9,5 +22,6 @@ export default class App {
 
   public start(): void {
     this.header.render();
+
   }
 }
