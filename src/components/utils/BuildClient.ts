@@ -15,6 +15,10 @@ const authMiddlewareOptions: AuthMiddlewareOptions = {
 };
 
 // Configure httpMiddlewareOptions
+const httpMiddlewareOptions: HttpMiddlewareOptions = {
+  host: 'https://api.europe-west1.gcp.commercetools.com',
+  fetch,
+};
 
 const ctpClient = new ClientBuilder()
   .withClientCredentialsFlow(authMiddlewareOptions)
@@ -24,4 +28,3 @@ const ctpClient = new ClientBuilder()
 
 // Export the ClientBuilder
 export default ctpClient;
-

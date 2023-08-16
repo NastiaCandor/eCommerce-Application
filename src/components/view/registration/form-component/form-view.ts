@@ -1,3 +1,4 @@
+/* eslint-disable comma-dangle */
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/comma-dangle */
 import { postcodeValidator } from 'postcode-validator';

@@ -1,5 +1,4 @@
 /* abstract class view, all Views must be inherited from him */
-
 import { ElementParamsType } from '../../types';
 import ElementCreator from '../utils/element-creator';
 

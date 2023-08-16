@@ -85,9 +85,9 @@ export default class ElementCreator {
     this.element.setAttribute('href', link);
   }
 
-
   public setAttribute(attr: string, attrValue: string): void {
     this.element.setAttribute(attr, attrValue);
+  }
 
   public setImageLink(src: string, alt: string): void {
     /* add the new method what can assign links to images.
@@ -98,7 +98,6 @@ export default class ElementCreator {
     } else {
       throw new Error('Element use the img tag!');
     }
-
   }
 }
 
