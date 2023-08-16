@@ -19,9 +19,9 @@ export default class CountryInputView extends View {
 
   public insertFieldsetItems(): void {
     // eslint-disable-next-line max-len
-    const label = this.createLabel(CountryInputParams.label.for, CountryInputParams.label.textContent);
+    const label = this.createLabel(CountryInputParams.label.textContent);
     this.addInnerElement(label);
-    const input = this.createInput(CountryInputParams.input.id);
+    const input = this.createInput();
     this.addInnerElement(input);
     this.getValue(input);
     const errorSpan = this.createErrorText();
@@ -30,9 +30,8 @@ export default class CountryInputView extends View {
     this.showError(input, errorSpan);
   }
 
-  private createInput(id: string): HTMLSelectElement {
+  private createInput(): HTMLSelectElement {
     const input = new ElementCreator(fieldsetParams.select).getElement() as HTMLSelectElement;
-    input.setAttribute('id', id);
     input.setAttribute('required', fieldsetParams.input.required);
     const countriesObj = CountryInputParams.countries;
     countriesObj.forEach((element, i: number) => {
@@ -52,9 +51,8 @@ export default class CountryInputView extends View {
     return option;
   }
 
-  private createLabel(forAttr: string, text: string): ElementCreator {
+  private createLabel(text: string): ElementCreator {
     const label = new ElementCreator(fieldsetParams.label);
-    label.setAttribute('for', forAttr);
     label.setTextContent(text);
     return label;
   }

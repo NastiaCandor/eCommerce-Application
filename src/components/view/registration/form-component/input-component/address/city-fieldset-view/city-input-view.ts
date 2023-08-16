@@ -19,9 +19,9 @@ export default class CityInputView extends View {
 
   public insertFieldsetItems(): void {
     // eslint-disable-next-line max-len
-    const label = this.createLabel(CityInputParams.label.for, CityInputParams.label.textContent);
+    const label = this.createLabel(CityInputParams.label.textContent);
     this.addInnerElement(label);
-    const input = this.createInput(CityInputParams.input.type, CityInputParams.input.id);
+    const input = this.createInput();
     this.addInnerElement(input);
     const errorSpan = this.createErrorText();
     this.addInnerElement(errorSpan);
@@ -29,19 +29,17 @@ export default class CityInputView extends View {
     this.showError(input, errorSpan);
   }
 
-  private createInput(type: string, id: string): HTMLInputElement {
+  private createInput(): HTMLInputElement {
     const input = new ElementCreator(fieldsetParams.input).getElement() as HTMLInputElement;
-    input.setAttribute('type', type);
-    input.setAttribute('id', id);
+    input.setAttribute('type', CityInputParams.input.type);
     input.setAttribute('minLength', CityInputParams.input.minLength);
     input.setAttribute('required', fieldsetParams.input.required);
     input.setAttribute('pattern', CityInputParams.input.pattern);
     return input;
   }
 
-  private createLabel(forAttr: string, text: string): ElementCreator {
+  private createLabel(text: string): ElementCreator {
     const label = new ElementCreator(fieldsetParams.label);
-    label.setAttribute('for', forAttr);
     label.setTextContent(text);
     return label;
   }

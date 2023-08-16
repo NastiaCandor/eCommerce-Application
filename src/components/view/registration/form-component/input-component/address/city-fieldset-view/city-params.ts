@@ -1,7 +1,6 @@
 const CityInputParams = {
   input: {
     type: 'text',
-    id: 'city',
     minLength: '1',
     pattern: '^[a-zA-Z]+$',
   },
@@ -9,6 +8,11 @@ const CityInputParams = {
   label: {
     for: 'city',
     textContent: 'City',
+  },
+
+  forId: {
+    ship: 'city-ship',
+    bill: 'city-bill',
   },
 
   errorSpan: {

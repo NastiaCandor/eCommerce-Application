@@ -19,9 +19,9 @@ export default class StreetInputView extends View {
 
   public insertFieldsetItems(): void {
     // eslint-disable-next-line max-len
-    const label = this.createLabel(StreetInputParams.label.for, StreetInputParams.label.textContent);
+    const label = this.createLabel(StreetInputParams.label.textContent);
     this.addInnerElement(label);
-    const input = this.createInput(StreetInputParams.input.type, StreetInputParams.input.id);
+    const input = this.createInput(StreetInputParams.input.type);
     this.addInnerElement(input);
     const errorSpan = this.createErrorText();
     this.addInnerElement(errorSpan);
@@ -29,18 +29,16 @@ export default class StreetInputView extends View {
     this.showError(input, errorSpan);
   }
 
-  private createInput(type: string, id: string): HTMLInputElement {
+  private createInput(type: string): HTMLInputElement {
     const input = new ElementCreator(fieldsetParams.input).getElement() as HTMLInputElement;
     input.setAttribute('type', type);
-    input.setAttribute('id', id);
     input.setAttribute('minLength', StreetInputParams.input.minLength);
     input.setAttribute('required', fieldsetParams.input.required);
     return input;
   }
 
-  private createLabel(forAttr: string, text: string): ElementCreator {
+  private createLabel(text: string): ElementCreator {
     const label = new ElementCreator(fieldsetParams.label);
-    label.setAttribute('for', forAttr);
     label.setTextContent(text);
     return label;
   }

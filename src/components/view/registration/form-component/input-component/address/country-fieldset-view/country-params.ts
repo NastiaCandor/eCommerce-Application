@@ -2,7 +2,11 @@ const CountryInputParams = {
   input: {
     type: 'text',
     id: 'country',
-    // cssClassesValid: 'reg-form__input-valid',
+  },
+
+  forId: {
+    ship: 'country-ship',
+    bill: 'country-bill',
   },
 
   option: {

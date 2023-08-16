@@ -9,6 +9,10 @@ const StreetInputParams = {
     for: 'street',
     textContent: 'Street',
   },
+  forId: {
+    ship: 'street-ship',
+    bill: 'street-bill',
+  },
 
   errorSpan: {
     tag: 'span',

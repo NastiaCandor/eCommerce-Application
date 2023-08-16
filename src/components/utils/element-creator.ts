@@ -54,6 +54,10 @@ export default class ElementCreator {
     return this.element;
   }
 
+  public getChildren(): HTMLCollection {
+    return this.getElement().children;
+  }
+
   public setCssClasses(classes: string[]): void {
     /* set the provided classes from ARRAY of strings, if any. */
     classes.forEach((className) => this.element.classList.add(className));

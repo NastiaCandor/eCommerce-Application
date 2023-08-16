@@ -22,27 +22,24 @@ export default class CheckboxView extends View {
   }
 
   public insertFieldsetItems(): void {
-    const input = this.createInput(CheckboxInputParams.input.type, CheckboxInputParams.input.id);
-    this.addInnerElement(input);
-    this.changeChecked(input);
-    // eslint-disable-next-line max-len
-    // const label = this.createLabel(CheckboxInputParams.label.for);
-    // this.addInnerElement(label);
+    // const input = this.createInput(CheckboxInputParams.input.type);
+    // this.addInnerElement(input);
+    // this.changeChecked(input);
   }
 
-  private createInput(type: string, id: string): HTMLInputElement {
+  public createInput(type: string, id: string): void {
     const input = new ElementCreator(CheckboxInputParams.input).getElement() as HTMLInputElement;
     input.setAttribute('type', type);
     input.setAttribute('id', id);
     input.setAttribute('required', fieldsetParams.input.required);
-    return input;
+    this.addInnerElement(input);
   }
 
-  public createLabel(forAttr: string): ElementCreator {
+  public createLabel(forAttr: string, text: string): void {
     const label = new ElementCreator(fieldsetParams.label);
     label.setAttribute('for', forAttr);
-    // label.setTextContent(text);
-    return label;
+    label.setTextContent(text);
+    this.addInnerElement(label);
   }
 
   private changeChecked(element: HTMLInputElement) {

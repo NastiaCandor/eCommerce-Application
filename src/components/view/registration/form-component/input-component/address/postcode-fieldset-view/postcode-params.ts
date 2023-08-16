@@ -11,6 +11,11 @@ const PostcodeInputParams = {
     textContent: 'Postcode',
   },
 
+  forId: {
+    ship: 'postcode-ship',
+    bill: 'postcode-bill',
+  },
+
   errorSpan: {
     tag: 'span',
     cssClasses: 'reg-form__error',
