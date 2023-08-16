@@ -1,32 +1,27 @@
-import {
-  ClientBuilder,
-  type AuthMiddlewareOptions, // Required for auth
-  type HttpMiddlewareOptions, // Required for sending HTTP requests
-} from '@commercetools/sdk-client-v2';
+import { ClientBuilder, type AuthMiddlewareOptions, type HttpMiddlewareOptions } from '@commercetools/sdk-client-v2';
 
-const projectKeyValue = 'ecommerce-quantum';
-
+// Configure authMiddlewareOptions
 const authMiddlewareOptions: AuthMiddlewareOptions = {
   host: 'https://auth.europe-west1.gcp.commercetools.com',
-  projectKey: projectKeyValue,
+  projectKey: 'ecommerce-quantum',
   credentials: {
-    clientId: 'keVo9CyFCe8ttWKCQE5zZOr6',
-    clientSecret: '63HNzyYWKWMSK2Hxnvjs4MpA25SVUWY7',
+    clientId: 'dS_IDDkqYFktWCp4tVv8XbIR',
+    clientSecret: 'xR6ABVakMAv1yPHq6tLugX4jGCV5khR2',
   },
-  scopes: ['view_project_settings:ecommerce-quantum'],
+  scopes: [
+    'view_shipping_methods:ecommerce-quantum create_anonymous_token:ecommerce-quantum view_payments:ecommerce-quantum view_categories:ecommerce-quantum view_types:ecommerce-quantum view_discount_codes:ecommerce-quantum view_cart_discounts:ecommerce-quantum view_published_products:ecommerce-quantum manage_customers:ecommerce-quantum',
+  ],
   fetch,
 };
 
-const httpMiddlewareOptions: HttpMiddlewareOptions = {
-  host: 'https://api.europe-west1.gcp.commercetools.com',
-  fetch,
-};
+// Configure httpMiddlewareOptions
 
-// eslint-disable-next-line import/prefer-default-export
-export const ctpClient = new ClientBuilder()
-  .withProjectKey(projectKeyValue)
+const ctpClient = new ClientBuilder()
   .withClientCredentialsFlow(authMiddlewareOptions)
   .withHttpMiddleware(httpMiddlewareOptions)
-  .withUserAgentMiddleware()
-  .withLoggerMiddleware()
+  // .withLoggerMiddleware() // view all responses and requests
   .build();
+
+// Export the ClientBuilder
+export default ctpClient;
+

@@ -20,12 +20,12 @@ const config = {
           test: /\.ts$/i, use: 'ts-loader'
       },
       {
-        test: /\.(png|jpg|jpeg|gif|ico)$/i, 
+        test: /\.(png|jpg|jpeg|gif|ico|svg)$/i, 
         type: 'asset/resource',
       },
       {
         test: /\.(svg)$/i,
-        type: 'asset/source',
+        type: 'asset/resource',
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,

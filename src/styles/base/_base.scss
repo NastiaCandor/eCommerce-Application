@@ -1,18 +1,15 @@
-
-
-
-// $font-stack: 'Death Star';
-
 html {
   scroll-behavior: smooth;
+    font-size: 10px;
 }
 
 
 body {
   display: flex;
   flex-direction: column;
-  // background: rgb(8,12,65);
-  // background: linear-gradient(90deg, rgba(8,12,65,1) 4%, rgba(15,3,8,1) 71%, rgba(71,48,36,1) 100%);
+  font-size: 1.6rem;
+  background-color: $sample-primary-color;
+  font-family: "Poppins", sans-serif;
 }
 
 * {
@@ -24,13 +21,15 @@ body {
   margin-inline-start: 0px;
   margin-inline-end: 0px;
   padding-inline-start: 0px;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  &::-webkit-scrollbar {
+    width: 0;}
 }
 
 button {
   background-color:unset;
   border: none;
   cursor: pointer;
-}
 
 a {
   text-decoration: none;

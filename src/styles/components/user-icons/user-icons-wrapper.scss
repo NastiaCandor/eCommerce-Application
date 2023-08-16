@@ -1,0 +1,15 @@
+@import './user-icons-link.scss';
+
+.header__user-icons {
+  display: flex;
+  justify-content: center;
+  max-width: 15%;
+  @media screen and (max-width: 1200px) {
+    max-width: 25%;
+  }
+
+  @media screen and (max-width: $tablet) {
+    max-width: 35%;
+    justify-content: space-around;
+  }
+}
