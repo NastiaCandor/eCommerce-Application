@@ -27,6 +27,7 @@
     "prettier/prettier" : "error",
     "max-len": ["error", { "code": 120, "ignoreUrls": true, "ignoreStrings": true, "ignoreTemplateLiterals": true }],
     "linebreak-style": ["error", "windows"]
+    // "arrow-body-style": ["error", "always"]
   },
   "root": true,
   "parser": "@typescript-eslint/parser"

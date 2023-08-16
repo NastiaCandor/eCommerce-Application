@@ -9,7 +9,6 @@ export default class App {
   constructor() {
     this.router = new Router();
     this.header = new HeaderView(this.router);
-    this.start();
   }
 
   public start(): void {

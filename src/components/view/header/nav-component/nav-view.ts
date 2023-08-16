@@ -1,4 +1,4 @@
-import View from '../../view';
+import View from '../../View';
 import ElementCreator from '../../../utils/element-creator';
 import navigationParams from './nav-params';
 

@@ -1,5 +1,5 @@
 import ElementCreator from '../../../utils/element-creator';
-import View from '../../view';
+import View from '../../View';
 import userIconsParams from './user-icons-params';
 import '../../../../assets/img/signup-svgrepo-com.svg';
 import '../../../../assets/img/login-svgrepo-com.svg';

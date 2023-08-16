@@ -1,10 +1,9 @@
 import ElementCreator from '../../utils/element-creator';
-import View from '../view';
+import View from '../View';
 import UserIconsView from './user-icons-component/user-icons-view';
 import headerParams from './header-params';
 import NavigationView from './nav-component/nav-view';
 import '../../../assets/img/icons8-cheburashka-48.svg';
-import wrapperParams from '../wrapper-params';
 import Router from '../../router/router';
 import { PagesAccountInterface, PagesContentInterface } from '../../../types';
 import PAGES from '../../router/pages';
@@ -38,25 +37,22 @@ export default class HeaderView extends View {
   }
 
   public render(): void {
-    this.configure(this.router);
+    this.configure();
   }
 
-  protected configure(router: Router): void {
-    console.log(router);
+  protected configure(): void {
     this.renderInnerWrapper();
     this.appendToDOM();
   }
 
   private renderInnerWrapper(): void {
-    const wrapper = new ElementCreator(wrapperParams);
-    const innerWrapper = new ElementCreator(headerParams.innerWrapper);
-    this.injectLogoLink(innerWrapper);
-    this.injectNavigationLinks(innerWrapper);
-    this.injectUserLinks(innerWrapper);
+    const wrapper = new ElementCreator(headerParams.innerWrapper);
+    this.injectLogoLink(wrapper);
+    this.injectNavigationLinks(wrapper);
+    this.injectUserLinks(wrapper);
     this.linksCallbackHandler(this.linksCollection);
-    this.injectBurgerMenuButton(innerWrapper);
-    this.injectBurgerMenu(innerWrapper);
-    wrapper.addInnerElement(innerWrapper);
+    this.injectBurgerMenuButton(wrapper);
+    this.injectBurgerMenu(wrapper);
     this.addInnerElement(wrapper);
   }
 
