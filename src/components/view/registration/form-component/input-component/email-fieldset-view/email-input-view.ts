@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/comma-dangle */
 import ElementCreator from '../../../../../utils/element-creator';
 import View from '../../../../view';
 import fieldsetParams from '../input-params';
@@ -49,6 +48,7 @@ export default class EmailInputView extends View {
     const errorSpan = new ElementCreator(fieldsetParams.errorSpan).getElement();
     return errorSpan;
   }
+  // /^[^ ]+@[^ ]+\.[a-z]{2,3}$/
 
   private validateEmail(element: HTMLInputElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;

@@ -30,8 +30,8 @@ export default class CountryInputView extends View {
     this.showError(input, errorSpan);
   }
 
-  private createInput(id: string): HTMLInputElement {
-    const input = new ElementCreator(fieldsetParams.select).getElement() as HTMLInputElement;
+  private createInput(id: string): HTMLSelectElement {
+    const input = new ElementCreator(fieldsetParams.select).getElement() as HTMLSelectElement;
     input.setAttribute('id', id);
     input.setAttribute('required', fieldsetParams.input.required);
     const countriesObj = CountryInputParams.countries;
@@ -41,8 +41,7 @@ export default class CountryInputView extends View {
     return input;
   }
 
-  public getValue(element: HTMLInputElement): string {
-    // console.log(element.value);
+  public getValue(element: HTMLSelectElement): string {
     return element.value;
   }
 
@@ -65,8 +64,16 @@ export default class CountryInputView extends View {
     return errorSpan;
   }
 
-  private validateCountry(element: HTMLInputElement, errorMessage: HTMLElement) {
+  public validateCountry(element: HTMLSelectElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
+    this.getValue(element);
+    if (element.validity.valid) {
+      errorSpan.textContent = '';
+      errorSpan.classList.add(CountryInputParams.errorSpan.cssClasses);
+      // element.classList.add(CountryInputParams.input.cssClassesValid);
+    } else {
+      this.showError(element, errorMessage);
+    }
     element.addEventListener('change', () => {
       this.getValue(element);
       if (element.validity.valid) {
@@ -79,10 +86,10 @@ export default class CountryInputView extends View {
     });
   }
 
-  public showError(input: HTMLInputElement, errorMessage: HTMLElement) {
+  public showError(input: HTMLSelectElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
     if (input.validity.valueMissing) {
-      errorSpan.textContent = 'Choose country';
+      errorSpan.textContent = 'Please choose a country';
     }
     errorSpan.classList.add(CountryInputParams.errorSpan.cssClassesActive);
   }

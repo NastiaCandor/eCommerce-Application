@@ -10,10 +10,16 @@ const CheckboxInputParams = {
   },
 
   label: {
+    tag: 'label',
+    cssClasses: ['reg-form__label'],
     for: 'address-choice',
-    textContent: 'This is also my billing address',
   },
 
+  labelTextContent: {
+    sameAdrs: 'This is also my billing address',
+    defaultShip: 'Save as default shipping address',
+    defaultBill: 'Save as default billing address',
+  },
   span: {
     textContent: 'Please fill in all shipping address fields',
     cssClasses: ['checkbox-adrs__span'],

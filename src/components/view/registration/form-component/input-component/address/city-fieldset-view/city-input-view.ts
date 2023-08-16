@@ -51,9 +51,14 @@ export default class CityInputView extends View {
     return errorSpan;
   }
 
-  private validateCity(element: HTMLInputElement, errorMessage: HTMLElement) {
+  public validateCity(element: HTMLInputElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
-
+    if (element.validity.valid) {
+      errorSpan.textContent = '';
+      errorSpan.classList.add(CityInputParams.errorSpan.cssClasses);
+    } else {
+      this.showError(element, errorMessage);
+    }
     element.addEventListener('input', () => {
       if (element.validity.valid) {
         errorSpan.textContent = '';
@@ -62,20 +67,20 @@ export default class CityInputView extends View {
         this.showError(element, errorMessage);
       }
     });
-    // element.addEventListener('change', () => {
-    //   if (element.validity.valid) {
-    //     errorSpan.textContent = '';
-    //     errorSpan.classList.add(CityInputParams.errorSpan.cssClasses);
-    //   } else {
-    //     this.showError(element, errorMessage);
-    //   }
-    // });
+    element.addEventListener('change', () => {
+      if (element.validity.valid) {
+        errorSpan.textContent = '';
+        errorSpan.classList.add(CityInputParams.errorSpan.cssClasses);
+      } else {
+        this.showError(element, errorMessage);
+      }
+    });
   }
 
   public showError(input: HTMLInputElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
     if (input.validity.valueMissing) {
-      errorSpan.textContent = 'Enter city name';
+      errorSpan.textContent = 'Please fill in this address field';
     } else if (input.validity.tooShort) {
       errorSpan.textContent = `City name should be at least ${input.minLength} characters long; you entered ${input.value.length}`;
     } else if (input.validity.patternMismatch) {

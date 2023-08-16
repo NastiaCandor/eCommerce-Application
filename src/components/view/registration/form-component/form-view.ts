@@ -4,17 +4,18 @@ import ElementCreator from '../../../utils/element-creator';
 import View from '../../view';
 import formParams from './form-params';
 import WrapperParams from '../../wrapper-params';
-import PostcodeInputParams from './input-component/address/postcode-input-view/postcode-params';
-import EmailInputView from './input-component/email-input-view/email-input-view';
-import FirstNameInputView from './input-component/name-input-views/firstName-input-view/firstName-input-view';
-import LastNameInputView from './input-component/name-input-views/lastName-input-view/lastName-input-view';
-import PasswordInputView from './input-component/password-input-view/password-input-view';
-import DateInputView from './input-component/date-input-view/date-input-view';
+import PostcodeInputParams from './input-component/address/postcode-fieldset-view/postcode-params';
+import EmailInputView from './input-component/email-fieldset-view/email-input-view';
+import FirstNameInputView from './input-component/name-views/firstName-fieldset-view/firstName-input-view';
+import LastNameInputView from './input-component/name-views/lastName-fieldset-view/lastName-input-view';
+import PasswordInputView from './input-component/password-fieldset-view/password-input-view';
+import DateInputView from './input-component/date-fieldset-view/date-input-view';
 import StreetInputView from './input-component/address/street-input-view/street-input-view';
-import CityInputView from './input-component/address/city-input-view/city-input-view';
-import CountryInputView from './input-component/address/country-input-view/country-input-view';
-import PostcodeInputView from './input-component/address/postcode-input-view/postcode-input-view';
+import CityInputView from './input-component/address/city-fieldset-view/city-input-view';
+import CountryInputView from './input-component/address/country-fieldset-view/country-input-view';
+import PostcodeInputView from './input-component/address/postcode-fieldset-view/postcode-input-view';
 import CheckboxView from './input-component/address/checkbox-view/checkbox-view';
+import CheckboxInputParams from './input-component/address/checkbox-view/checkbox-params';
 import { ElementParamsType } from '../../../../types';
 
 export default class FormView extends View {
@@ -44,7 +45,11 @@ export default class FormView extends View {
 
   private postcodeBillInput: PostcodeInputView;
 
-  private checkbox: CheckboxView;
+  private checkboxSameAdrs: CheckboxView;
+
+  private checkboxDefaultShip: CheckboxView;
+
+  private checkboxDefaultBill: CheckboxView;
 
   constructor() {
     super(formParams.form);
@@ -61,7 +66,9 @@ export default class FormView extends View {
     this.cityBillInput = new CityInputView();
     this.countryBillSelect = new CountryInputView();
     this.postcodeBillInput = new PostcodeInputView();
-    this.checkbox = new CheckboxView();
+    this.checkboxSameAdrs = new CheckboxView();
+    this.checkboxDefaultShip = new CheckboxView();
+    this.checkboxDefaultBill = new CheckboxView();
     this.render();
   }
 
@@ -91,9 +98,18 @@ export default class FormView extends View {
       this.streetShipInput,
       this.countryShipSelect,
       this.postcodeShipInput,
-      this.checkbox
+      this.checkboxSameAdrs,
+      this.checkboxDefaultShip
     );
     this.addInnerElement(shipAdrsWrapper);
+
+    const checkboxSameAdrsLabel = new ElementCreator(CheckboxInputParams.label);
+    checkboxSameAdrsLabel.setTextContent(CheckboxInputParams.labelTextContent.sameAdrs);
+    this.checkboxSameAdrs.addInnerElement(checkboxSameAdrsLabel);
+
+    const shipDefaultAdrsLabel = new ElementCreator(CheckboxInputParams.label);
+    shipDefaultAdrsLabel.setTextContent(CheckboxInputParams.labelTextContent.defaultShip);
+    this.checkboxDefaultShip.addInnerElement(shipDefaultAdrsLabel);
     const billAdrsWrapper = this.createAdrsWrapper(
       WrapperParams,
       formParams.heading.billing.text,
@@ -101,9 +117,13 @@ export default class FormView extends View {
       this.streetBillInput,
       this.countryBillSelect,
       this.postcodeBillInput,
-      this.checkbox
+      this.checkboxSameAdrs,
+      this.checkboxDefaultBill
     );
     this.addInnerElement(billAdrsWrapper);
+    const billDefaultAdrsLabel = new ElementCreator(CheckboxInputParams.label);
+    billDefaultAdrsLabel.setTextContent(CheckboxInputParams.labelTextContent.defaultBill);
+    this.checkboxDefaultBill.addInnerElement(billDefaultAdrsLabel);
     const submitBtn = this.createSubmitBtn();
     this.addInnerElement(submitBtn);
   }
@@ -115,7 +135,8 @@ export default class FormView extends View {
     street: StreetInputView,
     country: CountryInputView,
     postcode: PostcodeInputView,
-    checkbox: CheckboxView
+    checkboxSameAdrs: CheckboxView,
+    checkboxDefault: CheckboxView
   ): ElementCreator {
     const wrapper = new ElementCreator(params);
     wrapper.setCssClasses(formParams.addressDiv.cssClasses);
@@ -126,8 +147,9 @@ export default class FormView extends View {
     wrapper.addInnerElement(street);
     wrapper.addInnerElement(country);
     wrapper.addInnerElement(postcode);
+    wrapper.addInnerElement(checkboxDefault);
     if (hdnText === 'Shipping Address') {
-      wrapper.addInnerElement(checkbox);
+      wrapper.addInnerElement(checkboxSameAdrs);
     }
     return wrapper;
   }
@@ -135,7 +157,6 @@ export default class FormView extends View {
   private validateInput(): void {
     const formEl = this.getElement();
     const inputsArr = this.getInputsArr();
-    // const spansArr = this.getSpansArr();
     for (let i = 0; i < inputsArr.length; i += 1) {
       this.submitInvalid(formEl, inputsArr[i]);
     }
@@ -194,6 +215,12 @@ export default class FormView extends View {
     const billCountry = this.countryBillSelect.getElement().children[1] as HTMLSelectElement;
     const billPostcode = this.postcodeBillInput.getElement().children[1] as HTMLInputElement;
     const errorBillPostcode = this.postcodeBillInput.getElement().children[2] as HTMLElement;
+    try {
+      // eslint-disable-next-line max-len
+      this.checkPostcodeFunc(billPostcode.value, billCountry.value, errorBillPostcode, billPostcode);
+    } catch (error) {
+      errorBillPostcode.textContent = 'Please choose a country';
+    }
     billPostcode.addEventListener('input', () => {
       try {
         // eslint-disable-next-line max-len
@@ -224,56 +251,40 @@ export default class FormView extends View {
     }
   }
 
-  // private getSpansArr(): HTMLElement[] {
-  //   const spansArr = [];
-  //   const errorSpanEmail = this.emailInput.getElement().children[2] as HTMLElement;
-  //   const errorSpanFName = this.firstNameInput.getElement().children[2] as HTMLElement;
-  //   const errorSpanLName = this.lastNameInput.getElement().children[2] as HTMLElement;
-  //   const errorSpanPassword = this.passwordInput.getElement().children[2] as HTMLElement;
-  //   const errorSpanDate = this.dateInput.getElement().children[2] as HTMLElement;
-  //   const errorSpanStreet = this.streetShipInput.getElement().children[2] as HTMLElement;
-  //   const errorSpanCity = this.cityShipInput.getElement().children[2] as HTMLElement;
-  //   const errorSpanPostcode = this.postcodeShipInput.getElement().children[2] as HTMLElement;
-  //   spansArr.push(errorSpanEmail);
-  //   spansArr.push(errorSpanFName);
-  //   spansArr.push(errorSpanLName);
-  //   spansArr.push(errorSpanPassword);
-  //   spansArr.push(errorSpanDate);
-  //   spansArr.push(errorSpanStreet);
-  //   spansArr.push(errorSpanCity);
-  //   spansArr.push(errorSpanPostcode);
-  //   return spansArr;
-  // }
-
   private sameAddress() {
-    const checked = this.checkbox.sameAdrs;
+    const checked = this.checkboxSameAdrs.sameAdrs;
     return checked;
   }
 
   private copyAdrsValues(
     inputForShip: HTMLInputElement | HTMLSelectElement,
     inputForBill: HTMLInputElement | HTMLSelectElement,
+    billError: HTMLElement,
     checkbox: HTMLInputElement
   ) {
     const inputBill = inputForBill;
     checkbox.addEventListener('change', () => {
       if (this.sameAddress()) {
         inputBill.value = inputForShip.value;
-
-        // this.cityBillInput.setAttribute('style', 'display:none');
-        // this.countryBillSelect.setAttribute('style', 'display:none');
-        // this.streetBillInput.setAttribute('style', 'display:none');
-        // this.postcodeBillInput.setAttribute('style', 'display:none');
-      } else {
-        // this.cityBillInput.removeAttribute('style');
-        // this.countryBillSelect.removeAttribute('style');
-        // this.streetBillInput.removeAttribute('style');
-        // this.postcodeBillInput.removeAttribute('style');
+        if (inputForBill instanceof HTMLInputElement) {
+          this.streetBillInput.validateStreet(inputForBill, billError);
+          this.cityBillInput.validateCity(inputForBill, billError);
+          this.checkBillPostcode();
+        }
+        if (inputForBill instanceof HTMLSelectElement) {
+          this.countryBillSelect.validateCountry(inputForBill, billError);
+        }
       }
     });
     inputForShip.addEventListener('input', () => {
       if (this.sameAddress()) {
         inputBill.value = inputForShip.value;
+        if (inputForBill instanceof HTMLInputElement) {
+          this.streetBillInput.validateStreet(inputForBill, billError);
+          this.cityBillInput.validateCity(inputForBill, billError);
+          // this.countryBillSelect.validateCountry(inputForBill, billError);//////to do
+          this.checkBillPostcode();
+        }
       }
     });
   }
@@ -281,18 +292,27 @@ export default class FormView extends View {
   private callSameAdrs() {
     const shipCity = this.cityShipInput.getElement().children[1] as HTMLInputElement;
     const billCity = this.cityBillInput.getElement().children[1] as HTMLInputElement;
+    const billCityError = this.cityBillInput.getElement().children[2] as HTMLElement;
+    console.log(billCityError);
+
     const shipCountry = this.countryShipSelect.getElement().children[1] as HTMLSelectElement;
     const billCountry = this.countryBillSelect.getElement().children[1] as HTMLSelectElement;
+    const billCountryError = this.countryBillSelect.getElement().children[2] as HTMLElement;
+
     const shipStreet = this.streetShipInput.getElement().children[1] as HTMLSelectElement;
     const billStreet = this.streetBillInput.getElement().children[1] as HTMLSelectElement;
+    const billStreetError = this.streetBillInput.getElement().children[2] as HTMLElement;
+    console.log(billStreetError);
+
     const shipPostcode = this.postcodeShipInput.getElement().children[1] as HTMLSelectElement;
     const billPostcode = this.postcodeBillInput.getElement().children[1] as HTMLSelectElement;
-    const checkbox = this.checkbox.getElement().children[0] as HTMLInputElement;
+    const billPostcodeError = this.postcodeBillInput.getElement().children[2] as HTMLElement;
+    const checkbox = this.checkboxSameAdrs.getElement().children[0] as HTMLInputElement;
 
-    this.copyAdrsValues(shipCity, billCity, checkbox);
-    this.copyAdrsValues(shipCountry, billCountry, checkbox);
-    this.copyAdrsValues(shipStreet, billStreet, checkbox);
-    this.copyAdrsValues(shipPostcode, billPostcode, checkbox);
+    this.copyAdrsValues(shipCity, billCity, billCityError, checkbox);
+    this.copyAdrsValues(shipCountry, billCountry, billCountryError, checkbox);
+    this.copyAdrsValues(shipStreet, billStreet, billStreetError, checkbox);
+    this.copyAdrsValues(shipPostcode, billPostcode, billPostcodeError, checkbox);
   }
 
   private submitInvalid(el: HTMLElement, input: HTMLInputElement): void {
@@ -307,7 +327,7 @@ export default class FormView extends View {
 
   private createSubmitBtn(): ElementCreator {
     const btn = new ElementCreator(formParams.button);
-    btn.setType(formParams.button.type);
+    btn.setAttribute('type', formParams.button.type);
     btn.setTextContent(formParams.button.textContent);
     return btn;
   }

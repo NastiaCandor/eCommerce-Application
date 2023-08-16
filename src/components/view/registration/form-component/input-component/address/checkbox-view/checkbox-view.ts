@@ -26,36 +26,23 @@ export default class CheckboxView extends View {
     this.addInnerElement(input);
     this.changeChecked(input);
     // eslint-disable-next-line max-len
-    const label = this.createLabel(CheckboxInputParams.label.for, CheckboxInputParams.label.textContent);
-    this.addInnerElement(label);
-    // eslint-disable-next-line max-len
-    const error = this.createErrorText(CheckboxInputParams.span.textContent, CheckboxInputParams.span.cssClasses);
-    label.addInnerElement(error);
-    // this.validateCity(input, errorSpan);
-    // this.showError(input, errorSpan);
+    // const label = this.createLabel(CheckboxInputParams.label.for);
+    // this.addInnerElement(label);
   }
 
   private createInput(type: string, id: string): HTMLInputElement {
     const input = new ElementCreator(CheckboxInputParams.input).getElement() as HTMLInputElement;
     input.setAttribute('type', type);
     input.setAttribute('id', id);
-    // input.setAttribute('disabled', CheckboxInputParams.input.disabled);
     input.setAttribute('required', fieldsetParams.input.required);
     return input;
   }
 
-  private createLabel(forAttr: string, text: string): ElementCreator {
+  public createLabel(forAttr: string): ElementCreator {
     const label = new ElementCreator(fieldsetParams.label);
     label.setAttribute('for', forAttr);
-    label.setTextContent(text);
+    // label.setTextContent(text);
     return label;
-  }
-
-  private createErrorText(text: string, css: string[]): ElementCreator {
-    const errorSpan = new ElementCreator(fieldsetParams.errorSpan);
-    errorSpan.setTextContent(text);
-    errorSpan.setCssClasses(css);
-    return errorSpan;
   }
 
   private changeChecked(element: HTMLInputElement) {
@@ -63,20 +50,6 @@ export default class CheckboxView extends View {
       if (!this.sameAdrs) {
         this.sameAdrs = true;
       } else this.sameAdrs = false;
-      console.log(this.sameAdrs);
     });
   }
-
-  // public showError(input: HTMLInputElement, errorMessage: HTMLElement) {
-  //   const errorSpan = errorMessage;
-  //   if (input.validity.valueMissing) {
-  //     errorSpan.textContent = 'Enter city name';
-  //   } else if (input.validity.tooShort) {
-  //     errorSpan.textContent = `City name should be at least
-  // ${input.minLength} characters long; you entered ${input.value.length}`;
-  //   } else if (input.validity.patternMismatch) {
-  //     errorSpan.textContent = 'City name should contain only english letters';
-  //   }
-  //   errorSpan.classList.add(CheckboxInputParams.errorSpan.cssClassesActive);
-  // }
 }

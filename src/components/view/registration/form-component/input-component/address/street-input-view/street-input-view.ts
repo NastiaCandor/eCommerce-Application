@@ -25,7 +25,7 @@ export default class StreetInputView extends View {
     this.addInnerElement(input);
     const errorSpan = this.createErrorText();
     this.addInnerElement(errorSpan);
-    this.validateCountry(input, errorSpan);
+    this.validateStreet(input, errorSpan);
     this.showError(input, errorSpan);
   }
 
@@ -50,7 +50,7 @@ export default class StreetInputView extends View {
     return errorSpan;
   }
 
-  private validateCountry(element: HTMLInputElement, errorMessage: HTMLElement) {
+  public validateStreet(element: HTMLInputElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
     element.addEventListener('input', () => {
       if (element.validity.valid) {
@@ -65,7 +65,7 @@ export default class StreetInputView extends View {
   public showError(input: HTMLInputElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
     if (input.validity.valueMissing) {
-      errorSpan.textContent = 'Enter street name';
+      errorSpan.textContent = 'Please fill in this address field';
     } else if (input.validity.tooShort) {
       errorSpan.textContent = `Street name should be at least ${input.minLength} characters long; you entered ${input.value.length}`;
     }
