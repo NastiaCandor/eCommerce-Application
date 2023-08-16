@@ -9,7 +9,6 @@ export default class App {
   constructor() {
     this.header = new HeaderView();
     this.regWrapper = new RegView();
-    this.start();
   }
 
   public start(): void {
