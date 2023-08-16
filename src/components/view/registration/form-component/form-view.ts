@@ -246,14 +246,7 @@ export default class FormView extends View {
     const checkbox = this.checkboxSameAdrs.getChildren()[0] as HTMLInputElement;
     console.log(this.sameAdrs);
     checkbox.addEventListener('change', () => {
-      console.log(this.sameAdrs);
-      // if (!this.sameAdrs) {
-      //   this.sameAdrs = checkbox.checked;
-      // } else {
-      //   this.sameAdrs = false;
-      // }
       this.sameAdrs = checkbox.checked;
-      console.log(this.sameAdrs);
     });
   }
 
@@ -279,8 +272,6 @@ export default class FormView extends View {
       }
     });
     inputForShip.addEventListener('input', () => {
-      console.log(this.sameAdrs);
-
       if (this.sameAdrs) {
         inputBill.value = inputForShip.value;
         if (inputForBill instanceof HTMLInputElement) {
