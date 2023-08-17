@@ -52,14 +52,18 @@ export default class ElementCreator {
     });
   }
 
-  public getElement(): HTMLElement {
+  public getElement(): HTMLElement | HTMLInputElement {
     /* it's quite self-descriptive. returns the created HTMLElement.
     probably you'll need it before you wish to insert element to DOM;
     like const element = myElement.getElement() */
     return this.element;
   }
 
-  private setCssClasses(classes: string[]): void {
+  public getChildren(): HTMLCollection {
+    return this.getElement().children;
+  }
+
+  public setCssClasses(classes: string[]): void {
     /* set the provided classes from ARRAY of strings, if any. */
     classes.forEach((className) => this.element.classList.add(className));
   }
@@ -79,6 +83,10 @@ export default class ElementCreator {
   private setLink(link: string): void {
     /* set the provided href link from passed string, if any. */
     this.element.setAttribute('href', link);
+  }
+
+  public setAttribute(attr: string, attrValue: string): void {
+    this.element.setAttribute(attr, attrValue);
   }
 
   public setImageLink(src: string, alt: string): void {

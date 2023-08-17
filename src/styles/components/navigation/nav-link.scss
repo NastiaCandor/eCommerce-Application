@@ -3,4 +3,41 @@
   color: $sample-primary-color;
   font-size: 1.2rem;
   white-space: nowrap;
+  position: relative;
+  transition: color 0.3s ease-in-out;
+  &:hover {
+    color: $sample-secondary-color;
+  }
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    display: block;
+    height: 2px;
+    background: $sample-primary-color;
+    width: 0;
+    left: 50%;
+    transition: width 0.3s ease 0s, left 0.3s ease 0s;
+  }
+
+  &:hover::after {
+    width: 100%;
+    left: 0;
+  }
+
+  &.active {
+    position: relative;
+    color: $sample-secondary-color;
+    pointer-events: none;
+    &::after {
+      content: "";
+      left: 0;
+      position: absolute;
+      bottom: -6px;
+      display: block;
+      height: 2px;
+      width: 100%;
+      background: $sample-primary-color;
+    }
+  }
 }

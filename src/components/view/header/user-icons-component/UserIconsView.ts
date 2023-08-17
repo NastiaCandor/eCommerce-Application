@@ -1,13 +1,17 @@
-import ElementCreator from '../../../utils/element-creator';
-import View from '../../view';
+import ElementCreator from '../../../utils/ElementCreator';
+import View from '../../View';
 import userIconsParams from './user-icons-params';
 import '../../../../assets/img/signup-svgrepo-com.svg';
 import '../../../../assets/img/login-svgrepo-com.svg';
 import '../../../../assets/img/cart-svgrepo-com.svg';
 
 export default class UserIconsView extends View {
+  private iconsCollection: Map<string, HTMLElement>;
+
   constructor() {
     super(userIconsParams.wrapper);
+    this.iconsCollection = new Map();
+    this.createIconItems(userIconsParams.authItemsNames);
     this.render();
   }
 
@@ -20,12 +24,10 @@ export default class UserIconsView extends View {
   }
 
   private injectIconItems(): void {
-    const authArray = this.createIconsItems(userIconsParams.authItemsNames);
-    this.addInnerElement(authArray);
+    this.iconsCollection.forEach((value) => this.addInnerElement(value));
   }
 
-  private createIconsItems(names: string[]): ElementCreator[] {
-    const itemsArray: ElementCreator[] = [];
+  private createIconItems(names: string[]): void {
     names.forEach((name, i) => {
       const item = new ElementCreator(userIconsParams.authItem);
       const span = new ElementCreator(userIconsParams.authItem.span);
@@ -34,9 +36,16 @@ export default class UserIconsView extends View {
       item.addInnerElement(imageItem);
       item.addInnerElement(span);
       span.setTextContent(name);
-      itemsArray.push(item);
+      const key = this.formatKeyToUpperCase(name);
+      this.iconsCollection.set(key, item.getElement());
     });
+  }
 
-    return itemsArray;
+  private formatKeyToUpperCase(key: string): string {
+    return key.replace(/\s/g, '_').toUpperCase();
+  }
+
+  public get getIconsCollection(): Map<string, HTMLElement> {
+    return this.iconsCollection;
   }
 }
