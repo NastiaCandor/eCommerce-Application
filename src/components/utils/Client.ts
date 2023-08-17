@@ -1,4 +1,13 @@
-import { ApiRoot, CustomerSignin, createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
+/* eslint-disable @typescript-eslint/comma-dangle */
+/* eslint-disable object-curly-newline */
+/* eslint-disable comma-dangle */
+import {
+  Address,
+  ApiRoot,
+  CustomerDraft,
+  CustomerSignin,
+  createApiBuilderFromCtpClient,
+} from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 import ctpClient from './BuildClient';
 
@@ -20,5 +29,35 @@ export default class ClientAPI {
     };
     const loginAPI = () => apiRoot.login().post({ body }).execute();
     return loginAPI;
+  }
+
+  public registerClient(
+    newEmail: string,
+    newPassword: string,
+    newFName: string,
+    newLName: string,
+    newDateOfBirth: string,
+    addressesArr: Address[],
+    newShipAdrs: number[],
+    newBillAdrs: number[],
+    defaultShip: number | undefined,
+    defaultBill: number | undefined
+  ) {
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const body: CustomerDraft = {
+      email: newEmail,
+      password: newPassword,
+      firstName: newFName,
+      lastName: newLName,
+      dateOfBirth: newDateOfBirth,
+      addresses: addressesArr,
+      shippingAddresses: newShipAdrs,
+      billingAddresses: newBillAdrs,
+      defaultShippingAddress: defaultShip,
+      defaultBillingAddress: defaultBill,
+    };
+
+    const registerAPI = () => apiRoot.customers().post({ body }).execute();
+    return registerAPI;
   }
 }
