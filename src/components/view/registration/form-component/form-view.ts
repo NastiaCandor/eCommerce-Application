@@ -412,10 +412,12 @@ export default class FormView extends View {
       defaultShipAdrs,
       defaultBillAdrs
     );
+
     signUpAPI()
       .then((data) => {
         if (data.statusCode === 201) {
           console.log(data.body.customer);
+          this.login(email, password);
         }
       })
       .catch((error) => {
@@ -424,6 +426,20 @@ export default class FormView extends View {
         } else {
           console.log(error.status);
         }
+      });
+  }
+
+  private async login(email: string, password: string) {
+    const loginAPI = this.clientAPI.loginClient(email, password);
+    loginAPI()
+      .then((data) => {
+        if (data.statusCode === 200) {
+          console.log(data.body);
+          console.log(`Hello ${data.body.customer.firstName} ${data.body.customer.lastName}!`);
+        }
+      })
+      .catch((error) => {
+        console.log(error.status);
       });
   }
 
