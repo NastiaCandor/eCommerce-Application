@@ -430,9 +430,11 @@ export default class FormView extends View {
   private submitForm(): void {
     const formEl = this.getElement() as HTMLFormElement;
     formEl.addEventListener('submit', (el) => {
-      if (!formEl.checkValidity()) {
-        el.preventDefault();
-      } else this.signUp();
+      console.log(formEl.checkValidity());
+      el.preventDefault();
+      if (formEl.checkValidity()) {
+        this.signUp();
+      }
     });
   }
 
