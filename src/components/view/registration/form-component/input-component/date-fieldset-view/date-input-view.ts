@@ -24,7 +24,7 @@ export default class DateInputView extends View {
     const input = this.createInput(DateInputParams.input.type, DateInputParams.input.id);
     flatpickr(input, {
       maxDate: this.getDate18yo(),
-      dateFormat: 'd-m-Y',
+      dateFormat: 'Y-m-d',
     });
 
     this.addInnerElement(input);

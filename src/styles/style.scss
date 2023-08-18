@@ -5,6 +5,7 @@
 
 // BASE
 @import './base/base';
+@import './base/buttons';
 
 //LAYOUTS
 @import './layouts/wrapper';
@@ -20,3 +21,4 @@
 @import './components/user-icons/user-icons-wrapper.scss';
 @import './components/navigation/nav-wrapper.scss';
 @import './components/burger-menu/burger-menu.scss';
+@import './components/not-found';

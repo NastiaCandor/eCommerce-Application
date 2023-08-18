@@ -1,9 +1,15 @@
 import { Route } from '../../types';
 import PAGES from '../router/pages';
 import Router from '../router/Router';
+import CartView from '../view/cart/CartView';
 import HeaderView from '../view/header/HeaderView';
 import LoginView from '../view/login/LoginView';
 import MainView from '../view/main/MainView';
+import NotFoundView from '../view/not-found-page/NotFoundView';
+import AboutView from '../view/pages/about/AboutView';
+import CatalogView from '../view/pages/catalog/CatalogView';
+import ContactsView from '../view/pages/contacts/ContactsView';
+import ShippingView from '../view/pages/shipping/ShippingView';
 import RegView from '../view/registration/reg-view';
 
 export default class App {
@@ -13,12 +19,10 @@ export default class App {
 
   private router: Router;
 
-  private routes: Route[];
-
   constructor() {
-    this.routes = this.createRoutes();
+    const routes = this.createRoutes();
     this.main = new MainView();
-    this.router = new Router(this.routes);
+    this.router = new Router(routes);
     this.header = new HeaderView(this.router);
   }
 
@@ -44,21 +48,61 @@ export default class App {
         callback: () => {},
       },
       {
-        path: `${PAGES.ACCOUNT.LOG_IN}`,
+        path: `${PAGES.LOG_IN}`,
         callback: () => {
           this.setContent(new LoginView().getElement());
         },
       },
       {
-        path: `${PAGES.ACCOUNT.SIGN_UP}`,
+        path: `${PAGES.CART}`,
+        callback: () => {
+          this.setContent(new CartView().getElement());
+        },
+      },
+      {
+        path: `${PAGES.SIGN_UP}`,
         callback: () => {
           this.setContent(new RegView().getElement());
         },
       },
-      // {
-      //   path: `${PAGES.ACCOUNT.USER_PROFILE}`,
-      //   callback: () => {},
-      // },
+      {
+        path: `${PAGES.USER_PROFILE}`,
+        callback: () => {},
+      },
+      {
+        path: `${PAGES.ABOUT_US}`,
+        callback: () => {
+          const aboutView = new AboutView().getElement();
+          this.setContent(aboutView);
+        },
+      },
+      {
+        path: `${PAGES.CATALOG}`,
+        callback: () => {
+          this.setContent(new CatalogView().getElement());
+        },
+      },
+      {
+        path: `${PAGES.CONTACT_US}`,
+        callback: () => {
+          const contactsView = new ContactsView().getElement();
+          this.setContent(contactsView);
+        },
+      },
+      {
+        path: `${PAGES.SHIPPING}`,
+        callback: () => {
+          const shippingView = new ShippingView().getElement();
+          this.setContent(shippingView);
+        },
+      },
+      {
+        path: `${PAGES.NOT_FOUND}`,
+        callback: () => {
+          const notFoundView = new NotFoundView().getElement();
+          this.setContent(notFoundView);
+        },
+      },
     ];
   }
 }

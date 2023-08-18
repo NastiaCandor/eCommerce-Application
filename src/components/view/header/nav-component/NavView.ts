@@ -36,6 +36,9 @@ export default class NavigationView extends View {
       item.setTextContent(name);
       burgerClonedItem.setTextContent(name);
       const key = this.formatKeyToUpperCase(name);
+      const link = this.formatNameToLinkName(name);
+      item.setAttribute('href', link);
+      burgerClonedItem.setAttribute('href', link);
       const burgerKey = this.formatKeyToUpperCase(name, true);
       this.navCollection.set(key, item.getElement());
       this.burgerNavCollection.set(burgerKey, burgerClonedItem.getElement());
@@ -47,6 +50,10 @@ export default class NavigationView extends View {
       return `${key.replace(/\s/g, '_').toUpperCase()}_BG`;
     }
     return key.replace(/\s/g, '_').toUpperCase();
+  }
+
+  private formatNameToLinkName(name: string): string {
+    return name.replace(/\s/g, '_').toLowerCase();
   }
 
   public get getNavCollection(): Map<string, HTMLElement> {

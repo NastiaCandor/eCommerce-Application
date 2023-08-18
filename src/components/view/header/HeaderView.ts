@@ -5,7 +5,7 @@ import headerParams from './header-params';
 import NavigationView from './nav-component/NavView';
 import '../../../assets/img/icons8-cheburashka-48.svg';
 import Router from '../../router/Router';
-import { PagesAccountInterface, PagesContentInterface } from '../../../types';
+import { PagesInterface } from '../../../types';
 import navigationParams from './nav-component/nav-params';
 import PAGES from '../../router/pages';
 
@@ -112,12 +112,10 @@ export default class HeaderView extends View {
     return burgerButtonWrapper;
   }
 
-  private navigateToPage(page: keyof PagesContentInterface | keyof PagesAccountInterface): void {
+  private navigateToPage(page: string): void {
     const key = this.isBurgerItem(page) ? this.formatBurgerItemKey(page) : page;
-    if (key in PAGES.CONTENT) {
-      this.router.navigate(PAGES.CONTENT[key as keyof PagesContentInterface]);
-    } else if (key in PAGES.ACCOUNT) {
-      this.router.navigate(PAGES.ACCOUNT[key as keyof PagesAccountInterface]);
+    if (key in PAGES) {
+      this.router.navigate(PAGES[key as keyof PagesInterface]);
     } else {
       this.router.navigate(PAGES.NOT_FOUND);
     }
@@ -125,8 +123,9 @@ export default class HeaderView extends View {
 
   private linksCallbackHandler(collection: Map<string, HTMLElement>): void {
     collection.forEach((value, key) => {
-      const page = key as keyof PagesContentInterface | keyof PagesAccountInterface;
-      value.addEventListener('click', () => {
+      const page = key as keyof PagesInterface;
+      value.addEventListener('click', (evt) => {
+        evt.preventDefault();
         this.updateLinksStatus(page);
         this.navigateToPage(page);
       });

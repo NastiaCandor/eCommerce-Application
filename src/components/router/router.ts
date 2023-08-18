@@ -1,10 +1,12 @@
 import { Route, UserRequest } from '../../types';
+import PAGES from './pages';
 
 export default class Router {
   private routes: Route[];
 
   constructor(routes: Route[]) {
     this.routes = routes;
+    this.startInit();
   }
 
   public navigate(url: string) {
@@ -16,6 +18,7 @@ export default class Router {
       return;
     }
 
+    window.history.pushState(null, '', route?.path);
     route.callback();
   }
 
@@ -27,6 +30,28 @@ export default class Router {
   }
 
   private redirectToNotFound(): void {
-    //
+    const routeToNotFound = this.routes.find((route) => route.path === PAGES.NOT_FOUND);
+    if (routeToNotFound) this.navigate(routeToNotFound.path);
+  }
+
+  private urlChangeHandler(): void {
+    const path = this.getCurrentPath();
+    this.navigate(path);
+  }
+
+  private getCurrentPath(): string {
+    if (window.location.hash) {
+      return window.location.hash.slice(1);
+    }
+    return window.location.pathname.slice(1);
+  }
+
+  private startInit(): void {
+    window.addEventListener('DOMContentLoaded', () => {
+      const path = this.getCurrentPath();
+      this.navigate(path);
+    });
+
+    window.addEventListener('popstate', this.urlChangeHandler.bind(this));
   }
 }

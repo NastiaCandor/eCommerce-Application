@@ -2,6 +2,7 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/comma-dangle */
 import { postcodeValidator } from 'postcode-validator';
+import { Address } from '@commercetools/platform-sdk';
 import ElementCreator from '../../../utils/ElementCreator';
 import View from '../../View';
 import formParams from './form-params';
@@ -22,6 +23,7 @@ import { ElementParamsType } from '../../../../types';
 import CityInputParams from './input-component/address/city-fieldset-view/city-params';
 import StreetInputParams from './input-component/address/street-input-view/street-params';
 import CountryInputParams from './input-component/address/country-fieldset-view/country-params';
+import ClientAPI from '../../../utils/Client';
 
 export default class FormView extends View {
   private emailInput: EmailInputView;
@@ -56,6 +58,8 @@ export default class FormView extends View {
 
   private checkboxDefaultBill: CheckboxView;
 
+  clientAPI: ClientAPI;
+
   public sameAdrs: boolean;
 
   constructor() {
@@ -76,6 +80,7 @@ export default class FormView extends View {
     this.checkboxSameAdrs = new CheckboxView();
     this.checkboxDefaultShip = new CheckboxView();
     this.checkboxDefaultBill = new CheckboxView();
+    this.clientAPI = new ClientAPI();
     this.sameAdrs = false;
     this.render();
   }
@@ -87,7 +92,7 @@ export default class FormView extends View {
   protected configure(): void {
     this.insertFormItems();
     this.setAttribute('novalidate', 'true');
-    this.validateInput();
+    this.submitForm();
     this.checkShipPostcode();
     this.checkBillPostcode();
     this.callSameAdrs();
@@ -96,9 +101,9 @@ export default class FormView extends View {
 
   private insertFormItems(): void {
     this.addInnerElement(this.emailInput);
+    this.addInnerElement(this.passwordInput);
     this.addInnerElement(this.firstNameInput);
     this.addInnerElement(this.lastNameInput);
-    this.addInnerElement(this.passwordInput);
     this.addInnerElement(this.dateInput);
     const shipAdrsWrapper = this.createAdrsWrapper(
       WrapperParams,
@@ -189,18 +194,10 @@ export default class FormView extends View {
     return wrapper;
   }
 
-  private validateInput(): void {
-    const formEl = this.getElement();
-    const inputsArr = this.getInputsArr();
-    for (let i = 0; i < inputsArr.length; i += 1) {
-      this.submitInvalid(formEl, inputsArr[i]);
-    }
-  }
-
   private checkShipPostcode() {
-    const shipCountry = this.countryShipSelect.getElement().children[1] as HTMLSelectElement;
-    const shipPostcode = this.postcodeShipInput.getElement().children[1] as HTMLInputElement;
-    const errorShipPostcode = this.postcodeShipInput.getElement().children[2] as HTMLElement;
+    const shipCountry = this.countryShipSelect.getChildren()[1] as HTMLSelectElement;
+    const shipPostcode = this.postcodeShipInput.getChildren()[1] as HTMLInputElement;
+    const errorShipPostcode = this.postcodeShipInput.getChildren()[2] as HTMLElement;
     shipPostcode.addEventListener('input', () => {
       this.checkPostcode(shipPostcode, shipCountry, errorShipPostcode);
     });
@@ -219,9 +216,9 @@ export default class FormView extends View {
   }
 
   private checkBillPostcode() {
-    const billCountry = this.countryBillSelect.getElement().children[1] as HTMLSelectElement;
-    const billPostcode = this.postcodeBillInput.getElement().children[1] as HTMLInputElement;
-    const errorBillPostcode = this.postcodeBillInput.getElement().children[2] as HTMLElement;
+    const billCountry = this.countryBillSelect.getChildren()[1] as HTMLSelectElement;
+    const billPostcode = this.postcodeBillInput.getChildren()[1] as HTMLInputElement;
+    const errorBillPostcode = this.postcodeBillInput.getChildren()[2] as HTMLElement;
     this.checkPostcode(billPostcode, billCountry, errorBillPostcode);
     billPostcode.addEventListener('input', () => {
       this.checkPostcode(billPostcode, billCountry, errorBillPostcode);
@@ -244,7 +241,6 @@ export default class FormView extends View {
 
   private changeChecked() {
     const checkbox = this.checkboxSameAdrs.getChildren()[0] as HTMLInputElement;
-    console.log(this.sameAdrs);
     checkbox.addEventListener('change', () => {
       this.sameAdrs = checkbox.checked;
     });
@@ -287,22 +283,22 @@ export default class FormView extends View {
   }
 
   private callSameAdrs() {
-    const shipCity = this.cityShipInput.getElement().children[1] as HTMLInputElement;
-    const billCity = this.cityBillInput.getElement().children[1] as HTMLInputElement;
-    const billCityError = this.cityBillInput.getElement().children[2] as HTMLElement;
+    const shipCity = this.cityShipInput.getChildren()[1] as HTMLInputElement;
+    const billCity = this.cityBillInput.getChildren()[1] as HTMLInputElement;
+    const billCityError = this.cityBillInput.getChildren()[2] as HTMLElement;
 
-    const shipCountry = this.countryShipSelect.getElement().children[1] as HTMLSelectElement;
-    const billCountry = this.countryBillSelect.getElement().children[1] as HTMLSelectElement;
-    const billCountryError = this.countryBillSelect.getElement().children[2] as HTMLElement;
+    const shipCountry = this.countryShipSelect.getChildren()[1] as HTMLSelectElement;
+    const billCountry = this.countryBillSelect.getChildren()[1] as HTMLSelectElement;
+    const billCountryError = this.countryBillSelect.getChildren()[2] as HTMLElement;
 
-    const shipStreet = this.streetShipInput.getElement().children[1] as HTMLSelectElement;
-    const billStreet = this.streetBillInput.getElement().children[1] as HTMLSelectElement;
-    const billStreetError = this.streetBillInput.getElement().children[2] as HTMLElement;
+    const shipStreet = this.streetShipInput.getChildren()[1] as HTMLSelectElement;
+    const billStreet = this.streetBillInput.getChildren()[1] as HTMLSelectElement;
+    const billStreetError = this.streetBillInput.getChildren()[2] as HTMLElement;
 
-    const shipPostcode = this.postcodeShipInput.getElement().children[1] as HTMLSelectElement;
-    const billPostcode = this.postcodeBillInput.getElement().children[1] as HTMLSelectElement;
-    const billPostcodeError = this.postcodeBillInput.getElement().children[2] as HTMLElement;
-    const checkbox = this.checkboxSameAdrs.getElement().children[0] as HTMLInputElement;
+    const shipPostcode = this.postcodeShipInput.getChildren()[1] as HTMLSelectElement;
+    const billPostcode = this.postcodeBillInput.getChildren()[1] as HTMLSelectElement;
+    const billPostcodeError = this.postcodeBillInput.getChildren()[2] as HTMLElement;
+    const checkbox = this.checkboxSameAdrs.getChildren()[0] as HTMLInputElement;
 
     this.copyAdrsValues(shipCity, billCity, billCityError, checkbox);
     this.copyAdrsValues(shipCountry, billCountry, billCountryError, checkbox);
@@ -310,38 +306,150 @@ export default class FormView extends View {
     this.copyAdrsValues(shipPostcode, billPostcode, billPostcodeError, checkbox);
   }
 
-  private getInputsArr(): HTMLInputElement[] {
+  private getInputsArr(): (HTMLInputElement | HTMLSelectElement)[] {
     const inputsArr = [];
-    const inputEmail = this.emailInput.getElement().children[1] as HTMLInputElement;
-    const inputFirstName = this.firstNameInput.getElement().children[1] as HTMLInputElement;
-    const inputLastName = this.lastNameInput.getElement().children[1] as HTMLInputElement;
-    const inputPassword = this.passwordInput.getElement().children[1] as HTMLInputElement;
-    const inputDate = this.dateInput.getElement().children[1] as HTMLInputElement;
-    const inputShipStreet = this.streetShipInput.getElement().children[1] as HTMLInputElement;
-    const inputShipCity = this.cityShipInput.getElement().children[1] as HTMLInputElement;
-    const inputShipPostcode = this.postcodeShipInput.getElement().children[1] as HTMLInputElement;
-    const inputBillStreet = this.streetBillInput.getElement().children[1] as HTMLInputElement;
-    const inputBillCity = this.cityBillInput.getElement().children[1] as HTMLInputElement;
-    const inputBillPostcode = this.postcodeBillInput.getElement().children[1] as HTMLInputElement;
+    const inputEmail = this.emailInput.getChildren()[1] as HTMLInputElement;
+    const inputPassword = this.passwordInput.getChildren()[1] as HTMLInputElement;
+    const inputFirstName = this.firstNameInput.getChildren()[1] as HTMLInputElement;
+    const inputLastName = this.lastNameInput.getChildren()[1] as HTMLInputElement;
+    const inputDate = this.dateInput.getChildren()[1] as HTMLInputElement;
+    const inputShipCity = this.cityShipInput.getChildren()[1] as HTMLInputElement;
+    const inputShipStreet = this.streetShipInput.getChildren()[1] as HTMLInputElement;
+    const selectShipCountry = this.countryShipSelect.getChildren()[1] as HTMLSelectElement;
+    const inputShipPostcode = this.postcodeShipInput.getChildren()[1] as HTMLInputElement;
+    const inputBillCity = this.cityBillInput.getChildren()[1] as HTMLInputElement;
+    const inputBillStreet = this.streetBillInput.getChildren()[1] as HTMLInputElement;
+    const selectBillCountry = this.countryBillSelect.getChildren()[1] as HTMLSelectElement;
+    const inputBillPostcode = this.postcodeBillInput.getChildren()[1] as HTMLInputElement;
     inputsArr.push(inputEmail);
+    inputsArr.push(inputPassword);
     inputsArr.push(inputFirstName);
     inputsArr.push(inputLastName);
-    inputsArr.push(inputPassword);
     inputsArr.push(inputDate);
-    inputsArr.push(inputShipStreet);
     inputsArr.push(inputShipCity);
+    inputsArr.push(inputShipStreet);
+    inputsArr.push(selectShipCountry);
     inputsArr.push(inputShipPostcode);
-    inputsArr.push(inputBillStreet);
     inputsArr.push(inputBillCity);
+    inputsArr.push(inputBillStreet);
+    inputsArr.push(selectBillCountry);
     inputsArr.push(inputBillPostcode);
     return inputsArr;
   }
 
-  private submitInvalid(el: HTMLElement, input: HTMLInputElement): void {
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    el.addEventListener('submit', (el) => {
-      if (!input.validity.valid) {
-        el.preventDefault();
+  private getDefaultStatuses(): boolean[] {
+    const defaultShip = this.checkboxDefaultShip.getChildren()[0] as HTMLInputElement;
+    const defaultBill = this.checkboxDefaultBill.getChildren()[0] as HTMLInputElement;
+    const defaultStatusArr = [];
+    defaultStatusArr.push(defaultShip.checked, defaultBill.checked);
+    return defaultStatusArr;
+  }
+
+  private makeAdrsObj(
+    cityInput: HTMLInputElement,
+    streetInput: HTMLInputElement,
+    countrySelect: HTMLSelectElement,
+    postcodeInput: HTMLInputElement
+  ) {
+    const shipAdrsObj: Address = {
+      city: cityInput.value,
+      streetName: streetInput.value,
+      country: countrySelect.value,
+      postalCode: postcodeInput.value,
+    };
+    return shipAdrsObj;
+  }
+
+  private makeAdrsArr(): Address[] {
+    const adrsArr = [];
+    adrsArr.push(
+      this.makeAdrsObj(
+        this.getInputsArr()[5] as HTMLInputElement,
+        this.getInputsArr()[6] as HTMLInputElement,
+        this.getInputsArr()[7] as HTMLSelectElement,
+        this.getInputsArr()[8] as HTMLInputElement
+      ),
+      this.makeAdrsObj(
+        this.getInputsArr()[9] as HTMLInputElement,
+        this.getInputsArr()[10] as HTMLInputElement,
+        this.getInputsArr()[11] as HTMLSelectElement,
+        this.getInputsArr()[12] as HTMLInputElement
+      )
+    );
+    return adrsArr;
+  }
+
+  private async signUp() {
+    const email = this.getInputsArr()[0].value;
+    const password = this.getInputsArr()[1].value;
+    const fName = this.getInputsArr()[2].value;
+    const lName = this.getInputsArr()[3].value;
+    const dateOfBirth = this.getInputsArr()[4].value;
+    const adrsArr = this.makeAdrsArr();
+
+    const defStatusArr = this.getDefaultStatuses();
+    let defaultShipAdrs;
+    let defaultBillAdrs;
+    if (defStatusArr[0]) {
+      defaultShipAdrs = 0;
+    } else if (!defStatusArr[0]) {
+      defaultShipAdrs = undefined;
+    }
+    if (defStatusArr[1]) {
+      defaultBillAdrs = 1;
+    } else if (!defStatusArr[1]) {
+      defaultBillAdrs = undefined;
+    }
+    const signUpAPI = this.clientAPI.registerClient(
+      email,
+      password,
+      fName,
+      lName,
+      dateOfBirth,
+      adrsArr,
+      [0],
+      [1],
+      defaultShipAdrs,
+      defaultBillAdrs
+    );
+
+    signUpAPI()
+      .then((data) => {
+        if (data.statusCode === 201) {
+          console.log(data.body.customer);
+          this.login(email, password);
+        }
+      })
+      .catch((error) => {
+        if (error.status === 400) {
+          console.log(error);
+        } else {
+          console.log(error.status);
+        }
+      });
+  }
+
+  private async login(email: string, password: string) {
+    const loginAPI = this.clientAPI.loginClient(email, password);
+    loginAPI()
+      .then((data) => {
+        if (data.statusCode === 200) {
+          console.log(data.body);
+          console.log(`Hello ${data.body.customer.firstName} ${data.body.customer.lastName}!`);
+        }
+      })
+      .catch((error) => {
+        console.log(error.status);
+      });
+  }
+
+  private submitForm(): void {
+    const formEl = this.getElement() as HTMLFormElement;
+    formEl.addEventListener('submit', (el) => {
+      console.log(formEl.checkValidity());
+      el.preventDefault();
+      if (formEl.checkValidity()) {
+        this.signUp();
       }
     });
   }

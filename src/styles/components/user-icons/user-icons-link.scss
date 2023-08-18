@@ -52,4 +52,5 @@
   filter: opacity(0.6) brightness(0.4);
   background-color: $sample-secondary-color;
   border-radius: 5px;
+  pointer-events: none;
 }

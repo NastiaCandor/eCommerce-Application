@@ -4,7 +4,7 @@ const headerParams = {
   },
   innerWrapper: {
     tag: 'div',
-    cssClasses: ['header__wrapper'],
+    cssClasses: ['header__wrapper', 'wrapper'],
   },
   logo: {
     tag: 'a',

@@ -37,12 +37,18 @@ export default class UserIconsView extends View {
       item.addInnerElement(span);
       span.setTextContent(name);
       const key = this.formatKeyToUpperCase(name);
+      const link = this.formatNameToLinkName(name);
+      item.setAttribute('href', link);
       this.iconsCollection.set(key, item.getElement());
     });
   }
 
   private formatKeyToUpperCase(key: string): string {
     return key.replace(/\s/g, '_').toUpperCase();
+  }
+
+  private formatNameToLinkName(name: string): string {
+    return name.replace(/\s/g, '_').toLowerCase();
   }
 
   public get getIconsCollection(): Map<string, HTMLElement> {

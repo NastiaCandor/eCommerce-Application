@@ -7,7 +7,6 @@ const navigationParams = {
   navItem: {
     tag: 'a',
     cssClasses: ['nav_item'],
-    link: '#',
   },
 
   navItemsNames: ['Catalog', 'About us', 'Shipping', 'Contact us'],
