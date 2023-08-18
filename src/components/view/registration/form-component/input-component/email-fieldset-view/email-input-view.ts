@@ -1,3 +1,4 @@
+import Noty from 'noty';
 import ElementCreator from '../../../../../utils/element-creator';
 import View from '../../../../view';
 import fieldsetParams from '../input-params';
@@ -73,6 +74,16 @@ export default class EmailInputView extends View {
     });
   }
 
+  private showErrorMessage(): void {
+    new Noty({
+      theme: 'light',
+      text: 'Please check your connection',
+      timeout: 3000,
+      progressBar: true,
+      type: 'alert',
+    }).show();
+  }
+
   private async checkEmailExist(element: HTMLInputElement, errorSpan: HTMLElement) {
     element.addEventListener('blur', () => {
       const getCustomersAPI = this.clientAPI.getCustomers();
@@ -87,8 +98,8 @@ export default class EmailInputView extends View {
           }
         })
         .catch((error) => {
-          if (error.status === 400) {
-            console.log(error);
+          if (error.status === undefined) {
+            this.showErrorMessage();
           } else {
             console.log(error.status);
           }

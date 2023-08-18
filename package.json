@@ -61,7 +61,6 @@
     "@commercetools/platform-sdk": "^5.0.0",
     "@commercetools/sdk-client-v2": "^2.2.0",
     "flatpickr": "^4.6.13",
-    "node-fetch": "^3.3.2",
     "noty": "^3.2.0-beta-deprecated",
     "postcode-validator": "^3.8.14"
   }

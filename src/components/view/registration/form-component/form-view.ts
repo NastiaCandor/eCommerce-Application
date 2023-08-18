@@ -423,21 +423,40 @@ export default class FormView extends View {
         }
       })
       .catch((error) => {
-        if (error.status === 400) {
-          console.log(error);
-        } else {
-          console.log(error.status);
+        if (error.status === undefined) {
+          this.showSignUpErrorMessage(formParams.serverProblemMessage);
         }
+        this.showSignUpErrorMessage(formParams.errorSignUpMessage);
       });
   }
 
   private showRegMessage(): void {
     new Noty({
-      theme: 'light',
+      theme: 'mint',
       text: formParams.signUpMessage,
       timeout: 3000,
       progressBar: true,
       type: 'success',
+    }).show();
+  }
+
+  private showLoginErrorMessage(): void {
+    new Noty({
+      theme: 'mint',
+      text: formParams.errorLoginMessage,
+      timeout: 3000,
+      progressBar: true,
+      type: 'error',
+    }).show();
+  }
+
+  private showSignUpErrorMessage(message: string): void {
+    new Noty({
+      theme: 'mint',
+      text: message,
+      timeout: 3000,
+      progressBar: true,
+      type: 'error',
     }).show();
   }
 
@@ -447,18 +466,20 @@ export default class FormView extends View {
       .then((data) => {
         if (data.statusCode === 200) {
           console.log(data.body);
-          console.log(`Hello ${data.body.customer.firstName} ${data.body.customer.lastName}!`);
         }
       })
       .catch((error) => {
-        console.log(error.status);
+        if (error.statusCode === undefined) {
+          this.showLoginErrorMessage();
+        }
+        this.showLoginErrorMessage();
       });
   }
 
   private submitForm(): void {
     const formEl = this.getElement() as HTMLFormElement;
     formEl.addEventListener('submit', (el) => {
-      console.log(formEl.checkValidity());
+      // console.log(formEl.checkValidity());
       el.preventDefault();
       if (formEl.checkValidity()) {
         this.signUp();

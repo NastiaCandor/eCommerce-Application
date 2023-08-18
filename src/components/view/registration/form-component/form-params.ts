@@ -31,6 +31,9 @@ const formParams = {
     showDisplay: ['show-display'],
   },
   signUpMessage: 'Account has been created successfully!',
+  errorLoginMessage: 'Login attempt has failed. Please go to the login page and try again',
+  errorSignUpMessage: 'Please check your information and try again',
+  serverProblemMessage: 'Please check your connection and try again',
 };
 
 export default formParams;
