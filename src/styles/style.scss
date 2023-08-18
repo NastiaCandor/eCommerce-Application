@@ -17,10 +17,12 @@
 
 @import './components/reg';
 @import './components/input';
-@import './../../node_modules/flatpickr/dist/flatpickr.css';
 @import './components/login';
 @import './components/user-icons/user-icons-wrapper.scss';
 @import './components/navigation/nav-wrapper.scss';
 @import './components/burger-menu/burger-menu.scss';
 @import './components/not-found';
+@import './../../node_modules/flatpickr/dist/flatpickr.css';
+@import './../../node_modules/noty/src/noty.scss';
+@import './../../node_modules/noty/lib/themes/light.css'
 

@@ -30,6 +30,7 @@ const formParams = {
     noDisplay: ['no-display'],
     showDisplay: ['show-display'],
   },
+  signUpMessage: 'Account has been created successfully!',
 };
 
 export default formParams;

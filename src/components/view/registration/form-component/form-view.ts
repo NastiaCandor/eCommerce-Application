@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/comma-dangle */
 import { postcodeValidator } from 'postcode-validator';
 import { Address } from '@commercetools/platform-sdk';
+import Noty from 'noty';
 import ElementCreator from '../../../utils/element-creator';
 import View from '../../view';
 import formParams from './form-params';
@@ -417,6 +418,7 @@ export default class FormView extends View {
       .then((data) => {
         if (data.statusCode === 201) {
           console.log(data.body.customer);
+          this.showRegMessage();
           this.login(email, password);
         }
       })
@@ -427,6 +429,16 @@ export default class FormView extends View {
           console.log(error.status);
         }
       });
+  }
+
+  private showRegMessage(): void {
+    new Noty({
+      theme: 'light',
+      text: formParams.signUpMessage,
+      timeout: 3000,
+      progressBar: true,
+      type: 'success',
+    }).show();
   }
 
   private async login(email: string, password: string) {
