@@ -31,6 +31,13 @@ export default class ClientAPI {
     return loginAPI;
   }
 
+  public getCustomers() {
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+
+    const customersAPI = () => apiRoot.customers().get().execute();
+    return customersAPI;
+  }
+
   public registerClient(
     newEmail: string,
     newPassword: string,
