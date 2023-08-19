@@ -10,15 +10,21 @@ export default class Router {
   }
 
   public navigate(url: string) {
-    const request = this.parseUrl(url);
+    window.history.pushState(null, '', url);
+    const path = this.getCurrentPath();
+    this.routeTo(path);
+  }
+
+  private routeTo(path: string) {
+    const request = this.parseUrl(path);
     const pathToFind = request.resource === '' ? request.path : `${request.path}/${request.resource}`;
     const route = this.routes.find((item) => item.path === pathToFind);
+
     if (!route) {
       this.redirectToNotFound();
       return;
     }
 
-    window.history.pushState(null, '', route?.path);
     route.callback();
   }
 
@@ -48,10 +54,15 @@ export default class Router {
 
   private startInit(): void {
     window.addEventListener('DOMContentLoaded', () => {
-      const path = this.getCurrentPath();
-      this.navigate(path);
+      this.urlChangeHandler();
     });
 
-    window.addEventListener('popstate', this.urlChangeHandler.bind(this));
+    window.addEventListener('hashchange', () => {
+      this.urlChangeHandler();
+    });
+
+    window.addEventListener('popstate', () => {
+      this.urlChangeHandler();
+    });
   }
 }

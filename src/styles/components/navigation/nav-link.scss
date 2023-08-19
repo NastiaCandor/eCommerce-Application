@@ -1,9 +1,11 @@
 .nav_item {
   display: inline-block;
+  position: relative;
   color: $sample-primary-color;
   font-size: 1.2rem;
   white-space: nowrap;
-  position: relative;
+  user-select: none;
+
   transition: color 0.3s ease-in-out;
   &:hover {
     color: $sample-secondary-color;

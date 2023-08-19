@@ -126,16 +126,16 @@ export default class HeaderView extends View {
       const page = key as keyof PagesInterface;
       value.addEventListener('click', (evt) => {
         evt.preventDefault();
-        this.updateLinksStatus(page);
         this.navigateToPage(page);
       });
     });
   }
 
-  private updateLinksStatus(page: string): void {
+  public updateLinksStatus(page: string): void {
+    const pageName = page.toUpperCase();
     this.linksCollection.forEach((value, key) => {
       value.classList.remove('active');
-      if (key === page || `${key}_BG` === page || this.formatBurgerItemKey(key) === page) {
+      if (key === pageName || `${key}_BG` === pageName || this.formatBurgerItemKey(key) === pageName) {
         value.classList.add('active');
       }
     });

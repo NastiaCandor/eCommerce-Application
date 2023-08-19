@@ -65,22 +65,6 @@ export type PagesInterface = {
   CONTACT_US: string;
 };
 
-// export interface PagesAccountInterface {
-//   LOG_IN: string;
-//   SIGN_UP: string;
-//   USER_PROFILE: string;
-//   CART: string;
-// }
-
-// export interface PagesContentInterface {
-//   CATALOG: string;
-//   ABOUT_US: string;
-//   SHIPPING: string;
-//   CONTACT_US: string;
-// }
-
-// ROUTER
-
 export type Route = {
   path: string;
   callback: () => void;

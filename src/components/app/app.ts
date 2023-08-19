@@ -31,7 +31,8 @@ export default class App {
     this.main.render();
   }
 
-  private setContent(view: HTMLElement) {
+  private setContent(page: string, view: HTMLElement) {
+    this.header.updateLinksStatus(page);
     this.main.setContent(view);
   }
 
@@ -39,9 +40,7 @@ export default class App {
     return [
       {
         path: '',
-        callback: () => {
-          // this.setContent();
-        },
+        callback: () => {},
       },
       {
         path: `${PAGES.INDEX}`,
@@ -50,19 +49,19 @@ export default class App {
       {
         path: `${PAGES.LOG_IN}`,
         callback: () => {
-          this.setContent(new LoginView().getElement());
+          this.setContent(PAGES.LOG_IN, new LoginView().getElement());
         },
       },
       {
         path: `${PAGES.CART}`,
         callback: () => {
-          this.setContent(new CartView().getElement());
+          this.setContent(PAGES.CART, new CartView().getElement());
         },
       },
       {
         path: `${PAGES.SIGN_UP}`,
         callback: () => {
-          this.setContent(new RegView().getElement());
+          this.setContent(PAGES.SIGN_UP, new RegView().getElement());
         },
       },
       {
@@ -73,34 +72,34 @@ export default class App {
         path: `${PAGES.ABOUT_US}`,
         callback: () => {
           const aboutView = new AboutView().getElement();
-          this.setContent(aboutView);
+          this.setContent(PAGES.ABOUT_US, aboutView);
         },
       },
       {
         path: `${PAGES.CATALOG}`,
         callback: () => {
-          this.setContent(new CatalogView().getElement());
+          this.setContent(PAGES.CATALOG, new CatalogView().getElement());
         },
       },
       {
         path: `${PAGES.CONTACT_US}`,
         callback: () => {
           const contactsView = new ContactsView().getElement();
-          this.setContent(contactsView);
+          this.setContent(PAGES.CONTACT_US, contactsView);
         },
       },
       {
         path: `${PAGES.SHIPPING}`,
         callback: () => {
           const shippingView = new ShippingView().getElement();
-          this.setContent(shippingView);
+          this.setContent(PAGES.SHIPPING, shippingView);
         },
       },
       {
         path: `${PAGES.NOT_FOUND}`,
         callback: () => {
           const notFoundView = new NotFoundView().getElement();
-          this.setContent(notFoundView);
+          this.setContent(PAGES.NOT_FOUND, notFoundView);
         },
       },
     ];

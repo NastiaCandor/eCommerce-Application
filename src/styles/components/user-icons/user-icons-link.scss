@@ -7,6 +7,8 @@
   gap: 0.5rem;
   height: 100%;
   color: $sample-primary-color;
+  user-select: none;
+
   transition: all 0.5s ease;
 
   .item_text {
