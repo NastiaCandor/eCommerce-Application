@@ -101,11 +101,18 @@ export default class FormView extends View {
   }
 
   private insertFormItems(): void {
-    this.addInnerElement(this.emailInput);
-    this.addInnerElement(this.passwordInput);
-    this.addInnerElement(this.firstNameInput);
-    this.addInnerElement(this.lastNameInput);
-    this.addInnerElement(this.dateInput);
+    const wrapper = new ElementCreator(WrapperParams);
+    const heading = new ElementCreator(formParams.heading);
+    heading.setTextContent(formParams.heading.basicInfo.text);
+    wrapper.addInnerElement(heading);
+
+    wrapper.addInnerElement(this.emailInput);
+    wrapper.addInnerElement(this.passwordInput);
+    wrapper.addInnerElement(this.firstNameInput);
+    wrapper.addInnerElement(this.lastNameInput);
+    wrapper.addInnerElement(this.dateInput);
+    wrapper.setCssClasses(formParams.basicInfoDiv.cssClasses);
+    this.addInnerElement(wrapper);
     const shipAdrsWrapper = this.createAdrsWrapper(
       WrapperParams,
       formParams.heading.shipping.text,

@@ -6,7 +6,10 @@ const formParams = {
 
   heading: {
     tag: 'h4',
-    cssClasses: ['adrs-wrapper__hdn'],
+    cssClasses: ['wrapper__hdn'],
+    basicInfo: {
+      text: 'Create account',
+    },
     shipping: {
       text: 'Shipping Address',
     },
@@ -17,6 +20,9 @@ const formParams = {
 
   addressDiv: {
     cssClasses: ['adrs-wrapper'],
+  },
+  basicInfoDiv: {
+    cssClasses: ['info-wrapper'],
   },
 
   button: {

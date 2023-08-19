@@ -7,7 +7,7 @@
     "serve": "webpack serve --open --config ./webpack.config.js",
     "build": "webpack --config ./webpack.config.js --env mode=prod",
     "lint": "eslint . --ext .ts",
-    "test": "jest --collect-coverage",
+    "test": "nyc",
     "fix": "npm run lint -- --fix",
     "prepare": "husky install"
   },
