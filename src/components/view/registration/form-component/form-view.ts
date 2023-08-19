@@ -345,6 +345,17 @@ export default class FormView extends View {
     return inputsArr;
   }
 
+  private checkInputsValidity() {
+    const arr = this.getInputsArr();
+    const result: (HTMLSelectElement | HTMLInputElement)[] = [];
+    arr.forEach((element) => {
+      if (element.classList.contains('reg-form__input-invalid')) {
+        result.push(element);
+      }
+    });
+    return result.length === 0;
+  }
+
   private getDefaultStatuses(): boolean[] {
     const defaultShip = this.checkboxDefaultShip.getChildren()[0] as HTMLInputElement;
     const defaultBill = this.checkboxDefaultBill.getChildren()[0] as HTMLInputElement;
@@ -486,9 +497,10 @@ export default class FormView extends View {
   private submitForm(): void {
     const formEl = this.getElement() as HTMLFormElement;
     formEl.addEventListener('submit', (el) => {
-      // console.log(formEl.checkValidity());
+      console.log(formEl.checkValidity());
+      this.checkInputsValidity();
       el.preventDefault();
-      if (formEl.checkValidity()) {
+      if (formEl.checkValidity() && this.checkInputsValidity()) {
         this.signUp();
       }
     });

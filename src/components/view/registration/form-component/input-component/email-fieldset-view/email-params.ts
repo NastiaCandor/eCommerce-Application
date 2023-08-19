@@ -15,6 +15,6 @@ const EmailInputParams = {
     cssClasses: 'reg-form__error',
     cssClassesActive: 'reg-form__error-active',
   },
-  errorText: 'User with this email address already exists. Please enter new email address',
+  errorText: 'User with this email address already exists. Please enter another email address',
 };
 export default EmailInputParams;
