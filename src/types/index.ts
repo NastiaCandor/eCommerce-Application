@@ -1,3 +1,5 @@
+// TYPES
+
 export type ElementParamsType = {
   textContent?: string;
   cssClasses?: string[];
