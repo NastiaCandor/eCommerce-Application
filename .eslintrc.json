@@ -25,6 +25,7 @@
     "@typescript-eslint/no-explicit-any": 2,
     "comma-dangle": ["error", "always-multiline"],
     "prettier/prettier" : "error",
+    "max-len": ["error", { "code": 120, "ignoreUrls": true, "ignoreStrings": true, "ignoreTemplateLiterals": true }],
     "linebreak-style": ["error", "windows"]
     // "arrow-body-style": ["error", "always"]
   },

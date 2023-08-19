@@ -29,6 +29,7 @@ export default class NotFoundView extends View {
     wrapper.getElement().classList.add('not-found__wrapper');
     wrapper.addInnerElement(innerWrapper);
     this.addInnerElement(wrapper);
+    this.addInnerElement(wrapper);
   }
 
   private injectTitle(wrapper: ElementCreator): void {
