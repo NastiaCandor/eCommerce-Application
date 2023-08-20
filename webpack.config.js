@@ -10,17 +10,18 @@ const config = {
     rules: [
       {
         test: /\.s[ac]ss$/i,
-        use: ['style-loader', 'css-loader', "sass-loader"],
+        use: ['style-loader', 'css-loader', 'sass-loader'],
       },
       {
-          test: /\.css$/i,
-          use: ['style-loader', 'css-loader'],
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
       },
       {
-          test: /\.ts$/i, use: 'ts-loader'
+        test: /\.ts$/i,
+        use: 'ts-loader',
       },
       {
-        test: /\.(png|jpg|jpeg|gif|ico|svg)$/i, 
+        test: /\.(png|jpg|jpeg|gif|ico|svg)$/i,
         type: 'asset/resource',
       },
       {
@@ -30,35 +31,35 @@ const config = {
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
         type: 'asset/resource',
-    }
+      },
     ],
   },
   resolve: {
-      extensions: ['.js', '.ts'],
+    extensions: ['.js', '.ts'],
   },
   output: {
     filename: 'app.js',
     path: path.resolve(__dirname, 'dist'),
     clean: true,
-    assetModuleFilename: (ext) => ext === 'ico' ? 'assets/[name][ext]' : 'assets/img/[name][ext]',
+    assetModuleFilename: (ext) => (ext === 'ico' ? 'assets/[name][ext]' : 'assets/img/[name][ext]'),
   },
   plugins: [
-      new HtmlWebpackPlugin({
-          template: path.resolve(__dirname, './src/index.html'),
-          filename: 'index.html',
-          title: 'Vinyl Vibe Store',
-      }),
-      new CopyWebpackPlugin({
-        patterns: [
-          {
-            from: path.resolve(__dirname, 'src/assets/favicon.ico'),
-            to: path.resolve(__dirname, 'dist/assets/favicon.ico'), 
-          }
-        ]
-      }),
-      new ESLintPlugin({ extensions: 'ts' }),
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, './src/index.html'),
+      filename: 'index.html',
+      title: 'Vinyl Vibe Store',
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, 'src/assets/favicon.ico'),
+          to: path.resolve(__dirname, 'dist/assets/favicon.ico'),
+        },
+      ],
+    }),
+    new ESLintPlugin({ extensions: 'ts' }),
   ],
-}
+};
 
 module.exports = ({ mode }) => {
   const isProductionMode = mode === 'prod';

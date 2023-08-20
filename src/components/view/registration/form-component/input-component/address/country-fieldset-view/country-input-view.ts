@@ -18,7 +18,6 @@ export default class CountryInputView extends View {
   }
 
   public insertFieldsetItems(): void {
-    // eslint-disable-next-line max-len
     const label = this.createLabel(CountryInputParams.label.textContent);
     this.addInnerElement(label);
     const input = this.createInput();

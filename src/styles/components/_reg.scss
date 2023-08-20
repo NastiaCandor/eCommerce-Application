@@ -1,14 +1,14 @@
-$form-width: 35rem;
+$form-width: 46rem;
 $percent: 50;
 
 .reg-wrapper {
   margin: 0 auto;
-  border: 1px solid black;
   display: flex;
 }
 
 .reg-form,
-.adrs-wrapper {
+.adrs-wrapper,
+.info-wrapper {
   display: flex;
   flex-direction: row;
   width: $form-width;
@@ -20,6 +20,10 @@ $percent: 50;
 
 .adrs-wrapper {
   background-color: aliceblue;
+}
+
+.wrapper__hdn {
+  font-size: 2.4rem;
 }
 
 .reg-form__fieldset {
@@ -34,26 +38,26 @@ $percent: 50;
   width: 100%;
 }
 
-.name-input {
-  width: calc(($form-width - 4rem) / 2);
-}
-
 .reg-form__btn {
-  width: 11rem;
-  height: 3rem;
+  width: 100%;
+  height: 5.2rem;
   font-size: 2rem;
-  background-color: darkblue;
+  background-color: rgb(36, 131, 213);
   color: white;
-  border-radius: 5px;
+  border-radius: 2px;
   margin: 0 auto;
 }
 
-.reg-form__btn {
-  width: 11rem;
-  height: 3rem;
-  font-size: 2rem;
-  background-color: darkblue;
-  color: white;
-  border-radius: 5px;
-  margin: 0 auto;
+@media screen and (max-width: 500px) {
+
+  .reg-form,
+  .adrs-wrapper,
+  .info-wrapper {
+    width: 99%;
+  }
+
+  .wrapper__hdn {
+    font-size: 1.8rem;
+  }
+  
 }

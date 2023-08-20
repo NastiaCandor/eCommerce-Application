@@ -5,6 +5,7 @@ import { postcodeValidator } from 'postcode-validator';
 import { Address } from '@commercetools/platform-sdk';
 import ElementCreator from '../../../utils/ElementCreator';
 import View from '../../View';
+import Noty from 'noty';
 import formParams from './form-params';
 import WrapperParams from '../../wrapper-params';
 import PostcodeInputParams from './input-component/address/postcode-fieldset-view/postcode-params';
@@ -100,11 +101,18 @@ export default class FormView extends View {
   }
 
   private insertFormItems(): void {
-    this.addInnerElement(this.emailInput);
-    this.addInnerElement(this.passwordInput);
-    this.addInnerElement(this.firstNameInput);
-    this.addInnerElement(this.lastNameInput);
-    this.addInnerElement(this.dateInput);
+    const wrapper = new ElementCreator(WrapperParams);
+    const heading = new ElementCreator(formParams.heading);
+    heading.setTextContent(formParams.heading.basicInfo.text);
+    wrapper.addInnerElement(heading);
+
+    wrapper.addInnerElement(this.emailInput);
+    wrapper.addInnerElement(this.passwordInput);
+    wrapper.addInnerElement(this.firstNameInput);
+    wrapper.addInnerElement(this.lastNameInput);
+    wrapper.addInnerElement(this.dateInput);
+    wrapper.setCssClasses(formParams.basicInfoDiv.cssClasses);
+    this.addInnerElement(wrapper);
     const shipAdrsWrapper = this.createAdrsWrapper(
       WrapperParams,
       formParams.heading.shipping.text,
@@ -337,6 +345,17 @@ export default class FormView extends View {
     return inputsArr;
   }
 
+  private checkInputsValidity() {
+    const arr = this.getInputsArr();
+    const result: (HTMLSelectElement | HTMLInputElement)[] = [];
+    arr.forEach((element) => {
+      if (element.classList.contains('reg-form__input-invalid')) {
+        result.push(element);
+      }
+    });
+    return result.length === 0;
+  }
+
   private getDefaultStatuses(): boolean[] {
     const defaultShip = this.checkboxDefaultShip.getChildren()[0] as HTMLInputElement;
     const defaultBill = this.checkboxDefaultBill.getChildren()[0] as HTMLInputElement;
@@ -417,16 +436,46 @@ export default class FormView extends View {
       .then((data) => {
         if (data.statusCode === 201) {
           console.log(data.body.customer);
+          this.showRegMessage();
           this.login(email, password);
         }
       })
       .catch((error) => {
-        if (error.status === 400) {
-          console.log(error);
-        } else {
-          console.log(error.status);
+        if (error.status === undefined) {
+          this.showSignUpErrorMessage(formParams.serverProblemMessage);
         }
+        this.showSignUpErrorMessage(formParams.errorSignUpMessage);
       });
+  }
+
+  private showRegMessage(): void {
+    new Noty({
+      theme: 'mint',
+      text: formParams.signUpMessage,
+      timeout: 3000,
+      progressBar: true,
+      type: 'success',
+    }).show();
+  }
+
+  private showLoginErrorMessage(): void {
+    new Noty({
+      theme: 'mint',
+      text: formParams.errorLoginMessage,
+      timeout: 3000,
+      progressBar: true,
+      type: 'error',
+    }).show();
+  }
+
+  private showSignUpErrorMessage(message: string): void {
+    new Noty({
+      theme: 'mint',
+      text: message,
+      timeout: 3000,
+      progressBar: true,
+      type: 'error',
+    }).show();
   }
 
   private async login(email: string, password: string) {
@@ -435,11 +484,13 @@ export default class FormView extends View {
       .then((data) => {
         if (data.statusCode === 200) {
           console.log(data.body);
-          console.log(`Hello ${data.body.customer.firstName} ${data.body.customer.lastName}!`);
         }
       })
       .catch((error) => {
-        console.log(error.status);
+        if (error.statusCode === undefined) {
+          this.showLoginErrorMessage();
+        }
+        this.showLoginErrorMessage();
       });
   }
 
@@ -447,8 +498,9 @@ export default class FormView extends View {
     const formEl = this.getElement() as HTMLFormElement;
     formEl.addEventListener('submit', (el) => {
       console.log(formEl.checkValidity());
+      this.checkInputsValidity();
       el.preventDefault();
-      if (formEl.checkValidity()) {
+      if (formEl.checkValidity() && this.checkInputsValidity()) {
         this.signUp();
       }
     });

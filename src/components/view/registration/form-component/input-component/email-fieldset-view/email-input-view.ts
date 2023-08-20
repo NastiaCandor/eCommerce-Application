@@ -1,11 +1,16 @@
 import ElementCreator from '../../../../../utils/ElementCreator';
 import View from '../../../../View';
+import Noty from 'noty';
 import fieldsetParams from '../input-params';
 import EmailInputParams from './email-params';
+import ClientAPI from '../../../../../utils/Client';
 
 export default class EmailInputView extends View {
+  clientAPI: ClientAPI;
+
   constructor() {
     super(fieldsetParams.fieldset);
+    this.clientAPI = new ClientAPI();
     this.render();
   }
 
@@ -26,6 +31,7 @@ export default class EmailInputView extends View {
     this.addInnerElement(errorSpan);
     this.validateEmail(input, errorSpan);
     this.showError(input, errorSpan);
+    this.checkEmailExist(input, errorSpan);
   }
 
   private createInput(type: string): HTMLInputElement {
@@ -34,7 +40,6 @@ export default class EmailInputView extends View {
     input.setAttribute('id', type);
     input.setAttribute('minLength', EmailInputParams.input.minLength);
     input.setAttribute('required', fieldsetParams.input.required);
-    // input.setAttribute('pattern', EmailInputParams.input.pattern);
     return input;
   }
 
@@ -69,8 +74,41 @@ export default class EmailInputView extends View {
     });
   }
 
-  public showError(email: HTMLInputElement, errorMessage: HTMLElement) {
-    const errorSpan = errorMessage;
+  private showErrorMessage(): void {
+    new Noty({
+      theme: 'light',
+      text: 'Please check your connection',
+      timeout: 3000,
+      progressBar: true,
+      type: 'alert',
+    }).show();
+  }
+
+  private async checkEmailExist(element: HTMLInputElement, errorSpan: HTMLElement) {
+    element.addEventListener('blur', () => {
+      const getCustomersAPI = this.clientAPI.getCustomers();
+      getCustomersAPI()
+        .then((data) => {
+          if (data.statusCode === 200) {
+            const emailsArr: string[] = [];
+            data.body.results.forEach((customer) => emailsArr.push(customer.email));
+            if (emailsArr.includes(element.value)) {
+              this.showError(element, errorSpan, EmailInputParams.errorText);
+            }
+          }
+        })
+        .catch((error) => {
+          if (error.status === undefined) {
+            this.showErrorMessage();
+          } else {
+            console.log(error.status);
+          }
+        });
+    });
+  }
+
+  public showError(email: HTMLInputElement, errorMessageEl: HTMLElement, errorText?: string) {
+    const errorSpan = errorMessageEl;
     if (email.validity.valueMissing) {
       errorSpan.textContent = 'Enter your e-mail address';
     }
@@ -82,6 +120,9 @@ export default class EmailInputView extends View {
     }
     if (!this.checkEmail(email.value)) {
       errorSpan.textContent = 'Email address is invalid. Please enter a valid email address';
+    }
+    if (errorText) {
+      errorSpan.textContent = errorText;
     }
     errorSpan.classList.add(EmailInputParams.errorSpan.cssClassesActive);
     email.classList.add(EmailInputParams.input.cssClassesInvalid);

@@ -18,7 +18,6 @@ export default class PostcodeInputView extends View {
   }
 
   public insertFieldsetItems(): void {
-    // eslint-disable-next-line max-len
     const label = this.createLabel(PostcodeInputParams.label.textContent);
     this.addInnerElement(label);
     const input = this.createInput(PostcodeInputParams.input.type);
