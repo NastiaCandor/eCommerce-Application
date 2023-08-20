@@ -18,7 +18,6 @@ export default class StreetInputView extends View {
   }
 
   public insertFieldsetItems(): void {
-    // eslint-disable-next-line max-len
     const label = this.createLabel(StreetInputParams.label.textContent);
     this.addInnerElement(label);
     const input = this.createInput(StreetInputParams.input.type);

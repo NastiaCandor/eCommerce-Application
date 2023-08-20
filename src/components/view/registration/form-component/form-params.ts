@@ -6,7 +6,10 @@ const formParams = {
 
   heading: {
     tag: 'h4',
-    cssClasses: ['adrs-wrapper__hdn'],
+    cssClasses: ['wrapper__hdn'],
+    basicInfo: {
+      text: 'Create account',
+    },
     shipping: {
       text: 'Shipping Address',
     },
@@ -17,6 +20,9 @@ const formParams = {
 
   addressDiv: {
     cssClasses: ['adrs-wrapper'],
+  },
+  basicInfoDiv: {
+    cssClasses: ['info-wrapper'],
   },
 
   button: {
@@ -30,6 +36,10 @@ const formParams = {
     noDisplay: ['no-display'],
     showDisplay: ['show-display'],
   },
+  signUpMessage: 'Account has been created successfully!',
+  errorLoginMessage: 'Login attempt has failed. Please go to the login page and try again',
+  errorSignUpMessage: 'Please check your information and try again',
+  serverProblemMessage: 'Please check your connection and try again',
 };
 
 export default formParams;
