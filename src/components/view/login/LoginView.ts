@@ -1,7 +1,7 @@
 import { EMAIL_VALIDATION_TEXT, PASSWORD_VALIDATION_TEXT, wrapperParams } from '../../../types';
 import ClientAPI from '../../utils/Client';
-import ElementCreator from '../../utils/element-creator';
-import View from '../view';
+import ElementCreator from '../../utils/ElementCreator';
+import View from '../View';
 import loginParams from './login-params';
 
 export default class LoginView extends View {
@@ -10,6 +10,7 @@ export default class LoginView extends View {
   constructor() {
     super(loginParams.section);
     this.clientAPI = new ClientAPI();
+    this.render();
   }
 
   public render(): void {
@@ -18,7 +19,6 @@ export default class LoginView extends View {
 
   protected configure(): void {
     this.renderInnerWrapper();
-    this.appendToDom();
   }
 
   private renderInnerWrapper(): void {
@@ -208,9 +208,5 @@ export default class LoginView extends View {
           console.log(error.status);
         }
       });
-  }
-
-  private appendToDom(): void {
-    document.body.appendChild(this.getElement());
   }
 }

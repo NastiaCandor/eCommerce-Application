@@ -2,19 +2,23 @@
   display: inline-flex;
   flex-shrink: 1;
   align-items: center;
+  padding: 0.2rem;
   font-size: 1.5rem;
   gap: 0.5rem;
   height: 100%;
   color: $sample-primary-color;
+  user-select: none;
+
   transition: all 0.5s ease;
 
   .item_text {
-    font-size: 0.8em;
+    display: inline-block;
+    font-size: 0.7em;
   }
 
   img {
     display: inline-block;
-    width: 20%;
+    width: 30%;
 
     transition: all 0.5s ease;
   }
@@ -44,4 +48,11 @@
 
 .user-icon_item:hover > img {
   filter: opacity(0.6) brightness(0.4);
+}
+
+.user-icon_item.active {
+  filter: opacity(0.6) brightness(0.4);
+  background-color: $sample-secondary-color;
+  border-radius: 5px;
+  pointer-events: none;
 }

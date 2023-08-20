@@ -1,10 +1,13 @@
-import ElementCreator from '../../utils/element-creator';
-import View from '../view';
-import UserIconsView from './user-icons-component/user-icons-view';
+import ElementCreator from '../../utils/ElementCreator';
+import View from '../View';
+import UserIconsView from './user-icons-component/UserIconsView';
 import headerParams from './header-params';
-import NavigationView from './nav-component/nav-view';
+import NavigationView from './nav-component/NavView';
 import '../../../assets/img/icons8-cheburashka-48.svg';
-import wrapperParams from '../wrapper-params';
+import Router from '../../router/Router';
+import { PagesInterface } from '../../../types';
+import navigationParams from './nav-component/nav-params';
+import PAGES from '../../router/pages';
 
 export default class HeaderView extends View {
   private navigationView: NavigationView;
@@ -13,10 +16,23 @@ export default class HeaderView extends View {
 
   private burgerMenu: HTMLElement;
 
-  constructor() {
+  private router: Router;
+
+  private linksCollection: Map<string, HTMLElement>;
+
+  private burgerNavCollection: Map<string, HTMLElement>;
+
+  constructor(router: Router) {
     super(headerParams.header);
+    this.router = router;
     this.navigationView = new NavigationView();
     this.userIconsView = new UserIconsView();
+    this.burgerNavCollection = this.navigationView.getBurgerNavCollection;
+    this.linksCollection = new Map([
+      ...this.userIconsView.getIconsCollection,
+      ...this.navigationView.getNavCollection,
+      ...this.burgerNavCollection,
+    ]);
     this.burgerMenu = this.createBurgerMenu();
   }
 
@@ -30,14 +46,13 @@ export default class HeaderView extends View {
   }
 
   private renderInnerWrapper(): void {
-    const wrapper = new ElementCreator(wrapperParams);
-    const innerWrapper = new ElementCreator(headerParams.innerWrapper);
-    this.injectLogoLink(innerWrapper);
-    this.injectNavigationLinks(innerWrapper);
-    this.injectUserLinks(innerWrapper);
-    this.injectBurgerMenuButton(innerWrapper);
-    this.injectBurgerMenu(innerWrapper);
-    wrapper.addInnerElement(innerWrapper);
+    const wrapper = new ElementCreator(headerParams.innerWrapper);
+    this.injectLogoLink(wrapper);
+    this.injectNavigationLinks(wrapper);
+    this.injectUserLinks(wrapper);
+    this.linksCallbackHandler(this.linksCollection);
+    this.injectBurgerMenuButton(wrapper);
+    this.injectBurgerMenu(wrapper);
     this.addInnerElement(wrapper);
   }
 
@@ -63,7 +78,7 @@ export default class HeaderView extends View {
     wrapper.addInnerElement(this.burgerMenu);
   }
 
-  private burgerMenuHandler(btn: HTMLElement, menu: HTMLElement) {
+  private burgerMenuHandler(btn: HTMLElement, menu: HTMLElement): void {
     btn.addEventListener('click', () => {
       if (menu instanceof HTMLElement) {
         // ask Natasha about ability to do so:
@@ -77,11 +92,11 @@ export default class HeaderView extends View {
   }
 
   private createBurgerMenu(): HTMLElement {
+    const navLinks = new ElementCreator(navigationParams.wrapper);
+    this.burgerNavCollection.forEach((item) => navLinks.addInnerElement(item));
     const menuWrapper = new ElementCreator(headerParams.burgerMenuWrapper).getElement();
-    const navLinks = this.navigationView.getElement().cloneNode(true);
-    // maybe need to store logo for better perfomance
     const logo = new ElementCreator(headerParams.logo).getElement();
-    menuWrapper.append(logo, navLinks);
+    menuWrapper.append(logo, navLinks.getElement());
     return menuWrapper;
   }
 
@@ -95,6 +110,46 @@ export default class HeaderView extends View {
     this.burgerMenuHandler(burgerButtonWrapper, this.burgerMenu);
 
     return burgerButtonWrapper;
+  }
+
+  private navigateToPage(page: string): void {
+    const key = this.isBurgerItem(page) ? this.formatBurgerItemKey(page) : page;
+    if (key in PAGES) {
+      this.router.navigate(PAGES[key as keyof PagesInterface]);
+    } else {
+      this.router.navigate(PAGES.NOT_FOUND);
+    }
+  }
+
+  private linksCallbackHandler(collection: Map<string, HTMLElement>): void {
+    collection.forEach((value, key) => {
+      const page = key as keyof PagesInterface;
+      value.addEventListener('click', (evt) => {
+        evt.preventDefault();
+        this.navigateToPage(page);
+      });
+    });
+  }
+
+  public updateLinksStatus(page: string): void {
+    const pageName = page.toUpperCase();
+    this.linksCollection.forEach((value, key) => {
+      value.classList.remove('active');
+      if (key === pageName || `${key}_BG` === pageName || this.formatBurgerItemKey(key) === pageName) {
+        value.classList.add('active');
+      }
+    });
+  }
+
+  private formatBurgerItemKey(key: string): string {
+    const lastIndex = key.lastIndexOf('_BG');
+    const formattedKey = key.slice(0, lastIndex);
+    return formattedKey;
+  }
+
+  private isBurgerItem(key: string): boolean {
+    if (key.includes('_BG')) return true;
+    return false;
   }
 
   private appendToDOM(): void {

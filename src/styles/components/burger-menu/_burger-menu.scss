@@ -13,12 +13,13 @@
   top: 0;
   right: 0;
 
-  z-index: -1;
+  z-index: 50;
   opacity: 1;
   transition: all 0.3s ease-in-out;
 
   @media screen and (width > $tablet) {
     opacity: 0;
+    z-index: -10;
   }
 
   .header__user-icons {
@@ -46,9 +47,15 @@
     @media screen and (max-width: $tablet) {
       display: flex;
     }
+
+    @media screen and (width > $tablet) {
+      opacity: 0;
+      z-index: -10;
+    }
   }
 }
 
 .header__menu.hidden {
   opacity: 0;
+  top: -100%;
 }

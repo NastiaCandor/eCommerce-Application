@@ -1,11 +1,12 @@
 import { wrapperParams } from '../../../types';
-import ElementCreator from '../../utils/element-creator';
-import View from '../view';
+import ElementCreator from '../../utils/ElementCreator';
+import View from '../View';
 import notFoundParams from './not-found-params';
 
 export default class NotFoundView extends View {
   constructor() {
     super(notFoundParams.section);
+    this.render();
   }
 
   public render(): void {
@@ -14,7 +15,6 @@ export default class NotFoundView extends View {
 
   protected configure(): void {
     this.renderInnerWrapper();
-    this.appendToDom();
   }
 
   private renderInnerWrapper(): void {
@@ -28,7 +28,8 @@ export default class NotFoundView extends View {
 
     wrapper.getElement().classList.add('not-found__wrapper');
     wrapper.addInnerElement(innerWrapper);
-    super.addInnerElement(wrapper);
+    this.addInnerElement(wrapper);
+    this.addInnerElement(wrapper);
   }
 
   private injectTitle(wrapper: ElementCreator): void {
@@ -49,10 +50,14 @@ export default class NotFoundView extends View {
   private injectBackToMainBtn(wrapper: ElementCreator): void {
     const element = new ElementCreator(notFoundParams.backToMainBtn).getElement();
     element.setAttribute('href', '#');
+    this.backToMainCbHandler(element);
     wrapper.addInnerElement(element);
   }
 
-  private appendToDom(): void {
-    document.body.appendChild(this.getElement());
+  private backToMainCbHandler(btn: HTMLElement): void {
+    btn.addEventListener('click', () => {
+      const element = document.querySelector('.nav_item');
+      if (element instanceof HTMLElement) element.click();
+    });
   }
 }

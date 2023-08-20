@@ -1,6 +1,6 @@
 import flatpickr from 'flatpickr';
-import ElementCreator from '../../../../../utils/element-creator';
-import View from '../../../../view';
+import ElementCreator from '../../../../../utils/ElementCreator';
+import View from '../../../../View';
 import fieldsetParams from '../input-params';
 import DateInputParams from './date-params';
 

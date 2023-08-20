@@ -51,3 +51,28 @@ export const wrapperParams: ElementParamsType = {
 export const EMAIL_VALIDATION_TEXT = 'Please Enter Valid Email Address';
 
 export const PASSWORD_VALIDATION_TEXT = 'Please Enter Valid Password:';
+
+// PAGE INTERFACES
+
+export type PagesInterface = {
+  INDEX: string;
+  NOT_FOUND: string;
+  LOG_IN: string;
+  SIGN_UP: string;
+  USER_PROFILE: string;
+  CART: string;
+  CATALOG: string;
+  ABOUT_US: string;
+  SHIPPING: string;
+  CONTACT_US: string;
+};
+
+export type Route = {
+  path: string;
+  callback: () => void;
+};
+
+export type UserRequest = {
+  path: string;
+  resource: string;
+};

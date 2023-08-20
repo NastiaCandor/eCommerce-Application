@@ -1,5 +1,5 @@
-import ElementCreator from '../../utils/element-creator';
-import View from '../view';
+import ElementCreator from '../../utils/ElementCreator';
+import View from '../View';
 import regParams from './reg-params';
 import wrapperParams from '../wrapper-params';
 import FormView from './form-component/form-view';
@@ -7,6 +7,7 @@ import FormView from './form-component/form-view';
 export default class RegView extends View {
   constructor() {
     super(regParams.regWrapper);
+    this.render();
   }
 
   public render(): void {
@@ -15,7 +16,6 @@ export default class RegView extends View {
 
   protected configure(): void {
     this.renderForm();
-    this.appendToDOM();
   }
 
   private renderForm(): void {

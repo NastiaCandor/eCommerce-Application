@@ -1,5 +1,5 @@
-import ElementCreator from '../../../../../../utils/element-creator';
-import View from '../../../../../view';
+import ElementCreator from '../../../../../../utils/ElementCreator';
+import View from '../../../../../View';
 import fieldsetParams from '../../input-params';
 import nameInputParams from '../name-input-params';
 
