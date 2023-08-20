@@ -3,9 +3,9 @@
 /* eslint-disable @typescript-eslint/comma-dangle */
 import { postcodeValidator } from 'postcode-validator';
 import { Address } from '@commercetools/platform-sdk';
+import Noty from 'noty';
 import ElementCreator from '../../../utils/ElementCreator';
 import View from '../../View';
-import Noty from 'noty';
 import formParams from './form-params';
 import WrapperParams from '../../wrapper-params';
 import PostcodeInputParams from './input-component/address/postcode-fieldset-view/postcode-params';

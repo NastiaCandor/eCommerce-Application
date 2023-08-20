@@ -28,7 +28,7 @@ export default class CityInputView extends View {
     this.showError(input, errorSpan);
   }
 
-  private createInput(): HTMLInputElement {
+  public createInput(): HTMLInputElement {
     const input = new ElementCreator(fieldsetParams.input).getElement() as HTMLInputElement;
     input.setAttribute('type', CityInputParams.input.type);
     input.setAttribute('minLength', CityInputParams.input.minLength);
@@ -37,13 +37,13 @@ export default class CityInputView extends View {
     return input;
   }
 
-  private createLabel(text: string): ElementCreator {
+  public createLabel(text: string): ElementCreator {
     const label = new ElementCreator(fieldsetParams.label);
     label.setTextContent(text);
     return label;
   }
 
-  private createErrorText(): HTMLElement {
+  public createErrorText(): HTMLElement {
     const errorSpan = new ElementCreator(fieldsetParams.errorSpan).getElement();
     return errorSpan;
   }

@@ -29,7 +29,7 @@ export default class CountryInputView extends View {
     this.showError(input, errorSpan);
   }
 
-  private createInput(): HTMLSelectElement {
+  public createInput(): HTMLSelectElement {
     const input = new ElementCreator(fieldsetParams.select).getElement() as HTMLSelectElement;
     input.setAttribute('required', fieldsetParams.input.required);
     const countriesObj = CountryInputParams.countries;
@@ -43,20 +43,20 @@ export default class CountryInputView extends View {
     return element.value;
   }
 
-  private createOption(value: string, text: string): HTMLElement {
+  public createOption(value: string, text: string): HTMLElement {
     const option = new ElementCreator(CountryInputParams.option).getElement();
     option.setAttribute('value', value);
     option.textContent = text;
     return option;
   }
 
-  private createLabel(text: string): ElementCreator {
+  public createLabel(text: string): ElementCreator {
     const label = new ElementCreator(fieldsetParams.label);
     label.setTextContent(text);
     return label;
   }
 
-  private createErrorText(): HTMLElement {
+  public createErrorText(): HTMLElement {
     const errorSpan = new ElementCreator(fieldsetParams.errorSpan).getElement();
     return errorSpan;
   }
@@ -67,7 +67,6 @@ export default class CountryInputView extends View {
     if (element.validity.valid) {
       errorSpan.textContent = '';
       errorSpan.classList.add(CountryInputParams.errorSpan.cssClasses);
-      // element.classList.add(CountryInputParams.input.cssClassesValid);
     } else {
       this.showError(element, errorMessage);
     }
@@ -76,7 +75,6 @@ export default class CountryInputView extends View {
       if (element.validity.valid) {
         errorSpan.textContent = '';
         errorSpan.classList.add(CountryInputParams.errorSpan.cssClasses);
-        // element.classList.add(CountryInputParams.input.cssClassesValid);
       } else {
         this.showError(element, errorMessage);
       }

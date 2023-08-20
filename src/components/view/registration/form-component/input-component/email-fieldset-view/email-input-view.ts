@@ -1,6 +1,6 @@
+import Noty from 'noty';
 import ElementCreator from '../../../../../utils/ElementCreator';
 import View from '../../../../View';
-import Noty from 'noty';
 import fieldsetParams from '../input-params';
 import EmailInputParams from './email-params';
 import ClientAPI from '../../../../../utils/Client';
@@ -55,7 +55,7 @@ export default class EmailInputView extends View {
     return errorSpan;
   }
 
-  private checkEmail(str: string) {
+  public checkEmail(str: string) {
     const reg = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
     const result = reg.test(str);
     return result;

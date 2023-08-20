@@ -49,7 +49,7 @@ export default class PasswordInputView extends View {
     return errorSpan;
   }
 
-  private checkPassword(str: string) {
+  public checkPassword(str: string) {
     const reg = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
     const result = reg.test(str);
     return result;
