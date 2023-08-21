@@ -5,7 +5,7 @@
   align-items: center;
   display: flex;
   flex-direction: column;
-  background-color: $sample-darken-color;
+  background-color: $color-burger-background;
   max-width: 50%;
   height: 100%;
   top: 0;
@@ -14,6 +14,10 @@
   z-index: 50;
   opacity: 1;
   transition: all 0.3s ease-in-out;
+
+  .header__wrapper_logo {
+    padding: 0;
+  }
 
   @media screen and (width > $tablet) {
     opacity: 0;
@@ -58,6 +62,8 @@
   top: -100%;
 }
 
+// BUTTONS
+
 .header__menu_btn {
   position: sticky;
   z-index: 100;
@@ -70,7 +76,7 @@
     height: 2px;
     width: 1.8em;
     margin-bottom: 0.5em;
-    background-color: $sample-primary-color;
+    background-color: $color-burger-span;
 
     transition: all 0.3s ease-in-out;
   }

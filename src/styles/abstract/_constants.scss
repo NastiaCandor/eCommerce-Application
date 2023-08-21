@@ -1,7 +1,32 @@
-$sample-primary-color: #e1e5e8;
-$sample-secondary-color: #b1c2cf;
-$sample-darken-color: #6b818d;
-$sample-color-login-input-error: #e2b9b9;
-$sample-light-grey-color: #eae8e84d;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@700&display=swap');
 
+// COLOR
+
+$color-body-background: #FFFBBD;
+$color-primary-text: #000000;
+// header
+$color-hover-link: #E7557C;
+$color-active-link: #F3913E;
+$color-burger-span: #F3913E;
+$color-burger-background: #E0DED5;
+$color-active-text: #FFFFFF;
+// registration
+$color-registration-background-general: #CEBF93;
+$color-registration-background-address: #E0DED5;
+$color-input-error: #900;
+// login
+$color-login-background: #76C077;
+$color-login-text: #FFFFFF;
+$color-login-link-text: #E7557C;
+$color-login-link-text-hover: #a80531;
+$color-login-error: #870411;
+// buttons
+$color-button-background: #F3913E;
+$color-button-background-hover: #e2710f;
+$color-button-text: #FFF;
+
+
+// MEDIA WIDTHS
+$tablet-width: 768px;
 $tablet: 768px;
+$form-width: 46rem;

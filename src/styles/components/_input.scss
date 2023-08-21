@@ -4,7 +4,6 @@ select {
 input {
   border: none;
 }
-$error-color: #900;
 
 .reg-form__input {
   outline: none;
@@ -28,13 +27,13 @@ $error-color: #900;
 
 .reg-form__input:invalid:focus,
 .reg-form__input-invalid:focus {
-  border-color: $error-color;
+  border-color: $color-input-error;
   background-color: #fdd;
 }
 
 .reg-form__input:invalid:not(:focus),
 .reg-form__input-invalid:not(:focus) {
-  border-color: $error-color;
+  border-color: $color-input-error;
   background-color: white;
 }
 
@@ -45,13 +44,12 @@ $error-color: #900;
 .reg-form__error {
   padding: 0;
   font-size: 1.5rem;
-  color: $error-color;
-  background-color: $sample-light-grey-color;
+  color: $color-input-error;
 }
 
 .checkbox-adrs__span {
   background-color: transparent;
-  color: $error-color;
+  color: $color-input-error;
   font-size: 1.1rem;
 }
 
@@ -92,7 +90,6 @@ $error-color: #900;
 }
 
 @media screen and (max-width: 500px) {
-
   .reg-form__input, 
   .reg-form__select {
     height: 4rem;
@@ -101,9 +98,7 @@ $error-color: #900;
   .reg-form__error {
     font-size: 1.2rem;
   }
-
   .name-input {
     width: 100%;
   }
-
 }

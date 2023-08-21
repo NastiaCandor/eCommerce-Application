@@ -1,26 +1,20 @@
 // ABSTRACT
-@import './abstract/constants';
-@import './abstract/placeholder';
-@import './abstract/mixins';
+@import './abstract/all';
 
 // BASE
-@import './base/base';
-@import './base/buttons';
+@import './base/all';
 
 //LAYOUTS
-@import './layouts/wrapper';
-@import './layouts/header';
-@import './layouts/main';
-@import './layouts/footer';
+@import './layouts/all';
 
 // COMPONENTS
-@import './components/reg';
-@import './components/input';
-@import './components/login';
-@import './components/user-icons.scss';
-@import './components/nav-link.scss';
-@import './components/burger-menu.scss';
-@import './components/not-found';
+@import './components/all';
+
+// PAGES
+
+@import './pages/all';
+
+// LIBRARIES STYLES
 @import './../../node_modules/flatpickr/dist/flatpickr.css';
 @import './../../node_modules/noty/src/noty.scss';
 @import './../../node_modules/noty/lib/themes/light.css';

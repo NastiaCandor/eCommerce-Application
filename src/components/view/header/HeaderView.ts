@@ -101,8 +101,7 @@ export default class HeaderView extends View {
     const navLinks = new ElementCreator(navigationParams.wrapper);
     this.burgerNavCollection.forEach((item) => navLinks.addInnerElement(item));
     const menuWrapper = new ElementCreator(headerParams.burgerMenuWrapper).getElement();
-    const logo = new ElementCreator(headerParams.logo).getElement();
-    menuWrapper.append(logo, navLinks.getElement());
+    menuWrapper.append(navLinks.getElement());
     return menuWrapper;
   }
 

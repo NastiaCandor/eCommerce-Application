@@ -1,5 +1,5 @@
 header {
-  background-color: $sample-darken-color;
+  background-color: $color-body-background;
   white-space: nowrap;
 }
 
@@ -13,7 +13,12 @@ header {
   display: block;
   height: 3rem;
   width: 3rem;
-  background: no-repeat url('../assets/img/icons8-cheburashka-48.svg');
-  background-size: 100%;
+  background: no-repeat url('../assets/img/logo.svg');
+  background-size: 100% 100%;
+  background-position: 0 0%;
+  @extend %font-add-Oswald;
+  @include font(2rem, 150%, 700);
+  text-transform: uppercase;
+  padding-left: 4rem;
 }
 
