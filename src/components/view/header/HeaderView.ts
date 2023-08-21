@@ -18,19 +18,26 @@ export default class HeaderView extends View {
 
   private router: Router;
 
+  private wrapper: ElementCreator;
+
   private linksCollection: Map<string, HTMLElement>;
 
   private burgerNavCollection: Map<string, HTMLElement>;
 
+  public unnecessaryItems: Map<string, HTMLElement>; // remove after cross-check
+
   constructor(router: Router) {
     super(headerParams.header);
     this.router = router;
+    this.wrapper = new ElementCreator(headerParams.innerWrapper);
     this.navigationView = new NavigationView();
     this.userIconsView = new UserIconsView();
     this.burgerNavCollection = this.navigationView.getBurgerNavCollection;
+    this.unnecessaryItems = this.userIconsView.getUnnecessaryIconItems(); // remove after cross-check
     this.linksCollection = new Map([
       ...this.userIconsView.getIconsCollection,
       ...this.navigationView.getNavCollection,
+      ...this.unnecessaryItems,
       ...this.burgerNavCollection,
     ]);
     this.burgerMenu = this.createBurgerMenu();
@@ -46,14 +53,13 @@ export default class HeaderView extends View {
   }
 
   private renderInnerWrapper(): void {
-    const wrapper = new ElementCreator(headerParams.innerWrapper);
-    this.injectLogoLink(wrapper);
-    this.injectNavigationLinks(wrapper);
-    this.injectUserLinks(wrapper);
+    this.injectLogoLink(this.wrapper);
+    this.injectNavigationLinks(this.wrapper);
+    this.injectUserLinks(this.wrapper);
     this.linksCallbackHandler(this.linksCollection);
-    this.injectBurgerMenuButton(wrapper);
-    this.injectBurgerMenu(wrapper);
-    this.addInnerElement(wrapper);
+    this.injectBurgerMenuButton(this.wrapper);
+    this.injectBurgerMenu(this.wrapper);
+    this.addInnerElement(this.wrapper);
   }
 
   private injectLogoLink(wrapper: ElementCreator): void {
@@ -128,6 +134,23 @@ export default class HeaderView extends View {
         this.navigateToPage(page);
       });
     });
+  }
+
+  public updateIcons(): void {
+    const previousIcons = this.wrapper.getElement().querySelector('.header__user-icons');
+    const updatedIcons = new UserIconsView();
+    const collection = updatedIcons.getIconsCollection;
+    this.linksCallbackHandler(collection);
+    collection.forEach((value, key) => this.linksCollection.set(key, value));
+    if (previousIcons instanceof HTMLElement) {
+      this.wrapper.getElement().replaceChild(updatedIcons.getElement(), previousIcons);
+    }
+    this.unnecessaryItems = updatedIcons.getUnnecessaryIconItems();
+    this.linksCallbackHandler(this.unnecessaryItems);
+  }
+
+  public get getUnnItems(): Map<string, HTMLElement> {
+    return this.unnecessaryItems;
   }
 
   public updateLinksStatus(page: string): void {

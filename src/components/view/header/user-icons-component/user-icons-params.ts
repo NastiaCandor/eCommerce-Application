@@ -19,14 +19,24 @@ const userIconsParams = {
       cssClasses: ['item_text'],
     },
   },
-
-  authItemsNames: ['Cart', 'Sign Up', 'Log In'],
-  authItemsSrc: [
-    '../assets/img/cart-svgrepo-com.svg',
-    '../assets/img/signup-svgrepo-com.svg',
-    '../assets/img/login-svgrepo-com.svg',
-  ],
-  authItemsAlt: ['cart icon', 'sign up icon', 'sign in icon'],
+  anon: {
+    iconsNames: ['Cart', 'Sign Up', 'Log In'],
+    iconsSrc: [
+      '../assets/img/cart-svgrepo-com.svg',
+      '../assets/img/signup-svgrepo-com.svg',
+      '../assets/img/login-svgrepo-com.svg',
+    ],
+    iconsAlt: ['cart icon', 'profile icon', 'logout icon'],
+  },
+  auth: {
+    iconsNames: ['Cart', 'Profile', 'Log out'],
+    iconsSrc: [
+      '../assets/img/cart-svgrepo-com.svg',
+      '../assets/img/profile-svgrepo-com.svg',
+      '../assets/img/logout-svgrepo-com.svg',
+    ],
+    iconsAlt: ['cart icon', 'profile icon', 'log out icon'],
+  },
 };
 
 export default userIconsParams;

@@ -25,6 +25,8 @@ import CityInputParams from './input-component/address/city-fieldset-view/city-p
 import StreetInputParams from './input-component/address/street-input-view/street-params';
 import CountryInputParams from './input-component/address/country-fieldset-view/country-params';
 import ClientAPI from '../../../utils/Client';
+import Router from '../../../router/Router';
+import PAGES from '../../../router/pages';
 
 export default class FormView extends View {
   private emailInput: EmailInputView;
@@ -59,11 +61,13 @@ export default class FormView extends View {
 
   private checkboxDefaultBill: CheckboxView;
 
+  private router: Router;
+
   clientAPI: ClientAPI;
 
   public sameAdrs: boolean;
 
-  constructor() {
+  constructor(router: Router) {
     super(formParams.form);
     this.emailInput = new EmailInputView();
     this.firstNameInput = new FirstNameInputView();
@@ -83,6 +87,7 @@ export default class FormView extends View {
     this.checkboxDefaultBill = new CheckboxView();
     this.clientAPI = new ClientAPI();
     this.sameAdrs = false;
+    this.router = router;
     this.render();
   }
 
@@ -104,7 +109,8 @@ export default class FormView extends View {
     const wrapper = new ElementCreator(WrapperParams);
     const heading = new ElementCreator(formParams.heading);
     heading.setTextContent(formParams.heading.basicInfo.text);
-
+    wrapper.addInnerElement(heading);
+    wrapper.addInnerElement(this.addSignInLink());
     wrapper.addInnerElement(this.emailInput);
     wrapper.addInnerElement(this.passwordInput);
     wrapper.addInnerElement(this.firstNameInput);
@@ -199,6 +205,18 @@ export default class FormView extends View {
       wrapper.addInnerElement(checkboxSameAdrs);
     }
     return wrapper;
+  }
+
+  private addSignInLink(): ElementCreator {
+    const signInDiv = new ElementCreator(formParams.signInDiv);
+    const signInLink = new ElementCreator(formParams.signInLink);
+    signInLink.setAttribute('href', '#');
+    const signInElement = signInLink.getElement();
+    signInElement.addEventListener('click', () => {
+      this.router.navigate(PAGES.LOG_IN);
+    });
+    signInDiv.addInnerElement(signInLink);
+    return signInDiv;
   }
 
   private checkShipPostcode() {
@@ -418,33 +436,28 @@ export default class FormView extends View {
     } else if (!defStatusArr[1]) {
       defaultBillAdrs = undefined;
     }
-    const signUpAPI = this.clientAPI.registerClient(
-      email,
-      password,
-      fName,
-      lName,
-      dateOfBirth,
-      adrsArr,
-      [0],
-      [1],
-      defaultShipAdrs,
-      defaultBillAdrs
-    );
-
-    signUpAPI()
-      .then((data) => {
-        if (data.statusCode === 201) {
-          console.log(data.body.customer);
-          this.showRegMessage();
-          this.login(email, password);
-        }
-      })
-      .catch((error) => {
-        if (error.status === undefined) {
-          this.showSignUpErrorMessage(formParams.serverProblemMessage);
-        }
-        this.showSignUpErrorMessage(formParams.errorSignUpMessage);
-      });
+    try {
+      const signUpAPI = await this.clientAPI.registerClient(
+        email,
+        password,
+        fName,
+        lName,
+        dateOfBirth,
+        adrsArr,
+        [0],
+        [1],
+        defaultShipAdrs,
+        defaultBillAdrs
+      );
+      if (signUpAPI.statusCode === 201) {
+        this.showRegMessage();
+        this.login(email, password);
+      } else if (signUpAPI.statusCode && signUpAPI.statusCode >= 500) {
+        this.showSignUpErrorMessage(formParams.serverProblemMessage);
+      }
+    } catch {
+      this.showSignUpErrorMessage(formParams.errorSignUpMessage);
+    }
   }
 
   private showRegMessage(): void {
@@ -478,19 +491,16 @@ export default class FormView extends View {
   }
 
   private async login(email: string, password: string) {
-    const loginAPI = this.clientAPI.loginClient(email, password);
-    loginAPI()
-      .then((data) => {
-        if (data.statusCode === 200) {
-          console.log(data.body);
-        }
-      })
-      .catch((error) => {
-        if (error.statusCode === undefined) {
-          this.showLoginErrorMessage();
-        }
+    try {
+      const loginAPI = await this.clientAPI.loginClient(email, password);
+      if (loginAPI.statusCode === 200) {
+        this.router.navigate(PAGES.MAIN);
+      } else if (loginAPI.statusCode === undefined) {
         this.showLoginErrorMessage();
-      });
+      }
+    } catch {
+      this.showLoginErrorMessage();
+    }
   }
 
   private submitForm(): void {

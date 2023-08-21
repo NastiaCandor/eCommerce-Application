@@ -23,12 +23,12 @@ export default class DateInputView extends View {
     this.addInnerElement(label);
     const input = this.createInput(DateInputParams.input.type, DateInputParams.input.id);
     flatpickr(input, {
-      maxDate: this.getDate18yo(),
+      maxDate: this.getDate13yo(),
       dateFormat: 'Y-m-d',
     });
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
       input.setAttribute('type', 'date');
-      input.setAttribute('max', this.getDate18yo());
+      input.setAttribute('max', this.getDate13yo());
       input.removeAttribute('readonly');
     } else {
       // false for not mobile device
@@ -41,11 +41,11 @@ export default class DateInputView extends View {
     this.showError(input, errorSpan);
   }
 
-  private getDate18yo(): string {
+  private getDate13yo(): string {
     const today = new Date();
     let day = today.getDate().toString();
     let month = (today.getMonth() + 1).toString();
-    const year = today.getFullYear() - 18;
+    const year = today.getFullYear() - 13;
 
     if (Number(day) < 10) {
       day = `0${day}`;
@@ -101,7 +101,7 @@ export default class DateInputView extends View {
   public showError(date: HTMLInputElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
     if (!date.value) {
-      errorSpan.textContent = 'Enter your date of birth. You have to be at least 18 years old to register';
+      errorSpan.textContent = 'Enter your date of birth. You have to be at least 13 years old to register';
     }
     errorSpan.classList.add(DateInputParams.errorSpan.cssClassesActive);
   }

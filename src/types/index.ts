@@ -43,28 +43,20 @@ export type NotFoundType = {
   backToMainBtn: ElementParamsType;
 };
 
-// CONST
-
-export const wrapperParams: ElementParamsType = {
-  tag: 'div',
-  cssClasses: ['wrapper'],
-};
-
-export const EMAIL_VALIDATION_TEXT = 'Please Enter Valid Email Address';
-
-export const PASSWORD_VALIDATION_TEXT = 'Please Enter Valid Password:';
-
 // PAGE INTERFACES
 
 export type PagesInterface = {
   INDEX: string;
   NOT_FOUND: string;
+
   LOG_IN: string;
   SIGN_UP: string;
-  USER_PROFILE: string;
+  LOG_OUT: string;
+  PROFILE: string;
   CART: string;
+
+  MAIN: string;
   CATALOG: string;
-  ABOUT_US: string;
   SHIPPING: string;
   CONTACT_US: string;
 };
