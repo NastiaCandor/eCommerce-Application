@@ -1,4 +1,4 @@
-import { wrapperParams } from '../../../types';
+import { wrapperParams } from '../../constants';
 import ElementCreator from '../../utils/ElementCreator';
 import View from '../View';
 import notFoundParams from './not-found-params';

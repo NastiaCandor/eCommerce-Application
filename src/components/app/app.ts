@@ -6,41 +6,83 @@ import HeaderView from '../view/header/HeaderView';
 import LoginView from '../view/login/LoginView';
 import MainView from '../view/main/MainView';
 import NotFoundView from '../view/not-found-page/NotFoundView';
-import AboutView from '../view/pages/about/AboutView';
+// import AboutView from '../view/pages/about/AboutView';
 import CatalogView from '../view/pages/catalog/CatalogView';
 import ContactsView from '../view/pages/contacts/ContactsView';
 import ShippingView from '../view/pages/shipping/ShippingView';
+import ProfileView from '../view/profile/ProfileView';
 import RegView from '../view/registration/reg-view';
+import { ACCESS_TOKEN } from '../constants';
+import AboutView from '../view/pages/about/AboutView';
 
 export default class App {
   private header: HeaderView;
 
-  private main: MainView;
+  private mainContainer: MainView;
 
   private router: Router;
 
+  private shippingView: ShippingView;
+
+  // private catalogView: CatalogView;
+
+  private aboutView: AboutView;
+
+  private regView: RegView;
+
+  private contactsView: ContactsView;
+
+  private loginView: LoginView;
+
+  private notFoundView: NotFoundView;
+
   constructor() {
     const routes = this.createRoutes();
-    this.main = new MainView();
+    this.mainContainer = new MainView();
     this.router = new Router(routes);
     this.header = new HeaderView(this.router);
+    this.regView = new RegView(this.router);
+    this.loginView = new LoginView(this.router);
+    this.shippingView = new ShippingView();
+    this.notFoundView = new NotFoundView();
+    // this.catalogView = new CatalogView();
+    this.contactsView = new ContactsView();
+    this.aboutView = new AboutView();
   }
 
   public start(): void {
     this.header.render();
-    this.main.render();
+    this.mainContainer.render();
   }
 
   private setContent(page: string, view: HTMLElement) {
+    this.header.updateIcons();
     this.header.updateLinksStatus(page);
-    this.main.setContent(view);
+    this.mainContainer.setContent(view);
+  }
+
+  private deleteToken(name: string): void {
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;`;
+  }
+
+  private checkToken(name: string): boolean {
+    const allCookies = document.cookie.split(';');
+    const isAccessTokenExist = allCookies.some((token) => token.startsWith(`${name}=`));
+    return isAccessTokenExist;
+  }
+
+  private resetInputs(): void {
+    this.regView = new RegView(this.router);
+    this.loginView = new LoginView(this.router);
   }
 
   private createRoutes(): Route[] {
     return [
       {
         path: '',
-        callback: () => {},
+        callback: () => {
+          this.setContent(PAGES.MAIN, this.aboutView.getElement());
+        },
       },
       {
         path: `${PAGES.INDEX}`,
@@ -49,7 +91,11 @@ export default class App {
       {
         path: `${PAGES.LOG_IN}`,
         callback: () => {
-          this.setContent(PAGES.LOG_IN, new LoginView().getElement());
+          if (this.checkToken(ACCESS_TOKEN)) {
+            this.setContent(PAGES.MAIN, this.aboutView.getElement());
+            return;
+          }
+          this.setContent(PAGES.LOG_IN, this.loginView.getElement());
         },
       },
       {
@@ -61,45 +107,65 @@ export default class App {
       {
         path: `${PAGES.SIGN_UP}`,
         callback: () => {
-          this.setContent(PAGES.SIGN_UP, new RegView().getElement());
+          if (this.checkToken(ACCESS_TOKEN)) {
+            this.setContent(PAGES.MAIN, this.aboutView.getElement());
+            return;
+          }
+          this.resetInputs();
+          this.setContent(PAGES.SIGN_UP, this.regView.getElement());
         },
       },
       {
-        path: `${PAGES.USER_PROFILE}`,
-        callback: () => {},
+        path: `${PAGES.PROFILE}`,
+        callback: () => {
+          if (!this.checkToken(ACCESS_TOKEN)) {
+            this.setContent(PAGES.MAIN, this.aboutView.getElement());
+            return;
+          }
+          this.setContent(PAGES.PROFILE, new ProfileView().getElement());
+        },
       },
       {
-        path: `${PAGES.ABOUT_US}`,
+        path: `${PAGES.MAIN}`,
         callback: () => {
-          const aboutView = new AboutView().getElement();
-          this.setContent(PAGES.ABOUT_US, aboutView);
+          this.setContent(PAGES.MAIN, this.aboutView.getElement());
+        },
+      },
+      {
+        path: `${PAGES.LOG_OUT}`,
+        callback: () => {
+          if (!this.checkToken(ACCESS_TOKEN)) {
+            this.setContent(PAGES.MAIN, this.aboutView.getElement());
+            return;
+          }
+          this.deleteToken(ACCESS_TOKEN);
+          this.setContent(PAGES.MAIN, this.aboutView.getElement());
         },
       },
       {
         path: `${PAGES.CATALOG}`,
         callback: () => {
-          this.setContent(PAGES.CATALOG, new CatalogView().getElement());
+          const catalog = new CatalogView();
+          this.header.getUnnItems.forEach((value) => catalog.addInnerElement(value));
+          this.setContent(PAGES.CATALOG, catalog.getElement());
         },
       },
       {
         path: `${PAGES.CONTACT_US}`,
         callback: () => {
-          const contactsView = new ContactsView().getElement();
-          this.setContent(PAGES.CONTACT_US, contactsView);
+          this.setContent(PAGES.CONTACT_US, this.contactsView.getElement());
         },
       },
       {
         path: `${PAGES.SHIPPING}`,
         callback: () => {
-          const shippingView = new ShippingView().getElement();
-          this.setContent(PAGES.SHIPPING, shippingView);
+          this.setContent(PAGES.SHIPPING, this.shippingView.getElement());
         },
       },
       {
         path: `${PAGES.NOT_FOUND}`,
         callback: () => {
-          const notFoundView = new NotFoundView().getElement();
-          this.setContent(PAGES.NOT_FOUND, notFoundView);
+          this.setContent(PAGES.NOT_FOUND, this.notFoundView.getElement());
         },
       },
     ];

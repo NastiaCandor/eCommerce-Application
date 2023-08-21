@@ -1,4 +1,6 @@
-import { EMAIL_VALIDATION_TEXT, PASSWORD_VALIDATION_TEXT, wrapperParams } from '../../../types';
+import { EMAIL_VALIDATION_TEXT, PASSWORD_VALIDATION_TEXT, wrapperParams } from '../../constants';
+import PAGES from '../../router/pages';
+import Router from '../../router/Router';
 import ClientAPI from '../../utils/Client';
 import ElementCreator from '../../utils/ElementCreator';
 import View from '../View';
@@ -7,8 +9,11 @@ import loginParams from './login-params';
 export default class LoginView extends View {
   clientAPI: ClientAPI;
 
-  constructor() {
+  private router: Router;
+
+  constructor(router: Router) {
     super(loginParams.section);
+    this.router = router;
     this.clientAPI = new ClientAPI();
     this.render();
   }
@@ -182,7 +187,7 @@ export default class LoginView extends View {
     emailInput.classList.add('_invalid');
     passwordInput.classList.add('_invalid');
     const loginError = document.querySelector('.login__login-error');
-
+    console.log(emailInput, passwordInput);
     loginError?.classList.add('_display');
     setTimeout(() => {
       loginError?.classList.remove('_display');
@@ -194,11 +199,12 @@ export default class LoginView extends View {
     const password = (passwordInput as HTMLInputElement).value;
 
     const loginAPI = this.clientAPI.loginClient(email, password);
-    loginAPI()
-      .then((data) => {
+    loginAPI
+      .then(async (data) => {
         if (data.statusCode === 200) {
+          await this.clientAPI.obtainUserAccessToken(email, password);
           // TODO: impliment further functionality
-          console.log(`Hello ${data.body.customer.firstName} ${data.body.customer.lastName}!`);
+          this.router.navigate(PAGES.MAIN);
         }
       })
       .catch((error) => {
