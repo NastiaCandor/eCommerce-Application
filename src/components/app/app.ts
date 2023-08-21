@@ -94,6 +94,7 @@ export default class App {
             const about = new AboutView();
             this.header.getUnnItems.forEach((value) => about.addInnerElement(value));
             this.setContent(PAGES.MAIN, about.getElement());
+            window.location.href = 'main';
             // this.setContent(PAGES.MAIN, this.aboutView.getElement());
             return;
           }
@@ -112,7 +113,8 @@ export default class App {
           if (this.checkToken(ACCESS_TOKEN)) {
             const about = new AboutView();
             this.header.getUnnItems.forEach((value) => about.addInnerElement(value));
-            this.setContent(PAGES.MAIN, about.getElement());
+            window.location.href = 'main';
+            // this.setContent(PAGES.MAIN, about.getElement());
             return;
           }
           this.resetInputs();
@@ -126,7 +128,7 @@ export default class App {
             // this.setContent(PAGES.MAIN, this.aboutView.getElement());
             const about = new AboutView();
             this.header.getUnnItems.forEach((value) => about.addInnerElement(value));
-            this.setContent(PAGES.MAIN, about.getElement());
+            window.location.href = 'main';
             return;
           }
           this.setContent(PAGES.PROFILE, new ProfileView().getElement());
@@ -146,7 +148,8 @@ export default class App {
           if (!this.checkToken(ACCESS_TOKEN)) {
             const about = new AboutView();
             this.header.getUnnItems.forEach((value) => about.addInnerElement(value));
-            this.setContent(PAGES.MAIN, about.getElement());
+            // this.setContent(PAGES.MAIN, about.getElement());
+            window.location.href = 'main';
             return;
           }
           this.deleteToken(ACCESS_TOKEN);
