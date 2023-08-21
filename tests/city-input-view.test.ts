@@ -16,7 +16,7 @@ describe('cityInputView', () => {
     expect(cityInputView.createInput()).toBeInstanceOf(HTMLInputElement);
   });
 
-  it('should createa lavel of label element with proper text content', () => {
+  it('should create a label element with proper text content', () => {
     expect(cityInputView.createLabel('string').getElement().textContent).toBe('string');
   });
 
