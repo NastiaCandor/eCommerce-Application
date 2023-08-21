@@ -1,3 +1,4 @@
+import Noty from 'noty';
 import { EMAIL_VALIDATION_TEXT, PASSWORD_VALIDATION_TEXT, wrapperParams } from '../../constants';
 import PAGES from '../../router/pages';
 import Router from '../../router/Router';
