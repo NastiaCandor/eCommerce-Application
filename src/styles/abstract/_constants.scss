@@ -1,7 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@700&display=swap');
+
 $sample-primary-color: #e1e5e8;
 $sample-secondary-color: #b1c2cf;
 $sample-darken-color: #6b818d;
 $sample-color-login-input-error: #e2b9b9;
 $sample-light-grey-color: #eae8e84d;
 
+// COLOR
+$color-body-background: #FFFBBD;
+$color-primary-text: #000000;
+// header
+$color-hover-link: #E7557C;
+$color-active-link: #F3913E;
+$color-burger-span: #F3913E;
+$color-burger-background: #E0DED5;
+$color-active-text: #FFFFFF;
+
 $tablet: 768px;
+
+$form-width: 46rem;
+$percent: 50;
+$error-color: #900;

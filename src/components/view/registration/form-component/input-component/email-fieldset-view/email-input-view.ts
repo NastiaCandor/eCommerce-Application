@@ -1,6 +1,6 @@
+import Noty from 'noty';
 import ElementCreator from '../../../../../utils/ElementCreator';
 import View from '../../../../View';
-import Noty from 'noty';
 import fieldsetParams from '../input-params';
 import EmailInputParams from './email-params';
 import ClientAPI from '../../../../../utils/Client';

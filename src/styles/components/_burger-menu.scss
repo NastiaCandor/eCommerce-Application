@@ -1,5 +1,3 @@
-@import './burger-btn.scss';
-
 .header__menu {
   position: absolute;
   padding: 2em;
@@ -7,7 +5,7 @@
   align-items: center;
   display: flex;
   flex-direction: column;
-  background-color: $sample-darken-color;
+  background-color: $color-burger-background;
   max-width: 50%;
   height: 100%;
   top: 0;
@@ -16,6 +14,10 @@
   z-index: 50;
   opacity: 1;
   transition: all 0.3s ease-in-out;
+
+  .header__wrapper_logo {
+    padding: 0;
+  }
 
   @media screen and (width > $tablet) {
     opacity: 0;
@@ -58,4 +60,47 @@
 .header__menu.hidden {
   opacity: 0;
   top: -100%;
+}
+
+// BUTTONS
+
+.header__menu_btn {
+  position: sticky;
+  z-index: 100;
+  display: none;
+  cursor: pointer;
+
+  transition: transform 0.3s ease-in-out;
+  .btn_bar {
+    display: block;
+    height: 2px;
+    width: 1.8em;
+    margin-bottom: 0.5em;
+    background-color: $color-burger-span;
+
+    transition: all 0.3s ease-in-out;
+  }
+
+  .btn_bar:last-child {
+    margin-bottom: 0;
+  }
+
+  @media screen and (max-width: $tablet) {
+    display: block;
+  }
+}
+
+.header__menu_btn.clicked {
+  .btn_bar:first-child {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .btn_bar:nth-child(2) {
+    width: 0;
+  }
+
+  .btn_bar:last-child {
+    transform-origin: left;
+    transform: translate(3px, -3px) rotate(-45deg) ;
+  }
 }

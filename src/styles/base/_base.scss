@@ -7,8 +7,9 @@ body {
   display: flex;
   flex-direction: column;
   font-size: 1.6rem;
-  background-color: $sample-primary-color;
-  font-family: 'Poppins', sans-serif;
+  background-color: $color-body-background;
+  @extend %font-add-Inter;
+  color: $color-primary-text;
 }
 
 * {
@@ -36,5 +37,5 @@ a {
   text-decoration: none;
   color: inherit;
   cursor: pointer;
-  font-family: inherit;
+  // font-family: inherit;
 }

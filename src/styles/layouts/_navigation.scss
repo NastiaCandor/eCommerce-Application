@@ -1,14 +1,28 @@
+.header__nav {
+  display: flex;
+  justify-content: space-between;
+  width: 50%;
+  margin-left: 5rem;
+
+  @media screen and (max-width: $tablet) {
+    display: none;
+  }
+}
+
 .nav_item {
   display: inline-block;
   position: relative;
-  color: $sample-primary-color;
-  font-size: 1.2rem;
+  color: $color-primary-text;
   white-space: nowrap;
   user-select: none;
 
+  @extend %font-add-Inter;
+  @include font(1.6rem,120%, 500);
+  text-transform: uppercase;
+
   transition: color 0.3s ease-in-out;
   &:hover {
-    color: $sample-secondary-color;
+    color: $color-hover-link;
   }
   &::after {
     content: "";
@@ -16,7 +30,7 @@
     bottom: -6px;
     display: block;
     height: 2px;
-    background: $sample-primary-color;
+    background: $color-hover-link;
     width: 0;
     left: 50%;
     transition: width 0.3s ease 0s, left 0.3s ease 0s;
@@ -29,7 +43,7 @@
 
   &.active {
     position: relative;
-    color: $sample-secondary-color;
+    color: $color-active-link;
     pointer-events: none;
     &::after {
       content: "";
@@ -39,7 +53,7 @@
       display: block;
       height: 2px;
       width: 100%;
-      background: $sample-primary-color;
+      background: $color-active-link;
     }
   }
 }
