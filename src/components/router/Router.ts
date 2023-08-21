@@ -24,7 +24,6 @@ export default class Router {
       this.redirectToNotFound();
       return;
     }
-
     route.callback();
   }
 
@@ -37,12 +36,15 @@ export default class Router {
 
   private redirectToNotFound(): void {
     const routeToNotFound = this.routes.find((route) => route.path === PAGES.NOT_FOUND);
-    if (routeToNotFound) this.navigate(routeToNotFound.path);
+    if (routeToNotFound) {
+      window.history.replaceState(null, '', routeToNotFound.path);
+      routeToNotFound.callback();
+    }
   }
 
   private urlChangeHandler(): void {
     const path = this.getCurrentPath();
-    this.navigate(path);
+    this.routeTo(path);
   }
 
   private getCurrentPath(): string {
