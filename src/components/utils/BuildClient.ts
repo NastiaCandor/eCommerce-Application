@@ -11,6 +11,7 @@ const authMiddlewareOptions: AuthMiddlewareOptions = {
   scopes: [
     'view_shipping_methods:ecommerce-quantum create_anonymous_token:ecommerce-quantum view_payments:ecommerce-quantum view_categories:ecommerce-quantum view_types:ecommerce-quantum view_discount_codes:ecommerce-quantum view_cart_discounts:ecommerce-quantum view_published_products:ecommerce-quantum manage_customers:ecommerce-quantum',
   ],
+  // eslint-disable-next-line object-shorthand
   fetch,
 };
 

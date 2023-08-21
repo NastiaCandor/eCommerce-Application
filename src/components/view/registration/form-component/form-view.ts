@@ -3,9 +3,9 @@
 /* eslint-disable @typescript-eslint/comma-dangle */
 import { postcodeValidator } from 'postcode-validator';
 import { Address } from '@commercetools/platform-sdk';
+import Noty from 'noty';
 import ElementCreator from '../../../utils/ElementCreator';
 import View from '../../View';
-import Noty from 'noty';
 import formParams from './form-params';
 import WrapperParams from '../../wrapper-params';
 import PostcodeInputParams from './input-component/address/postcode-fieldset-view/postcode-params';
@@ -105,7 +105,7 @@ export default class FormView extends View {
     const heading = new ElementCreator(formParams.heading);
     heading.setTextContent(formParams.heading.basicInfo.text);
     wrapper.addInnerElement(heading);
-
+    wrapper.addInnerElement(this.addSignInLink());
     wrapper.addInnerElement(this.emailInput);
     wrapper.addInnerElement(this.passwordInput);
     wrapper.addInnerElement(this.firstNameInput);
@@ -200,6 +200,14 @@ export default class FormView extends View {
       wrapper.addInnerElement(checkboxSameAdrs);
     }
     return wrapper;
+  }
+
+  private addSignInLink(): ElementCreator {
+    const signInDiv = new ElementCreator(formParams.signInDiv);
+    const signInLink = new ElementCreator(formParams.signInLink);
+    signInLink.setAttribute('href', '#');
+    signInDiv.addInnerElement(signInLink);
+    return signInDiv;
   }
 
   private checkShipPostcode() {

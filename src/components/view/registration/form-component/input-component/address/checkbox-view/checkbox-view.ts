@@ -4,12 +4,9 @@ import fieldsetParams from '../../input-params';
 import CheckboxInputParams from './checkbox-params';
 
 export default class CheckboxView extends View {
-  // public sameAdrs: boolean;
-
   constructor() {
     super(fieldsetParams.fieldset);
     this.render();
-    // this.sameAdrs = false;
   }
 
   public render(): void {
@@ -33,12 +30,4 @@ export default class CheckboxView extends View {
     label.setTextContent(text);
     this.addInnerElement(label);
   }
-
-  // public changeChecked(element: HTMLInputElement) {
-  //   element.addEventListener('change', () => {
-  //     if (!this.sameAdrs) {
-  //       this.sameAdrs = true;
-  //     } else this.sameAdrs = false;
-  //   });
-  // }
 }

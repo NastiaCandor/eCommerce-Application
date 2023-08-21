@@ -36,6 +36,18 @@ const formParams = {
     noDisplay: ['no-display'],
     showDisplay: ['show-display'],
   },
+
+  signInDiv: {
+    tag: 'div',
+    cssClasses: ['sign-in__wrapper'],
+    textContent: 'Returning customer?   ',
+  },
+  signInLink: {
+    tag: 'a',
+    cssClasses: ['sign-in__link'],
+    textContent: '  Sign in!',
+  },
+
   signUpMessage: 'Account has been created successfully!',
   errorLoginMessage: 'Login attempt has failed. Please go to the login page and try again',
   errorSignUpMessage: 'Please check your information and try again',
