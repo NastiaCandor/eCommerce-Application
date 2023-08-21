@@ -494,6 +494,7 @@ export default class FormView extends View {
     try {
       const loginAPI = await this.clientAPI.loginClient(email, password);
       if (loginAPI.statusCode === 200) {
+        await this.clientAPI.obtainUserAccessToken(email, password);
         this.router.navigate(PAGES.MAIN);
       } else if (loginAPI.statusCode === undefined) {
         this.showLoginErrorMessage();
