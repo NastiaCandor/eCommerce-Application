@@ -24,7 +24,7 @@ export default class App {
 
   private shippingView: ShippingView;
 
-  // private catalogView: CatalogView;
+  private catalogView: CatalogView;
 
   private aboutView: AboutView;
 
@@ -45,7 +45,7 @@ export default class App {
     this.loginView = new LoginView(this.router);
     this.shippingView = new ShippingView();
     this.notFoundView = new NotFoundView();
-    // this.catalogView = new CatalogView();
+    this.catalogView = new CatalogView();
     this.contactsView = new ContactsView();
     this.aboutView = new AboutView();
   }
@@ -81,18 +81,20 @@ export default class App {
       {
         path: '',
         callback: () => {
-          this.setContent(PAGES.MAIN, this.aboutView.getElement());
+          const about = new AboutView();
+          this.header.getUnnItems.forEach((value) => about.addInnerElement(value));
+          this.setContent(PAGES.MAIN, about.getElement());
+          // this.setContent(PAGES.MAIN, this.aboutView.getElement());
         },
-      },
-      {
-        path: `${PAGES.INDEX}`,
-        callback: () => {},
       },
       {
         path: `${PAGES.LOG_IN}`,
         callback: () => {
           if (this.checkToken(ACCESS_TOKEN)) {
-            this.setContent(PAGES.MAIN, this.aboutView.getElement());
+            const about = new AboutView();
+            this.header.getUnnItems.forEach((value) => about.addInnerElement(value));
+            this.setContent(PAGES.MAIN, about.getElement());
+            // this.setContent(PAGES.MAIN, this.aboutView.getElement());
             return;
           }
           this.setContent(PAGES.LOG_IN, this.loginView.getElement());
@@ -108,7 +110,9 @@ export default class App {
         path: `${PAGES.SIGN_UP}`,
         callback: () => {
           if (this.checkToken(ACCESS_TOKEN)) {
-            this.setContent(PAGES.MAIN, this.aboutView.getElement());
+            const about = new AboutView();
+            this.header.getUnnItems.forEach((value) => about.addInnerElement(value));
+            this.setContent(PAGES.MAIN, about.getElement());
             return;
           }
           this.resetInputs();
@@ -119,7 +123,10 @@ export default class App {
         path: `${PAGES.PROFILE}`,
         callback: () => {
           if (!this.checkToken(ACCESS_TOKEN)) {
-            this.setContent(PAGES.MAIN, this.aboutView.getElement());
+            // this.setContent(PAGES.MAIN, this.aboutView.getElement());
+            const about = new AboutView();
+            this.header.getUnnItems.forEach((value) => about.addInnerElement(value));
+            this.setContent(PAGES.MAIN, about.getElement());
             return;
           }
           this.setContent(PAGES.PROFILE, new ProfileView().getElement());
@@ -128,26 +135,31 @@ export default class App {
       {
         path: `${PAGES.MAIN}`,
         callback: () => {
-          this.setContent(PAGES.MAIN, this.aboutView.getElement());
+          const about = new AboutView();
+          this.header.getUnnItems.forEach((value) => about.addInnerElement(value));
+          this.setContent(PAGES.MAIN, about.getElement());
         },
       },
       {
         path: `${PAGES.LOG_OUT}`,
         callback: () => {
           if (!this.checkToken(ACCESS_TOKEN)) {
-            this.setContent(PAGES.MAIN, this.aboutView.getElement());
+            const about = new AboutView();
+            this.header.getUnnItems.forEach((value) => about.addInnerElement(value));
+            this.setContent(PAGES.MAIN, about.getElement());
             return;
           }
           this.deleteToken(ACCESS_TOKEN);
-          this.setContent(PAGES.MAIN, this.aboutView.getElement());
+          const about = new AboutView();
+          this.header.getUnnItems.forEach((value) => about.addInnerElement(value));
+          this.setContent(PAGES.MAIN, about.getElement());
+          // this.setContent(PAGES.MAIN, this.aboutView.getElement());
         },
       },
       {
         path: `${PAGES.CATALOG}`,
         callback: () => {
-          const catalog = new CatalogView();
-          this.header.getUnnItems.forEach((value) => catalog.addInnerElement(value));
-          this.setContent(PAGES.CATALOG, catalog.getElement());
+          this.setContent(PAGES.CATALOG, this.catalogView.getElement());
         },
       },
       {

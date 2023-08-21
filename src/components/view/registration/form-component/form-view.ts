@@ -211,6 +211,10 @@ export default class FormView extends View {
     const signInDiv = new ElementCreator(formParams.signInDiv);
     const signInLink = new ElementCreator(formParams.signInLink);
     signInLink.setAttribute('href', '#');
+    const signInElement = signInLink.getElement();
+    signInElement.addEventListener('click', () => {
+      this.router.navigate(PAGES.LOG_IN);
+    });
     signInDiv.addInnerElement(signInLink);
     return signInDiv;
   }

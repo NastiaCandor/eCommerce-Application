@@ -46,7 +46,10 @@ export default class LoginView extends View {
 
   private injectFormSubtitle(wrapper: ElementCreator): void {
     const newCustomer = new ElementCreator(loginParams.newCustomerText);
-    newCustomer.addInnerElement(new ElementCreator(loginParams.newCustomerLink));
+    const newCustomerLink = new ElementCreator(loginParams.newCustomerLink);
+    const newCustomerLinkElement = newCustomerLink.getElement();
+    newCustomerLinkElement.addEventListener('click', () => this.router.navigate(PAGES.SIGN_UP));
+    newCustomer.addInnerElement(newCustomerLinkElement);
     wrapper.addInnerElement(newCustomer);
   }
 
