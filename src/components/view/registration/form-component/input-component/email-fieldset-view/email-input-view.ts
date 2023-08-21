@@ -55,7 +55,7 @@ export default class EmailInputView extends View {
     return errorSpan;
   }
 
-  private checkEmail(str: string) {
+  public checkEmail(str: string) {
     const reg = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
     const result = reg.test(str);
     return result;
