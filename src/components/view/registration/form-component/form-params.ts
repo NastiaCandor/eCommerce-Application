@@ -45,7 +45,7 @@ const formParams = {
   signInLink: {
     tag: 'a',
     cssClasses: ['sign-in__link'],
-    textContent: '  Sign in!',
+    textContent: '  Log in!',
   },
 
   signUpMessage: 'Account has been created successfully!',

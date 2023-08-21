@@ -17,6 +17,7 @@
   "devDependencies": {
     "@commercetools/history-sdk": "^3.5.0",
     "@commercetools/importapi-sdk": "^4.6.2",
+    "@commercetools/sdk-middleware-auth": "^7.0.1",
     "@commitlint/cli": "^17.6.7",
     "@commitlint/config-conventional": "^17.6.7",
     "@types/jest": "^29.5.3",
@@ -59,6 +60,7 @@
   "homepage": "https://github.com/NastiaCandor/eCommerce-Application#readme",
   "dependencies": {
     "@commercetools/platform-sdk": "^5.0.0",
+    "@commercetools/sdk-auth": "^4.0.1",
     "@commercetools/sdk-client-v2": "^2.2.0",
     "flatpickr": "^4.6.13",
     "noty": "^3.2.0-beta-deprecated",

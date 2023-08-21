@@ -151,3 +151,10 @@
     bottom: 1.5rem;
   }
 }
+.login__new-customer-link {
+  transition: all 0.3s ease;
+}
+
+.login__new-customer-link:hover {
+  color: $sample-darken-color;
+}

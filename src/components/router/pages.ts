@@ -6,11 +6,12 @@ const PAGES: PagesInterface = {
 
   LOG_IN: 'log_in',
   SIGN_UP: 'sign_up',
-  USER_PROFILE: 'profile',
+  LOG_OUT: 'log_out',
+  PROFILE: 'profile',
   CART: 'cart',
 
+  MAIN: 'main',
   CATALOG: 'catalog',
-  ABOUT_US: 'about_us',
   SHIPPING: 'shipping',
   CONTACT_US: 'contact_us',
 };

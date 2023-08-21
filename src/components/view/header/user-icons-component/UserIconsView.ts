@@ -4,6 +4,8 @@ import userIconsParams from './user-icons-params';
 import '../../../../assets/img/signup-svgrepo-com.svg';
 import '../../../../assets/img/login-svgrepo-com.svg';
 import '../../../../assets/img/cart-svgrepo-com.svg';
+import '../../../../assets/img/profile-svgrepo-com.svg';
+import '../../../../assets/img/logout-svgrepo-com.svg';
 
 export default class UserIconsView extends View {
   private iconsCollection: Map<string, HTMLElement>;
@@ -11,7 +13,7 @@ export default class UserIconsView extends View {
   constructor() {
     super(userIconsParams.wrapper);
     this.iconsCollection = new Map();
-    this.createIconItems(userIconsParams.authItemsNames);
+    this.createIconItems();
     this.render();
   }
 
@@ -20,27 +22,57 @@ export default class UserIconsView extends View {
   }
 
   protected configure(): void {
-    this.injectIconItems();
+    this.injectIconItems(this.iconsCollection);
   }
 
-  private injectIconItems(): void {
-    this.iconsCollection.forEach((value) => this.addInnerElement(value));
+  private checkToken(name: string): boolean {
+    const allCookies = document.cookie.split(';');
+    const isAccessTokenExist = allCookies.some((token) => token.startsWith(`${name}=`));
+    return isAccessTokenExist;
   }
 
-  private createIconItems(names: string[]): void {
+  public injectIconItems(collection: Map<string, HTMLElement>): void {
+    collection.forEach((value) => this.addInnerElement(value));
+  }
+
+  private createIconItems(): void {
+    const key = this.checkToken('access_token') ? 'auth' : 'anon';
+    const names = userIconsParams[key].iconsNames;
     names.forEach((name, i) => {
       const item = new ElementCreator(userIconsParams.authItem);
       const span = new ElementCreator(userIconsParams.authItem.span);
       const imageItem = new ElementCreator(userIconsParams.authItem.itemImg);
-      imageItem.setImageLink(userIconsParams.authItemsSrc[i], userIconsParams.authItemsAlt[i]);
+      imageItem.setImageLink(userIconsParams[key].iconsSrc[i], userIconsParams[key].iconsAlt[i]);
       item.addInnerElement(imageItem);
       item.addInnerElement(span);
       span.setTextContent(name);
-      const key = this.formatKeyToUpperCase(name);
+      const nameKey = this.formatKeyToUpperCase(name);
       const link = this.formatNameToLinkName(name);
-      item.setAttribute('href', link);
-      this.iconsCollection.set(key, item.getElement());
+      item.setAttribute('href', `#${link}`);
+      this.iconsCollection.set(nameKey, item.getElement());
     });
+  }
+
+  // remove after crosscheck. this function only generate icons for better cross-check expiriences;
+  public getUnnecessaryIconItems(): Map<string, HTMLElement> {
+    const key = 'anon';
+    const items: Map<string, HTMLElement> = new Map();
+    const names = userIconsParams[key].iconsNames;
+    names.forEach((name, i) => {
+      const item = new ElementCreator(userIconsParams.authItem);
+      const span = new ElementCreator(userIconsParams.authItem.span);
+      const imageItem = new ElementCreator(userIconsParams.authItem.itemImg);
+      imageItem.setImageLink(userIconsParams[key].iconsSrc[i], userIconsParams[key].iconsAlt[i]);
+      item.addInnerElement(imageItem);
+      item.addInnerElement(span);
+      span.setTextContent(name);
+      const nameKey = this.formatKeyToUpperCase(name);
+      const link = this.formatNameToLinkName(name);
+      item.setAttribute('href', `#${link}`);
+      items.set(nameKey, item.getElement());
+      this.iconsCollection.set(nameKey, item.getElement());
+    });
+    return items;
   }
 
   private formatKeyToUpperCase(key: string): string {

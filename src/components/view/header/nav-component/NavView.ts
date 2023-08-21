@@ -37,8 +37,8 @@ export default class NavigationView extends View {
       burgerClonedItem.setTextContent(name);
       const key = this.formatKeyToUpperCase(name);
       const link = this.formatNameToLinkName(name);
-      item.setAttribute('href', link);
-      burgerClonedItem.setAttribute('href', link);
+      item.setAttribute('href', `#${link}`);
+      burgerClonedItem.setAttribute('href', `#${link}`);
       const burgerKey = this.formatKeyToUpperCase(name, true);
       this.navCollection.set(key, item.getElement());
       this.burgerNavCollection.set(burgerKey, burgerClonedItem.getElement());

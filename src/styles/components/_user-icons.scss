@@ -1,3 +1,19 @@
+.header__user-icons {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  max-width: 15%;
+  z-index: 80;
+  @media screen and (max-width: 1200px) {
+    max-width: 25%;
+  }
+
+  @media screen and (max-width: $tablet) {
+    max-width: 35%;
+    justify-content: space-around;
+  }
+}
+
 .user-icon_item {
   display: inline-flex;
   flex-shrink: 1;
@@ -55,4 +71,10 @@
   background-color: $sample-secondary-color;
   border-radius: 5px;
   pointer-events: none;
+}
+
+// delete after cross-check
+
+section > .user-icon_item {
+  max-width: 10%;
 }

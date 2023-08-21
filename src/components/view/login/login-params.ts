@@ -65,7 +65,7 @@ const loginParams: LoginParamsType = {
   newCustomerLink: {
     tag: 'a',
     cssClasses: ['login__new-customer-link'],
-    textContent: 'Creat one!',
+    textContent: 'Create one!',
     link: '#',
   },
   inputError: {
