@@ -43,9 +43,8 @@
 }
 
 .user-icon_item:hover {
-  color: $sample-secondary-color;
+  color: $color-hover-link;
   filter: opacity(0.8) brightness(0.4);
-
 }
 
 .user-icon_item:hover > img {
@@ -53,11 +52,13 @@
 }
 
 .user-icon_item.active {
-  // filter: opacity(0.6) brightness(0.4);
   background-color: $color-active-link;
   border-radius: 0.5rem;
   pointer-events: none;
   color: $color-active-text;
+  .item_img {
+    filter: invert(1);
+  }
 }
 
 // WRAPPER

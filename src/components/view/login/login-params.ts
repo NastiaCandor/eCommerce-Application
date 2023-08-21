@@ -12,7 +12,7 @@ const loginParams: LoginParamsType = {
   title: {
     tag: 'h2',
     cssClasses: ['login__title'],
-    textContent: 'Sign In',
+    textContent: 'Log In',
   },
   form: {
     tag: 'form',
@@ -55,7 +55,7 @@ const loginParams: LoginParamsType = {
   loginBtn: {
     tag: 'button',
     cssClasses: ['login__form-btn', 'button'],
-    textContent: 'Sign In',
+    textContent: 'Log In',
   },
   newCustomerText: {
     tag: 'p',
@@ -65,18 +65,16 @@ const loginParams: LoginParamsType = {
   newCustomerLink: {
     tag: 'a',
     cssClasses: ['login__new-customer-link'],
-    textContent: 'Creat one!',
+    textContent: 'Create one!',
     link: '#',
   },
   inputError: {
     tag: 'div',
     cssClasses: ['login__input-error'],
   },
-  loginError: {
-    tag: 'span',
-    cssClasses: ['login__login-error'],
-    textContent: 'Wrong email address or password',
-  },
+  loginErrorMessage: 'Wrong Email Address or Password',
+  loginSuccessMessage: 'Welcome back',
+  serverErrorMessage: 'Please check your connection and try again',
 };
 
 export default loginParams;

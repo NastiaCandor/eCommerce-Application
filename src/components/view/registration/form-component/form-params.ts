@@ -27,7 +27,7 @@ const formParams = {
 
   button: {
     tag: 'button',
-    cssClasses: ['reg-form__btn'],
+    cssClasses: ['reg-form__btn', 'button'],
     type: 'submit',
     textContent: 'Sign Up',
   },

@@ -1,3 +1,4 @@
+import Noty from 'noty';
 import { EMAIL_VALIDATION_TEXT, PASSWORD_VALIDATION_TEXT, wrapperParams } from '../../../types';
 import ClientAPI from '../../utils/Client';
 import ElementCreator from '../../utils/ElementCreator';
@@ -77,7 +78,6 @@ export default class LoginView extends View {
     this.tracePasswordInput(passwordInput, passwordError);
 
     const loginBtn = new ElementCreator(loginParams.loginBtn);
-    const loginError = new ElementCreator(loginParams.loginError);
 
     form.getElement().addEventListener('submit', (e: Event) => {
       e.preventDefault();
@@ -85,7 +85,7 @@ export default class LoginView extends View {
         this.checkLogin(emailInput, passwordInput);
       }
     });
-    form.addInnerElement([emailBox, passwordBox, loginBtn, loginError]);
+    form.addInnerElement([emailBox, passwordBox, loginBtn]);
   }
 
   private showPasswordFunctionality(eyeIcon: ElementCreator, input: HTMLInputElement): void {
@@ -178,15 +178,14 @@ export default class LoginView extends View {
     return passwordInput;
   }
 
-  private showLoginError(emailInput: HTMLElement, passwordInput: HTMLElement): void {
-    emailInput.classList.add('_invalid');
-    passwordInput.classList.add('_invalid');
-    const loginError = document.querySelector('.login__login-error');
-
-    loginError?.classList.add('_display');
-    setTimeout(() => {
-      loginError?.classList.remove('_display');
-    }, 2000);
+  private showSideBarMessage(messageText: string, type: string): void {
+    new Noty({
+      theme: 'mint',
+      text: messageText,
+      timeout: 3000,
+      progressBar: true,
+      type: type === 'success' ? 'success' : 'error',
+    }).show();
   }
 
   private async checkLogin(emailInput: HTMLElement, passwordInput: HTMLElement): Promise<void> {
@@ -197,14 +196,22 @@ export default class LoginView extends View {
     loginAPI()
       .then((data) => {
         if (data.statusCode === 200) {
-          // TODO: impliment further functionality
-          console.log(`Hello ${data.body.customer.firstName} ${data.body.customer.lastName}!`);
+          const { firstName } = data.body.customer;
+          const { lastName } = data.body.customer;
+          if (firstName && lastName) {
+            const message = `${loginParams.loginSuccessMessage}, ${data.body.customer.firstName} ${data.body.customer.lastName}!`;
+            this.showSideBarMessage(message, 'success');
+          } else {
+            const message = `${loginParams.loginSuccessMessage}!`;
+            this.showSideBarMessage(message, 'success');
+          }
         }
       })
       .catch((error) => {
         if (error.status === 400) {
-          this.showLoginError(emailInput, passwordInput);
+          this.showSideBarMessage(loginParams.loginErrorMessage, 'error');
         } else {
+          this.showSideBarMessage(loginParams.serverErrorMessage, 'error');
           console.log(error.status);
         }
       });

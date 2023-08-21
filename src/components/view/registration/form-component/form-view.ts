@@ -104,7 +104,6 @@ export default class FormView extends View {
     const wrapper = new ElementCreator(WrapperParams);
     const heading = new ElementCreator(formParams.heading);
     heading.setTextContent(formParams.heading.basicInfo.text);
-    wrapper.addInnerElement(heading);
 
     wrapper.addInnerElement(this.emailInput);
     wrapper.addInnerElement(this.passwordInput);
@@ -112,7 +111,7 @@ export default class FormView extends View {
     wrapper.addInnerElement(this.lastNameInput);
     wrapper.addInnerElement(this.dateInput);
     wrapper.setCssClasses(formParams.basicInfoDiv.cssClasses);
-    this.addInnerElement(wrapper);
+    this.addInnerElement([heading, wrapper]);
     const shipAdrsWrapper = this.createAdrsWrapper(
       WrapperParams,
       formParams.heading.shipping.text,

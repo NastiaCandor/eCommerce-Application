@@ -29,7 +29,9 @@ export type LoginParamsType = {
   newCustomerText: ElementParamsType;
   newCustomerLink: ElementParamsType;
   inputError: ElementParamsType;
-  loginError: ElementParamsType;
+  loginErrorMessage: string;
+  loginSuccessMessage: string;
+  serverErrorMessage: string;
 };
 
 export type NotFoundType = {
