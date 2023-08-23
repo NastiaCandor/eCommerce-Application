@@ -7,7 +7,7 @@ import '../../../assets/img/icons8-cheburashka-48.svg';
 import Router from '../../router/Router';
 import { PagesInterface } from '../../../types';
 import navigationParams from './nav-component/nav-params';
-import PAGES from '../../router/pages';
+import PAGES from '../../router/utils/pages';
 
 export default class HeaderView extends View {
   private navigationView: NavigationView;

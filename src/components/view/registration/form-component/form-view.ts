@@ -25,7 +25,7 @@ import CityInputParams from './input-component/address/city-fieldset-view/city-p
 import StreetInputParams from './input-component/address/street-input-view/street-params';
 import CountryInputParams from './input-component/address/country-fieldset-view/country-params';
 import Router from '../../../router/Router';
-import PAGES from '../../../router/pages';
+import PAGES from '../../../router/utils/pages';
 import ClientAPI from '../../../utils/Client';
 
 export default class FormView extends View {

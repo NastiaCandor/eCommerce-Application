@@ -1,10 +1,10 @@
-import { PagesInterface } from '../../types';
+import { PagesInterface } from '../../../types';
 
 const PAGES: PagesInterface = {
   INDEX: 'index',
-  NOT_FOUND: 'not-found',
+  NOT_FOUND: 'not_found',
 
-  LOG_IN: 'log_in',
+  LOG_IN: 'login',
   SIGN_UP: 'sign_up',
   LOG_OUT: 'log_out',
   PROFILE: 'profile',
@@ -13,7 +13,7 @@ const PAGES: PagesInterface = {
   MAIN: 'main',
   CATALOG: 'catalog',
   SHIPPING: 'shipping',
-  CONTACT_US: 'contact_us',
+  CONTACTS: 'contacts',
 };
 
 export default PAGES;

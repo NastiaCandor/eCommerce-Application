@@ -1,68 +1,54 @@
-import { Route } from '../../types';
-import PAGES from '../router/pages';
+import { ACCESS_TOKEN, COOKIE_RESET_DATE } from '../constants';
+import PAGES from '../router/utils/pages';
 import Router from '../router/Router';
 import CartView from '../view/cart/CartView';
 import HeaderView from '../view/header/HeaderView';
 import LoginView from '../view/login/LoginView';
 import MainView from '../view/main/MainView';
 import NotFoundView from '../view/not-found-page/NotFoundView';
-// import AboutView from '../view/pages/about/AboutView';
 import CatalogView from '../view/pages/catalog/CatalogView';
 import ContactsView from '../view/pages/contacts/ContactsView';
 import ShippingView from '../view/pages/shipping/ShippingView';
 import ProfileView from '../view/profile/ProfileView';
 import RegView from '../view/registration/reg-view';
-import { ACCESS_TOKEN } from '../constants';
 import AboutView from '../view/pages/about/AboutView';
+import Routes from '../router/utils/Routes';
+import { RouteCallbacks } from '../../types';
 
 export default class App {
   private header: HeaderView;
 
-  private mainContainer: MainView;
+  private contentContainer: MainView;
 
   private router: Router;
 
-  private shippingView: ShippingView;
+  private signupForm: RegView;
 
-  private catalogView: CatalogView;
-
-  private aboutView: AboutView;
-
-  private regView: RegView;
-
-  private contactsView: ContactsView;
-
-  private loginView: LoginView;
-
-  private notFoundView: NotFoundView;
+  private loginForm: LoginView;
 
   constructor() {
-    const routes = this.createRoutes();
-    this.mainContainer = new MainView();
+    const routesClass = new Routes(this.getRoutesCallbacks());
+    const routes = routesClass.getRoutes();
     this.router = new Router(routes);
+    this.contentContainer = new MainView();
     this.header = new HeaderView(this.router);
-    this.regView = new RegView(this.router);
-    this.loginView = new LoginView(this.router);
-    this.shippingView = new ShippingView();
-    this.notFoundView = new NotFoundView();
-    this.catalogView = new CatalogView();
-    this.contactsView = new ContactsView();
-    this.aboutView = new AboutView();
+    this.signupForm = new RegView(this.router);
+    this.loginForm = new LoginView(this.router);
   }
 
   public start(): void {
     this.header.render();
-    this.mainContainer.render();
+    this.contentContainer.render();
   }
 
   private setContent(page: string, view: HTMLElement) {
     this.header.updateIcons();
     this.header.updateLinksStatus(page);
-    this.mainContainer.setContent(view);
+    this.contentContainer.setContent(view);
   }
 
   private deleteToken(name: string): void {
-    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;`;
+    document.cookie = `${name}${COOKIE_RESET_DATE}`;
   }
 
   private checkToken(name: string): boolean {
@@ -71,118 +57,93 @@ export default class App {
     return isAccessTokenExist;
   }
 
-  private resetInputs(): void {
-    this.regView = new RegView(this.router);
-    this.loginView = new LoginView(this.router);
+  private loadMainPage() {
+    const main = new AboutView().getElement();
+    this.header.getUnnItems.forEach((item) => main.append(item));
+    this.setContent(PAGES.MAIN, main);
   }
 
-  private createRoutes(): Route[] {
-    return [
-      {
-        path: '',
-        callback: () => {
-          const about = new AboutView();
-          this.header.getUnnItems.forEach((value) => about.addInnerElement(value));
-          this.setContent(PAGES.MAIN, about.getElement());
-          // this.setContent(PAGES.MAIN, this.aboutView.getElement());
-        },
-      },
-      {
-        path: `${PAGES.LOG_IN}`,
-        callback: () => {
-          if (this.checkToken(ACCESS_TOKEN)) {
-            const about = new AboutView();
-            this.header.getUnnItems.forEach((value) => about.addInnerElement(value));
-            this.setContent(PAGES.MAIN, about.getElement());
-            window.location.href = 'main';
-            // this.setContent(PAGES.MAIN, this.aboutView.getElement());
-            return;
-          }
-          this.setContent(PAGES.LOG_IN, this.loginView.getElement());
-        },
-      },
-      {
-        path: `${PAGES.CART}`,
-        callback: () => {
-          this.setContent(PAGES.CART, new CartView().getElement());
-        },
-      },
-      {
-        path: `${PAGES.SIGN_UP}`,
-        callback: () => {
-          if (this.checkToken(ACCESS_TOKEN)) {
-            const about = new AboutView();
-            this.header.getUnnItems.forEach((value) => about.addInnerElement(value));
-            window.location.href = 'main';
-            // this.setContent(PAGES.MAIN, about.getElement());
-            return;
-          }
-          this.resetInputs();
-          this.setContent(PAGES.SIGN_UP, this.regView.getElement());
-        },
-      },
-      {
-        path: `${PAGES.PROFILE}`,
-        callback: () => {
-          if (!this.checkToken(ACCESS_TOKEN)) {
-            // this.setContent(PAGES.MAIN, this.aboutView.getElement());
-            const about = new AboutView();
-            this.header.getUnnItems.forEach((value) => about.addInnerElement(value));
-            window.location.href = 'main';
-            return;
-          }
-          this.setContent(PAGES.PROFILE, new ProfileView().getElement());
-        },
-      },
-      {
-        path: `${PAGES.MAIN}`,
-        callback: () => {
-          const about = new AboutView();
-          this.header.getUnnItems.forEach((value) => about.addInnerElement(value));
-          this.setContent(PAGES.MAIN, about.getElement());
-        },
-      },
-      {
-        path: `${PAGES.LOG_OUT}`,
-        callback: () => {
-          if (!this.checkToken(ACCESS_TOKEN)) {
-            const about = new AboutView();
-            this.header.getUnnItems.forEach((value) => about.addInnerElement(value));
-            // this.setContent(PAGES.MAIN, about.getElement());
-            window.location.href = 'main';
-            return;
-          }
-          this.deleteToken(ACCESS_TOKEN);
-          const about = new AboutView();
-          this.header.getUnnItems.forEach((value) => about.addInnerElement(value));
-          this.setContent(PAGES.MAIN, about.getElement());
-          // this.setContent(PAGES.MAIN, this.aboutView.getElement());
-        },
-      },
-      {
-        path: `${PAGES.CATALOG}`,
-        callback: () => {
-          this.setContent(PAGES.CATALOG, this.catalogView.getElement());
-        },
-      },
-      {
-        path: `${PAGES.CONTACT_US}`,
-        callback: () => {
-          this.setContent(PAGES.CONTACT_US, this.contactsView.getElement());
-        },
-      },
-      {
-        path: `${PAGES.SHIPPING}`,
-        callback: () => {
-          this.setContent(PAGES.SHIPPING, this.shippingView.getElement());
-        },
-      },
-      {
-        path: `${PAGES.NOT_FOUND}`,
-        callback: () => {
-          this.setContent(PAGES.NOT_FOUND, this.notFoundView.getElement());
-        },
-      },
-    ];
+  private returnToMain(replaceState = true): void {
+    this.loadMainPage();
+    if (replaceState) {
+      window.history.replaceState(null, '', PAGES.MAIN);
+    }
+  }
+
+  private loadLoginPage() {
+    if (this.checkToken(ACCESS_TOKEN)) {
+      this.returnToMain();
+      return;
+    }
+    this.setContent(PAGES.LOG_IN, this.loginForm.getElement());
+  }
+
+  private loadCartPage() {
+    const cart = new CartView().getElement();
+    this.setContent(PAGES.CART, cart);
+  }
+
+  private loadContactsPage() {
+    const contacts = new ContactsView().getElement();
+    this.setContent(PAGES.CONTACTS, contacts);
+  }
+
+  private loadSignupPage() {
+    if (this.checkToken(ACCESS_TOKEN)) {
+      this.returnToMain();
+      return;
+    }
+    this.setContent(PAGES.SIGN_UP, this.signupForm.getElement());
+  }
+
+  private loadProfilePage() {
+    if (!this.checkToken(ACCESS_TOKEN)) {
+      this.returnToMain();
+      return;
+    }
+    this.setContent(PAGES.PROFILE, new ProfileView().getElement());
+  }
+
+  private loadShippingPage() {
+    const shipping = new ShippingView().getElement();
+    this.setContent(PAGES.SHIPPING, shipping);
+  }
+
+  private loadNotFoundPage() {
+    const notFound = new NotFoundView().getElement();
+    this.setContent(PAGES.SHIPPING, notFound);
+  }
+
+  private loadCatalogPage() {
+    const catalog = new CatalogView().getElement();
+    this.setContent(PAGES.CATALOG, catalog);
+  }
+
+  private logoutUser() {
+    if (this.checkToken(ACCESS_TOKEN)) {
+      this.deleteToken(ACCESS_TOKEN);
+      this.resetForms();
+    }
+    this.returnToMain();
+  }
+
+  private resetForms(): void {
+    this.signupForm = new RegView(this.router);
+    this.loginForm = new LoginView(this.router);
+  }
+
+  private getRoutesCallbacks(): RouteCallbacks {
+    return {
+      loadContactsPage: this.loadContactsPage.bind(this),
+      loadShippingPage: this.loadShippingPage.bind(this),
+      loadNotFoundPage: this.loadNotFoundPage.bind(this),
+      loadCatalogPage: this.loadCatalogPage.bind(this),
+      loadProfilePage: this.loadProfilePage.bind(this),
+      loadSignupPage: this.loadSignupPage.bind(this),
+      loadLoginPage: this.loadLoginPage.bind(this),
+      loadMainPage: this.loadMainPage.bind(this),
+      loadCartPage: this.loadCartPage.bind(this),
+      logoutUser: this.logoutUser.bind(this),
+    };
   }
 }

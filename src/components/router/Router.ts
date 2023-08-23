@@ -1,5 +1,5 @@
 import { Route, UserRequest } from '../../types';
-import PAGES from './pages';
+import PAGES from './utils/pages';
 
 export default class Router {
   private routes: Route[];
@@ -11,8 +11,22 @@ export default class Router {
 
   public navigate(url: string) {
     window.history.pushState(null, '', url);
-    const path = this.getCurrentPath();
-    this.routeTo(path);
+    this.routeTo(this.currentPath);
+  }
+
+  private setPageTitle(url: string): void {
+    document.title = this.formatPageTitle(url);
+  }
+
+  private formatPageTitle(url: string): string {
+    return `Vinyl Vibe Store - ${url.slice(0, 1).toUpperCase()}${url.replace('_', ' ').slice(1)}`;
+  }
+
+  private parseUrl(url: string): UserRequest {
+    const result = <UserRequest>{};
+    const path = url.split('/');
+    [result.path = '', result.resource = ''] = path;
+    return result;
   }
 
   private routeTo(path: string) {
@@ -24,34 +38,20 @@ export default class Router {
       this.redirectToNotFound();
       return;
     }
+    this.setPageTitle(this.currentPath);
     route.callback();
-  }
-
-  private parseUrl(url: string): UserRequest {
-    const result = <UserRequest>{};
-    const path = url.split('/');
-    [result.path = '', result.resource = ''] = path;
-    return result;
   }
 
   private redirectToNotFound(): void {
     const routeToNotFound = this.routes.find((route) => route.path === PAGES.NOT_FOUND);
     if (routeToNotFound) {
-      window.history.replaceState(null, '', routeToNotFound.path);
+      this.setPageTitle(routeToNotFound.path);
       routeToNotFound.callback();
     }
   }
 
   private urlChangeHandler(): void {
-    const path = this.getCurrentPath();
-    this.routeTo(path);
-  }
-
-  private getCurrentPath(): string {
-    if (window.location.hash) {
-      return window.location.hash.slice(1);
-    }
-    return window.location.pathname.slice(1);
+    this.routeTo(this.currentPath);
   }
 
   private startInit(): void {
@@ -66,5 +66,12 @@ export default class Router {
     window.addEventListener('popstate', () => {
       this.urlChangeHandler();
     });
+  }
+
+  private get currentPath(): string {
+    if (window.location.hash) {
+      return window.location.hash.slice(1);
+    }
+    return window.location.pathname.slice(1);
   }
 }

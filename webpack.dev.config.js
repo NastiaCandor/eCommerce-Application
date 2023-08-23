@@ -5,6 +5,7 @@ module.exports = {
   devtool: 'inline-source-map',
   devServer: {
     port: 8080,
+    hot: true,
     static: path.resolve(__dirname, 'dist'),
     historyApiFallback: true,
   },
