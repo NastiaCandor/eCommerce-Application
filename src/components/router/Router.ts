@@ -1,30 +1,30 @@
 import { Route, UserRequest } from '../../types';
-import PAGES from './pages';
+import State from '../state/State';
+import PAGES from './utils/pages';
+import { linksForSignedIn, linksForSignedOut } from './utils/redirectsUrl';
 
 export default class Router {
   private routes: Route[];
 
+  private state: State;
+
   constructor(routes: Route[]) {
+    this.state = new State();
     this.routes = routes;
     this.startInit();
   }
 
   public navigate(url: string) {
-    window.history.pushState(null, '', url);
-    const path = this.getCurrentPath();
-    this.routeTo(path);
+    this.state.pushState(url);
+    this.redirectUrl(this.currentPath);
   }
 
-  private routeTo(path: string) {
-    const request = this.parseUrl(path);
-    const pathToFind = request.resource === '' ? request.path : `${request.path}/${request.resource}`;
-    const route = this.routes.find((item) => item.path === pathToFind);
-
-    if (!route) {
-      this.redirectToNotFound();
+  private redirectUrl(url: string): void {
+    if (this.signedInUserAccess(url) || this.signedOutUserAccess(url)) {
+      this.routeTo(PAGES.MAIN);
       return;
     }
-    route.callback();
+    this.routeTo(url);
   }
 
   private parseUrl(url: string): UserRequest {
@@ -34,24 +34,46 @@ export default class Router {
     return result;
   }
 
+  public stateDeleteToken(): void {
+    this.state.deleteAccessToken();
+  }
+
+  private routeTo(path: string) {
+    const request = this.parseUrl(path);
+    const pathToFind = request.resource === '' ? request.path : `${request.path}/${request.resource}`;
+    const route = this.routes.find((item) => item.path === pathToFind);
+    if (!route) {
+      this.redirectToNotFound();
+      return;
+    }
+    this.state.setPageTitle(route.path);
+    route.callback();
+  }
+
   private redirectToNotFound(): void {
     const routeToNotFound = this.routes.find((route) => route.path === PAGES.NOT_FOUND);
     if (routeToNotFound) {
-      window.history.replaceState(null, '', routeToNotFound.path);
+      this.state.setPageTitle(routeToNotFound.path);
       routeToNotFound.callback();
     }
   }
 
-  private urlChangeHandler(): void {
-    const path = this.getCurrentPath();
-    this.routeTo(path);
+  private urlChangeHandler(redirectTo: string = this.currentPath): void {
+    this.redirectUrl(redirectTo);
   }
 
-  private getCurrentPath(): string {
-    if (window.location.hash) {
-      return window.location.hash.slice(1);
+  private signedOutUserAccess(url: string): boolean {
+    if (this.state.isAccessTokenValid() && linksForSignedOut.includes(url)) {
+      return true;
     }
-    return window.location.pathname.slice(1);
+    return false;
+  }
+
+  private signedInUserAccess(url: string): boolean {
+    if (!this.state.isAccessTokenValid() && linksForSignedIn.includes(url)) {
+      return true;
+    }
+    return false;
   }
 
   private startInit(): void {
@@ -63,8 +85,19 @@ export default class Router {
       this.urlChangeHandler();
     });
 
-    window.addEventListener('popstate', () => {
+    window.addEventListener('popstate', (evt) => {
+      if (evt.target instanceof Window && this.currentPath === PAGES.LOG_OUT) {
+        this.urlChangeHandler(PAGES.MAIN);
+        return;
+      }
       this.urlChangeHandler();
     });
+  }
+
+  private get currentPath(): string {
+    if (window.location.hash) {
+      return window.location.hash.slice(1);
+    }
+    return window.location.pathname.slice(1);
   }
 }
