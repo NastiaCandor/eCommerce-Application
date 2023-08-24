@@ -507,7 +507,6 @@ export default class FormView extends View {
   private submitForm(): void {
     const formEl = this.getElement() as HTMLFormElement;
     formEl.addEventListener('submit', (el) => {
-      console.log(formEl.checkValidity());
       this.checkInputsValidity();
       el.preventDefault();
       if (formEl.checkValidity() && this.checkInputsValidity()) {

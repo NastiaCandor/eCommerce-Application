@@ -1,3 +1,4 @@
+import { ACCESS_TOKEN, COOKIE_RESET_DATE } from '../constants';
 import PAGES from '../router/utils/pages';
 import Router from '../router/Router';
 import CartView from '../view/cart/CartView';

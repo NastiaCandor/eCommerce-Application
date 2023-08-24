@@ -50,7 +50,7 @@ export default class PasswordInputView extends View {
   }
 
   public checkPassword(str: string) {
-    const reg = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+    const reg = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!#$%&? "]).{8,}$/;
     const result = reg.test(str);
     return result;
   }
@@ -74,7 +74,9 @@ export default class PasswordInputView extends View {
       errorSpan.textContent = 'Enter your password';
     }
     if (!this.checkPassword(password.value)) {
-      errorSpan.textContent = 'Minimum 8 characters, at least 1 uppercase letter, 1 lowercase letter, and 1 number';
+      // eslint-disable-next-line operator-linebreak
+      errorSpan.textContent =
+        'Minimum 8 characters, at least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special symbol';
     }
     errorSpan.classList.add(passwordInputParams.errorSpan.cssClassesActive);
     password.classList.add(passwordInputParams.input.cssClassesInvalid);

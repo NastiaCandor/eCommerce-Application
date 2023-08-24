@@ -136,7 +136,7 @@ export default class LoginView extends View {
   }
 
   private validateEmail(email: string): boolean {
-    const pattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+    const pattern = /^[^ ]+@[^ ]+\.[a-z]{2,20}$/;
     return !!email.match(pattern);
   }
 

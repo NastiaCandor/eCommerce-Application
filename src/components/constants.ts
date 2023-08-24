@@ -7,7 +7,7 @@ const wrapperParams = {
 
 const ACCESS_TOKEN = 'access_token';
 
-const EMAIL_VALIDATION_TEXT = 'Please Enter Valid Email Address';
+const EMAIL_VALIDATION_TEXT = 'Email address is invalid. Please enter a valid email address, e.g. "user@example.com"';
 
 const PASSWORD_VALIDATION_TEXT = 'Please Enter Valid Password:';
 

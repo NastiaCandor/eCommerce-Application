@@ -6,6 +6,7 @@ import {
   ApiRoot,
   CustomerDraft,
   CustomerSignin,
+  // QueryParam,
   createApiBuilderFromCtpClient,
 } from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
@@ -34,8 +35,12 @@ export default class ClientAPI {
 
   public getCustomers() {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
-
-    const customersAPI = () => apiRoot.customers().get().execute();
+    const args = {
+      queryArgs: {
+        limit: 500,
+      },
+    };
+    const customersAPI = () => apiRoot.customers().get(args).execute();
     return customersAPI;
   }
 
