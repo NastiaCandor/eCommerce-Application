@@ -58,7 +58,7 @@ export type PagesInterface = {
   MAIN: string;
   CATALOG: string;
   SHIPPING: string;
-  CONTACT_US: string;
+  CONTACTS: string;
 };
 
 export type Route = {
@@ -69,4 +69,19 @@ export type Route = {
 export type UserRequest = {
   path: string;
   resource: string;
+};
+
+// ROUTES TYPES
+
+export type RouteCallbacks = {
+  loadLoginPage: () => void;
+  loadCartPage: () => void;
+  loadContactsPage: () => void;
+  loadSignupPage: () => void;
+  loadProfilePage: () => void;
+  loadMainPage: () => void;
+  loadShippingPage: () => void;
+  loadNotFoundPage: () => void;
+  loadCatalogPage: () => void;
+  logoutUser: () => void;
 };

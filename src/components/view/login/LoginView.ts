@@ -1,6 +1,6 @@
 import Noty from 'noty';
 import { EMAIL_VALIDATION_TEXT, PASSWORD_VALIDATION_TEXT, wrapperParams } from '../../constants';
-import PAGES from '../../router/pages';
+import PAGES from '../../router/utils/pages';
 import Router from '../../router/Router';
 import ClientAPI from '../../utils/Client';
 import ElementCreator from '../../utils/ElementCreator';
@@ -136,7 +136,7 @@ export default class LoginView extends View {
   }
 
   private validateEmail(email: string): boolean {
-    const pattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+    const pattern = /^[^ ]+@[^ ]+\.[a-z]{2,20}$/;
     return !!email.match(pattern);
   }
 

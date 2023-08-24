@@ -5,6 +5,7 @@ import {
   type PasswordAuthMiddlewareOptions,
 } from '@commercetools/sdk-client-v2';
 // import SdkAuth from '@commercetools/sdk-client-v2';
+// import { createRequestBuilder } from '@commercetools/api-request-builder'
 // Configure authMiddlewareOptions
 const authMiddlewareOptions: AuthMiddlewareOptions = {
   host: 'https://auth.europe-west1.gcp.commercetools.com',

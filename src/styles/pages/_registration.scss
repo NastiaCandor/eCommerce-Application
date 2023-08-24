@@ -61,3 +61,11 @@
     width: 100%;
   }
 }
+
+.sign-in__link {
+  transition: color 0.2s ease;
+}
+
+.sign-in__link:hover {
+  color: $color-hover-link;
+}

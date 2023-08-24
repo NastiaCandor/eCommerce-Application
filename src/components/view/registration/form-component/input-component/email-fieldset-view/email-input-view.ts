@@ -56,7 +56,7 @@ export default class EmailInputView extends View {
   }
 
   public checkEmail(str: string) {
-    const reg = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+    const reg = /^[^ ]+@[^ ]+\.[a-z]{2,20}$/;
     const result = reg.test(str);
     return result;
   }
@@ -113,13 +113,13 @@ export default class EmailInputView extends View {
       errorSpan.textContent = 'Enter your e-mail address';
     }
     if (email.validity.typeMismatch) {
-      errorSpan.textContent = 'Email address is invalid. Please enter a valid email address';
+      errorSpan.textContent = 'Email address is invalid. Please enter a valid email address, e.g. "user@example.com"';
     }
     if (email.validity.tooShort) {
       errorSpan.textContent = `Email should be at least ${email.minLength} characters long; you entered ${email.value.length}`;
     }
     if (!this.checkEmail(email.value)) {
-      errorSpan.textContent = 'Email address is invalid. Please enter a valid email address';
+      errorSpan.textContent = 'Email address is invalid. Please enter a valid email address, e.g. "user@example.com"';
     }
     if (errorText) {
       errorSpan.textContent = errorText;

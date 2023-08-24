@@ -49,7 +49,6 @@ export default class NotFoundView extends View {
 
   private injectBackToMainBtn(wrapper: ElementCreator): void {
     const element = new ElementCreator(notFoundParams.backToMainBtn).getElement();
-    element.setAttribute('href', '#');
     this.backToMainCbHandler(element);
     wrapper.addInnerElement(element);
   }
