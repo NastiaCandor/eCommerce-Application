@@ -9,7 +9,7 @@ const headerParams = {
   logo: {
     tag: 'a',
     cssClasses: ['header__wrapper_logo'],
-    link: '#',
+    link: '#main',
     textContent: 'Vibe Store',
   },
 

@@ -47,34 +47,13 @@ export default class App {
     this.contentContainer.setContent(view);
   }
 
-  private deleteToken(name: string): void {
-    document.cookie = `${name}${COOKIE_RESET_DATE}`;
-  }
-
-  private checkToken(name: string): boolean {
-    const allCookies = document.cookie.split(';');
-    const isAccessTokenExist = allCookies.some((token) => token.startsWith(`${name}=`));
-    return isAccessTokenExist;
-  }
-
   private loadMainPage() {
     const main = new AboutView().getElement();
     this.header.getUnnItems.forEach((item) => main.append(item));
     this.setContent(PAGES.MAIN, main);
   }
 
-  private returnToMain(replaceState = true): void {
-    this.loadMainPage();
-    if (replaceState) {
-      window.history.replaceState(null, '', PAGES.MAIN);
-    }
-  }
-
   private loadLoginPage() {
-    if (this.checkToken(ACCESS_TOKEN)) {
-      this.returnToMain();
-      return;
-    }
     this.setContent(PAGES.LOG_IN, this.loginForm.getElement());
   }
 
@@ -89,18 +68,10 @@ export default class App {
   }
 
   private loadSignupPage() {
-    if (this.checkToken(ACCESS_TOKEN)) {
-      this.returnToMain();
-      return;
-    }
     this.setContent(PAGES.SIGN_UP, this.signupForm.getElement());
   }
 
   private loadProfilePage() {
-    if (!this.checkToken(ACCESS_TOKEN)) {
-      this.returnToMain();
-      return;
-    }
     this.setContent(PAGES.PROFILE, new ProfileView().getElement());
   }
 
@@ -120,11 +91,9 @@ export default class App {
   }
 
   private logoutUser() {
-    if (this.checkToken(ACCESS_TOKEN)) {
-      this.deleteToken(ACCESS_TOKEN);
-      this.resetForms();
-    }
-    this.returnToMain();
+    this.router.stateDeleteToken();
+    this.router.navigate(PAGES.MAIN);
+    this.resetForms();
   }
 
   private resetForms(): void {
