@@ -56,6 +56,7 @@ export default class ProductView extends View {
         this.fillProductPhotoSide(productDisplay, body);
         this.fillProductInfoSide(productDisplay, body);
         this.fillProductAside(productDisplay, body);
+        this.fillAdditionalSide(productDisplay, body);
       })
       .catch((error) => {
         console.log(error);
@@ -73,7 +74,6 @@ export default class ProductView extends View {
       this.injectProductSubtitle(productSide, attributes[0].value);
       this.injectProductInfo(productSide, attributes);
     }
-    // this.injectProductSubtitle(productSide, attributes[0]);
     console.log(body, masterVariant);
 
     wrapper.addInnerElement(productSide);
@@ -226,5 +226,41 @@ export default class ProductView extends View {
     box.addInnerElement([label, text]);
 
     wrapper.addInnerElement(box);
+  }
+
+  private fillAdditionalSide(wrapper: ElementCreator, body: ProductProjection): void {
+    const productSide = new ElementCreator(productParams.additionalSide);
+    const { description, masterVariant } = body;
+    this.injectAdditionalTitle(productSide);
+    if (description) this.injectDescription(productSide, description['en-US']);
+    const { attributes } = masterVariant;
+    if (attributes && attributes[3].name === 'track-list') this.injectTrackList(productSide, attributes[3].value);
+
+    wrapper.addInnerElement(productSide);
+  }
+
+  private injectAdditionalTitle(wrapper: ElementCreator): void {
+    const title = new ElementCreator(productParams.additionalTitle);
+    wrapper.addInnerElement(title);
+  }
+
+  private injectDescription(wrapper: ElementCreator, text: string): void {
+    const description = new ElementCreator(productParams.descriptionProduct).getElement();
+    description.textContent = text;
+    wrapper.addInnerElement(description);
+  }
+
+  private injectTrackList(wrapper: ElementCreator, text: string): void {
+    const trackListTitle = new ElementCreator(productParams.trackListTitle);
+    const trackList = new ElementCreator(productParams.trackList).getElement();
+    const trackArr = text.split('\n');
+    trackArr.forEach((track) => {
+      const item = new ElementCreator(productParams.trackListItem).getElement();
+      item.textContent = track;
+      trackList.append(item);
+    });
+
+    trackList.append();
+    wrapper.addInnerElement([trackListTitle, trackList]);
   }
 }

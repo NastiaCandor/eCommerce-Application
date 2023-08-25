@@ -31,6 +31,13 @@ type ProductParamsType = {
   availabilityLabel: ElementParamsType;
   availabilityText: ElementParamsType;
   addToCartBtn: ElementParamsType;
+  // Aditional side
+  additionalSide: ElementParamsType;
+  additionalTitle: ElementParamsType;
+  descriptionProduct: ElementParamsType;
+  trackList: ElementParamsType;
+  trackListTitle: ElementParamsType;
+  trackListItem: ElementParamsType;
 };
 
 const productParams: ProductParamsType = {
@@ -145,6 +152,33 @@ const productParams: ProductParamsType = {
     tag: 'button',
     cssClasses: ['product__add-to-cart-btn', 'button'],
     textContent: 'Add To Cart',
+  },
+  // ADDITIONAL SIDE
+  additionalSide: {
+    tag: 'div',
+    cssClasses: ['product__additional'],
+  },
+  additionalTitle: {
+    tag: 'h3',
+    cssClasses: ['product__additional-title'],
+    textContent: 'Additional information',
+  },
+  descriptionProduct: {
+    tag: 'p',
+    cssClasses: ['product__desription'],
+  },
+  trackListTitle: {
+    tag: 'h4',
+    cssClasses: ['product__track-list-title'],
+    textContent: 'Track List',
+  },
+  trackList: {
+    tag: 'ul',
+    cssClasses: ['product__track-list'],
+  },
+  trackListItem: {
+    tag: 'li',
+    cssClasses: ['product__track-list-item'],
   },
 };
 

@@ -1,8 +1,13 @@
 .product__display {
-  display: flex;
+  display: grid;
 }
 
 // PHOTO SIDE
+
+.product__photo-side {
+  grid-row: 1;
+  grid-column: 1 / 2;
+}
 
 .product__img {
   width: 10rem;
@@ -13,6 +18,8 @@
 
 .product__info-side {
   margin: 0 0 0 2rem;
+  grid-row: 1;
+  grid-column: 2 / 3;
 }
 
 .product__info-label {
@@ -32,6 +39,8 @@
   border-radius: 1.3rem;
   color: #fff;
   margin: 0 1rem;
+  grid-row: 1;
+  grid-column: 3 / 4;
 }
 
 .product__price-box {
@@ -84,4 +93,15 @@
   padding: 1rem;
   width: 100%;
   margin-top: 1rem;
+}
+
+// ADDITIONAL SIDE
+
+.product__additional {
+  grid-row: 2;
+  grid-column: 1 / 4;
+}
+
+.product__track-list-item {
+  list-style: none;
 }
