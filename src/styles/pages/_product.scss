@@ -23,3 +23,65 @@
   list-style: none;
   display: flex;
 }
+
+// ASIDE
+
+.product__aside {
+  background-color: $color-login-background;
+  padding: 1rem;
+  border-radius: 1.3rem;
+  color: #fff;
+  margin: 0 1rem;
+}
+
+.product__price-box {
+  display: block;
+}
+
+.product__price {
+  &_current {
+    padding: 0.3rem;
+    width: 100%;
+    &._discounted-price {
+      color: #c20000;
+      @include font(1.8rem, 100%, 500);
+      
+    }
+  }
+  &_prev {
+    display: flex;
+    font-size: 1.2rem;
+  }
+  &_prev-text {
+    text-decoration: line-through;
+  }
+}
+
+.product__discount-text {
+  padding-left: 0.3rem;
+}
+
+.product__discount-info {
+  background-color: $color-login-link-text;
+  padding: 0.5rem;
+  border-radius: 1rem;
+  margin: 1rem 0;
+}
+
+.product__avail {
+  display: flex;
+}
+
+.product__avail {
+  &-label {
+    padding-right: 0.3rem;
+    text-transform: capitalize;
+  }
+}
+
+.product__add-to-cart-btn {
+  @include font(1.3rem, 100%, 500);
+  padding: 1rem;
+  width: 100%;
+  margin-top: 1rem;
+}

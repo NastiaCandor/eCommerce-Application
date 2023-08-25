@@ -38,8 +38,20 @@ export default class ClientAPI {
     const getProduct = apiRoot.productProjections().withId({ ID: productID }).get().execute();
     // const getProduct2 = apiRoot.productProjections().withKey({ key: 'mx-bing-crosby' }).get().execute();
     // getProduct2.then(console.log).catch(console.log);
+    // const getProduct2 = apiRoot
+    //   .productDiscounts()
+    //   .withId({ ID: '48023e90-13c9-4b23-9f68-6b92d7d30f07' })
+    //   .get()
+    //   .execute();
+    // getProduct2.then(console.log).catch(console.log);
     return getProduct;
     // getProduct.then(console.log).catch(console.log);
+  }
+
+  public async getDiscountById(discountID: string) {
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const getProduct = apiRoot.productDiscounts().withId({ ID: discountID }).get().execute();
+    return getProduct;
   }
 
   public getCustomers() {

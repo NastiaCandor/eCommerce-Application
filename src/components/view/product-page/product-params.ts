@@ -7,6 +7,7 @@ type ProductParamsType = {
   innerWrapper: ElementParamsType;
   productDisplay: ElementParamsType;
   photoSide: ElementParamsType;
+  // Info side with ditails about producr
   infoSide: ElementParamsType;
   productTitle: ElementParamsType;
   productSubtitle: ElementParamsType;
@@ -15,7 +16,21 @@ type ProductParamsType = {
   productInfoItemLabel: ElementParamsType;
   productInfoItemText: ElementParamsType;
   productInfoItemLink: ElementParamsType;
-  productPrice: ElementParamsType;
+  // Aside section with price and Buy btn
+  productAside: ElementParamsType;
+  priceTitle: ElementParamsType;
+  productPriceBox: ElementParamsType;
+  productPriceCurrent: ElementParamsType;
+  productPricePrevious: ElementParamsType;
+  productPricePrevText: ElementParamsType;
+  discountText: ElementParamsType;
+  discountInfoBox: ElementParamsType;
+  discountInfoTitle: ElementParamsType;
+  discountInfoText: ElementParamsType;
+  availabilityBox: ElementParamsType;
+  availabilityLabel: ElementParamsType;
+  availabilityText: ElementParamsType;
+  addToCartBtn: ElementParamsType;
 };
 
 const productParams: ProductParamsType = {
@@ -70,9 +85,66 @@ const productParams: ProductParamsType = {
     tag: 'a',
     cssClasses: ['product__info-link'],
   },
-  productPrice: {
+  // ASIDE
+  productAside: {
+    tag: 'div',
+    cssClasses: ['product__aside'],
+  },
+  priceTitle: {
+    tag: 'h3',
+    cssClasses: ['product__aside-title'],
+    textContent: 'Price',
+  },
+  productPriceBox: {
+    tag: 'div',
+    cssClasses: ['product__price-box'],
+  },
+  productPriceCurrent: {
+    tag: 'div',
+    cssClasses: ['product__price_current'],
+  },
+  productPricePrevious: {
+    tag: 'div',
+    cssClasses: ['product__price_prev'],
+  },
+  productPricePrevText: {
     tag: 'p',
-    cssClasses: ['product__price'],
+    cssClasses: ['product__price_prev-text'],
+  },
+  discountText: {
+    tag: 'p',
+    cssClasses: ['product__discount-text'],
+    textContent: ' - discount',
+  },
+  discountInfoBox: {
+    tag: 'div',
+    cssClasses: ['product__discount-info'],
+  },
+  discountInfoTitle: {
+    tag: 'h4',
+    cssClasses: ['product__discount-info-title'],
+  },
+  discountInfoText: {
+    tag: 'p',
+    cssClasses: ['product__discount-info-text'],
+  },
+  availabilityBox: {
+    tag: 'div',
+    cssClasses: ['product__avail'],
+  },
+  availabilityLabel: {
+    tag: 'p',
+    cssClasses: ['product__avail-label'],
+    textContent: 'available: ',
+  },
+  availabilityText: {
+    tag: 'p',
+    cssClasses: ['product__avail-text'],
+  },
+  addToCartBtn: {
+    tag: 'button',
+    cssClasses: ['product__add-to-cart-btn', 'button'],
+    textContent: 'Add To Cart',
   },
 };
 

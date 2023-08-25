@@ -91,7 +91,8 @@ export default class App {
   }
 
   private loadProductPage() {
-    // TODO: connect productID from Catalog Page to Product Page
+    // TODO: connect productID from Catalog Page to Product Page 177a75d9-7bcc-4800-8031-91ac81f2bd29
+    // 5673e423-c01e-4b35-9ef0-86b1043d08b4
     const product = new ProductView(this.router, '5673e423-c01e-4b35-9ef0-86b1043d08b4').getElement();
     this.setContent(PAGES.PRODUCT, product);
   }
