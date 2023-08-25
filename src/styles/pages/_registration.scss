@@ -1,0 +1,71 @@
+.reg-wrapper {
+  margin: 0 auto;
+  display: flex;
+}
+
+.reg-form,
+.adrs-wrapper,
+.info-wrapper {
+  display: flex;
+  flex-direction: column;
+  max-width: 50rem;
+  width: 50rem;
+  border-radius: 1rem;
+  gap: 2rem;
+  padding: 1rem;
+  font-size: 1.5rem;
+  flex-wrap: wrap;
+  @extend %transition;
+  .wrapper__hdn {
+    @include font(3rem,120%, 700);
+    text-transform: uppercase;
+    text-align: center;
+  }
+  @include media-tablet {
+    max-width: 40rem;
+  }
+}
+
+.info-wrapper {
+  background-color: $color-registration-background-general;
+}
+
+.adrs-wrapper {
+  background-color: $color-registration-background-address;
+  .wrapper__hdn {
+    @include font(2.0rem,120%, 700);
+    text-transform: uppercase;
+    text-align: left;
+  }
+}
+
+.reg-form__fieldset {
+  border: none;
+  width: 100%;
+}
+
+.reg-form__label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+@media screen and (max-width: 500px) {
+  .wrapper__hdn {
+    font-size: 1.8rem;
+  }
+  .reg-form,
+  .adrs-wrapper,
+  .info-wrapper {
+    width: 100%;
+  }
+}
+
+.sign-in__link {
+  color: $color-login-link-text;
+  @extend %transition;;
+  &:hover {
+    color: $color-login-link-text-hover;
+  }  
+}
