@@ -10,6 +10,8 @@ const PAGES: PagesInterface = {
   PROFILE: 'profile',
   CART: 'cart',
 
+  PRODUCT: 'product',
+
   MAIN: 'main',
   CATALOG: 'catalog',
   SHIPPING: 'shipping',

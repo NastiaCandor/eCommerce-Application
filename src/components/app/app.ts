@@ -1,4 +1,3 @@
-import { ACCESS_TOKEN, COOKIE_RESET_DATE } from '../constants';
 import PAGES from '../router/utils/pages';
 import Router from '../router/Router';
 import CartView from '../view/cart/CartView';
@@ -14,6 +13,7 @@ import RegView from '../view/registration/reg-view';
 import AboutView from '../view/pages/about/AboutView';
 import Routes from '../router/utils/Routes';
 import { RouteCallbacks } from '../../types';
+import ProductView from '../view/product-page/ProductView';
 
 export default class App {
   private header: HeaderView;
@@ -90,6 +90,12 @@ export default class App {
     this.setContent(PAGES.CATALOG, catalog);
   }
 
+  private loadProductPage() {
+    // TODO: connect productID from Catalog Page to Product Page
+    const product = new ProductView(this.router, '5673e423-c01e-4b35-9ef0-86b1043d08b4').getElement();
+    this.setContent(PAGES.PRODUCT, product);
+  }
+
   private logoutUser() {
     this.router.stateDeleteToken();
     this.router.navigate(PAGES.MAIN);
@@ -113,6 +119,7 @@ export default class App {
       loadMainPage: this.loadMainPage.bind(this),
       loadCartPage: this.loadCartPage.bind(this),
       logoutUser: this.logoutUser.bind(this),
+      loadProductPage: this.loadProductPage.bind(this),
     };
   }
 }

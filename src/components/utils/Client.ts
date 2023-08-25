@@ -33,6 +33,15 @@ export default class ClientAPI {
     return loginAPI;
   }
 
+  public async getProductById(productID: string) {
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const getProduct = apiRoot.productProjections().withId({ ID: productID }).get().execute();
+    // const getProduct2 = apiRoot.productProjections().withKey({ key: 'mx-bing-crosby' }).get().execute();
+    // getProduct2.then(console.log).catch(console.log);
+    return getProduct;
+    // getProduct.then(console.log).catch(console.log);
+  }
+
   public getCustomers() {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
     const args = {

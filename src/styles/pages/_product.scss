@@ -1,0 +1,25 @@
+.product__display {
+  display: flex;
+}
+
+// PHOTO SIDE
+
+.product__img {
+  width: 10rem;
+  height: 10rem;
+}
+
+// INFO SIDE
+
+.product__info-side {
+  margin: 0 0 0 2rem;
+}
+
+.product__info-label {
+  padding-right: 0.5rem;
+}
+
+.product__info-item {
+  list-style: none;
+  display: flex;
+}
