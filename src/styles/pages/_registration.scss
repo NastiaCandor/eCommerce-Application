@@ -63,9 +63,9 @@
 }
 
 .sign-in__link {
-  transition: color 0.2s ease;
-}
-
-.sign-in__link:hover {
-  color: $color-hover-link;
+  color: $color-login-link-text;
+  @extend %transition;;
+  &:hover {
+    color: $color-login-link-text-hover;
+  }  
 }

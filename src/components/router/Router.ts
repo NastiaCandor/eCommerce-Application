@@ -16,11 +16,12 @@ export default class Router {
 
   public navigate(url: string) {
     this.state.pushState(url);
-    this.redirectUrl(this.currentPath);
+    this.processUrl(this.currentPath);
   }
 
-  private redirectUrl(url: string): void {
+  private processUrl(url: string): void {
     if (this.signedInUserAccess(url) || this.signedOutUserAccess(url)) {
+      this.state.replaceState(PAGES.MAIN);
       this.routeTo(PAGES.MAIN);
       return;
     }
@@ -59,21 +60,15 @@ export default class Router {
   }
 
   private urlChangeHandler(redirectTo: string = this.currentPath): void {
-    this.redirectUrl(redirectTo);
+    this.processUrl(redirectTo);
   }
 
   private signedOutUserAccess(url: string): boolean {
-    if (this.state.isAccessTokenValid() && linksForSignedOut.includes(url)) {
-      return true;
-    }
-    return false;
+    return this.state.isAccessTokenValid() && linksForSignedOut.includes(url);
   }
 
   private signedInUserAccess(url: string): boolean {
-    if (!this.state.isAccessTokenValid() && linksForSignedIn.includes(url)) {
-      return true;
-    }
-    return false;
+    return !this.state.isAccessTokenValid() && linksForSignedIn.includes(url);
   }
 
   private startInit(): void {

@@ -63,7 +63,8 @@ export default class HeaderView extends View {
   }
 
   private injectLogoLink(wrapper: ElementCreator): void {
-    const logo = new ElementCreator(headerParams.logo);
+    const logo = new ElementCreator(headerParams.logo).getElement();
+    logo.addEventListener('click', () => this.router.navigate(PAGES.MAIN));
     wrapper.addInnerElement(logo);
   }
 

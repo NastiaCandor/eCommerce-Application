@@ -15,6 +15,10 @@ export default class State {
     window.history.pushState(null, '', url);
   }
 
+  public replaceState(url: string): void {
+    window.history.replaceState(null, '', url);
+  }
+
   public setPageTitle(url: string): void {
     document.title = this.formatPageTitle(url);
   }
