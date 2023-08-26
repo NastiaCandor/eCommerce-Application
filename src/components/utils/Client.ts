@@ -6,11 +6,10 @@ import {
   ApiRoot,
   CustomerDraft,
   CustomerSignin,
-  // QueryParam,
   createApiBuilderFromCtpClient,
 } from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
-import { ctpClient } from './BuildClient';
+import { ctpClient, SECRET, ID } from './BuildClient';
 import { ACCESS_TOKEN } from '../constants';
 
 export default class ClientAPI {
@@ -77,8 +76,8 @@ export default class ClientAPI {
   public async obtainUserAccessToken(clientEmail: string, clientPassword: string) {
     const url = 'https://auth.europe-west1.gcp.commercetools.com/oauth/ecommerce-quantum/customers/token';
     const credentials = {
-      clientId: 'dS_IDDkqYFktWCp4tVv8XbIR',
-      clientSecret: 'xR6ABVakMAv1yPHq6tLugX4jGCV5khR2',
+      clientId: ID,
+      clientSecret: SECRET,
     };
     const authString = btoa(`${credentials.clientId}:${credentials.clientSecret}`);
 
@@ -91,9 +90,11 @@ export default class ClientAPI {
       body: `grant_type=password&username=${clientEmail}&password=${clientPassword}`,
     });
 
-    const data = await response.json();
-    if (data) {
+    try {
+      const data = await response.json();
       this.setAccessTokenCookie(data.access_token, data.expires_in);
+    } catch (e) {
+      console.log(`${e} occured when fetch access token!`);
     }
   }
 

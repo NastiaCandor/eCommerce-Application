@@ -1,4 +1,3 @@
-import { ACCESS_TOKEN, COOKIE_RESET_DATE } from '../constants';
 import PAGES from '../router/utils/pages';
 import Router from '../router/Router';
 import CartView from '../view/cart/CartView';
@@ -49,7 +48,6 @@ export default class App {
 
   private loadMainPage() {
     const main = new AboutView().getElement();
-    this.header.getUnnItems.forEach((item) => main.append(item));
     this.setContent(PAGES.MAIN, main);
   }
 
