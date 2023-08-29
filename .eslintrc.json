@@ -27,7 +27,8 @@
     "prettier/prettier" : 2,
     "max-len": [2, { "code": 120, "ignoreUrls": true, "ignoreStrings": true, "ignoreTemplateLiterals": true }],
     "linebreak-style": [2, "windows"],
-    "object-curly-newline": 0
+    "object-curly-newline": 0,
+    "consistent-return": 0
   },
   "root": true,
   "parser": "@typescript-eslint/parser"
