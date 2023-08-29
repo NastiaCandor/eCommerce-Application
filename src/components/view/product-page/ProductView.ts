@@ -1,5 +1,8 @@
 // import Noty from 'noty';
-import { Attribute, Price, ProductDiscount, ProductProjection, TypedMoney } from '@commercetools/platform-sdk';
+import { Attribute, Price, ProductDiscount, ProductProjection, TypedMoney, Image } from '@commercetools/platform-sdk';
+// import Splide from '@splidejs/splide';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { Splide } from '@splidejs/splide';
 import { wrapperParams } from '../../constants';
 // import PAGES from '../../router/utils/pages';
 import Router from '../../router/Router';
@@ -7,6 +10,8 @@ import ClientAPI from '../../utils/Client';
 import ElementCreator from '../../utils/ElementCreator';
 import View from '../View';
 import productParams from './product-params';
+import sliderParams from './slider-params';
+import Modal from '../../utils/Modal';
 
 export default class ProductView extends View {
   clientAPI: ClientAPI;
@@ -120,18 +125,137 @@ export default class ProductView extends View {
 
     const { masterVariant } = body;
     const { images } = masterVariant;
+    if (!images) return;
 
     // TESTING
-    if (!images) return;
-    const imgParams = {
-      tag: 'img',
-      cssClasses: ['product__img'],
-    };
-    const img = new ElementCreator(imgParams);
-    img.setImageLink(images[0].url, 'vinyl photo');
-    productSide.addInnerElement(img);
+    // const imgParams = {
+    //   tag: 'img',
+    //   cssClasses: ['product__img'],
+    // };
+    // const img = new ElementCreator(imgParams);
+    // img.setImageLink(images[0].url, 'vinyl photo');
+    // productSide.addInnerElement(img);
+    const mainCarousel = this.injectPhotoSlider(productSide, images);
+    this.mainCarouselMpdal(mainCarousel, images);
 
     wrapper.addInnerElement(productSide);
+  }
+
+  // private injectPhotoSlider(wrapper: ElementCreator, images: Image[]): void {
+  //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  //   const thubnailPar: ElementParamsType = {
+  //     tag: 'div',
+  //     cssClasses: ['splide'],
+  //     id: 'thumbnail-slider',
+  //   };
+  //   const thubnail = new ElementCreator(thubnailPar);
+  //   const trackPar: ElementParamsType = {
+  //     tag: 'div',
+  //     cssClasses: ['splide__track'],
+  //   };
+  //   const track = new ElementCreator(trackPar);
+  //   const listPar: ElementParamsType = {
+  //     tag: 'ul',
+  //     cssClasses: ['splide__list'],
+  //   };
+  //   const list = new ElementCreator(listPar);
+  //   const slidePar: ElementParamsType = {
+  //     tag: 'li',
+  //     cssClasses: ['splide__slide'],
+  //   };
+  //   const imgParams = {
+  //     tag: 'img',
+  //     cssClasses: ['product__img'],
+  //   };
+  //   images.forEach((img) => {
+  //     const imgItem = new ElementCreator(imgParams);
+  //     imgItem.setImageLink(img.url, img.label ? img.label : 'vinyl photo');
+  //     const slide = new ElementCreator(slidePar);
+  //     slide.addInnerElement(imgItem);
+  //     list.addInnerElement(slide);
+  //   });
+  //   track.addInnerElement(list);
+  //   thubnail.addInnerElement(track);
+  //   // const img = new ElementCreator(imgParams);
+  //   // img.setImageLink(images[0].url, 'vinyl photo');
+
+  //   new Splide(thubnail.getElement(), {
+  //     fixedWidth: 100,
+  //     fixedHeight: 60,
+  //     gap: 10,
+  //     rewind: true,
+  //     pagination: false,
+  //     cover: true,
+  //     isNavigation: true,
+  //     breakpoints: {
+  //       600: {
+  //         fixedWidth: 60,
+  //         fixedHeight: 44,
+  //       },
+  //     },
+  //   }).mount();
+
+  //   wrapper.addInnerElement(thubnail);
+  // }
+
+  private injectPhotoSlider(wrapper: ElementCreator, images: Image[]) {
+    const mainCarousel = new ElementCreator(sliderParams.maincarousel);
+    const track = new ElementCreator(sliderParams.track);
+    const list = new ElementCreator(sliderParams.list);
+
+    const thubnails = new ElementCreator(sliderParams.thubnails);
+    const thubnailArr: HTMLElement[] = [];
+
+    images.forEach((img) => {
+      const slide = new ElementCreator(sliderParams.slide);
+      const image = new ElementCreator(sliderParams.img);
+      image.setImageLink(img.url, img.label ? img.label : 'vinyl photo');
+      slide.addInnerElement(image);
+      list.addInnerElement(slide);
+
+      const thubnail = new ElementCreator(sliderParams.thubnail);
+      const thubimg = new ElementCreator(sliderParams.img);
+      thubimg.setImageLink(img.url, img.label ? img.label : 'vinyl photo');
+      thubnail.addInnerElement(thubimg);
+      thubnailArr.push(thubnail.getElement());
+      thubnails.addInnerElement(thubnail);
+    });
+    track.addInnerElement(list);
+    mainCarousel.addInnerElement(track);
+
+    const splide = new Splide(mainCarousel.getElement(), {
+      pagination: false,
+    });
+
+    thubnailArr.forEach((thub, ind) => {
+      thub.addEventListener('click', () => {
+        splide.go(ind);
+      });
+    });
+    let current = thubnailArr[0];
+    splide.on('mounted move', () => {
+      const thumbnail = thubnailArr[splide.index];
+      if (thumbnail) {
+        if (current) {
+          current.classList.remove('is-active');
+        }
+        thumbnail.classList.add('is-active');
+        current = thumbnail;
+      }
+    });
+
+    splide.mount();
+    wrapper.addInnerElement([mainCarousel, thubnails]);
+    return mainCarousel;
+  }
+
+  private mainCarouselMpdal(mainCarousel: ElementCreator, images: Image[]) {
+    mainCarousel.getElement().addEventListener('click', () => {
+      const modal = new Modal(['modal__product-slider']);
+      const content = new ElementCreator(productParams.modalConent);
+      this.injectPhotoSlider(content, images);
+      modal.buildModal(content.getElement());
+    });
   }
 
   private fillProductAside(wrapper: ElementCreator, body: ProductProjection): void {

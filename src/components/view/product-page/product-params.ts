@@ -38,6 +38,8 @@ type ProductParamsType = {
   trackList: ElementParamsType;
   trackListTitle: ElementParamsType;
   trackListItem: ElementParamsType;
+  // Modal
+  modalConent: ElementParamsType;
 };
 
 const productParams: ProductParamsType = {
@@ -179,6 +181,10 @@ const productParams: ProductParamsType = {
   trackListItem: {
     tag: 'li',
     cssClasses: ['product__track-list-item'],
+  },
+  modalConent: {
+    tag: 'div',
+    cssClasses: ['modal__conent'],
   },
 };
 

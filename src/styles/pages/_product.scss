@@ -11,11 +11,27 @@
 .product__photo-side {
   grid-row: 1;
   grid-column: 1 / 2;
+  display: grid;
+  .splide {
+    grid-row: 1;
+    grid-column: 2 / 3;
+    cursor: pointer;
+  }
+  .thumbnails {
+    grid-row: 1;
+    grid-column: 1 / 2;
+    flex-direction: column;
+  }
+  .splide__arrows {
+    display: none;
+  }
 }
 
 .product__img {
-  width: 10rem;
-  height: 10rem;
+  // width: 10rem;
+  // height: 10rem;
+  width: 100%;
+  height: auto;
 }
 
 // INFO SIDE
