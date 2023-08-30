@@ -40,6 +40,10 @@ type ProductParamsType = {
   trackListItem: ElementParamsType;
   // Modal
   modalConent: ElementParamsType;
+  // Error message
+  errorSection: ElementParamsType;
+  errorTitle: ElementParamsType;
+  errorText: ElementParamsType;
 };
 
 const productParams: ProductParamsType = {
@@ -185,6 +189,20 @@ const productParams: ProductParamsType = {
   modalConent: {
     tag: 'div',
     cssClasses: ['modal__conent'],
+  },
+  errorSection: {
+    tag: 'div',
+    cssClasses: ['product__error'],
+  },
+  errorTitle: {
+    tag: 'h3',
+    cssClasses: ['product__error-title'],
+    textContent: 'Not Found',
+  },
+  errorText: {
+    tag: 'p',
+    cssClasses: ['product__error-text'],
+    textContent: 'The product you are looking for do not available right now',
   },
 };
 

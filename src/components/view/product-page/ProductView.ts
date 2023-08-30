@@ -55,7 +55,10 @@ export default class ProductView extends View {
         this.fillProductInfoSide(productDisplay, body);
         this.fillAdditionalSide(productDisplay, body);
       })
-      .catch((error) => {
+      .catch((error: Error) => {
+        if (error.name === 'NotFound') {
+          this.injectNotFoundMessage(wrapper);
+        }
         console.log(error);
       });
 
@@ -311,5 +314,13 @@ export default class ProductView extends View {
 
     trackList.append();
     wrapper.addInnerElement([trackListTitle, trackList]);
+  }
+
+  private injectNotFoundMessage(wrapper: ElementCreator): void {
+    const error = new ElementCreator(productParams.errorSection);
+    const title = new ElementCreator(productParams.errorTitle);
+    const text = new ElementCreator(productParams.errorText);
+    error.addInnerElement([title, text]);
+    wrapper.addInnerElement(error);
   }
 }
