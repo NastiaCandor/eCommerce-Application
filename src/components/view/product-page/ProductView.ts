@@ -1,10 +1,7 @@
-// import Noty from 'noty';
 import { Attribute, Price, ProductDiscount, ProductProjection, TypedMoney, Image } from '@commercetools/platform-sdk';
-// import Splide from '@splidejs/splide';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Splide } from '@splidejs/splide';
 import { wrapperParams } from '../../constants';
-// import PAGES from '../../router/utils/pages';
 import Router from '../../router/Router';
 import ClientAPI from '../../utils/Client';
 import ElementCreator from '../../utils/ElementCreator';
@@ -41,10 +38,6 @@ export default class ProductView extends View {
     const innerWrapper = new ElementCreator(productParams.innerWrapper);
 
     this.injectProductSection(innerWrapper);
-    // this.injectLoginForm(innerWrapper);
-    // this.injectFormSubtitle(innerWrapper);
-
-    // this.injectProductSection();
 
     wrapper.getElement().classList.add('product__wrapper');
     wrapper.addInnerElement(innerWrapper);
@@ -60,7 +53,6 @@ export default class ProductView extends View {
         const { body } = data;
         this.fillProductPhotoSide(productDisplay, body);
         this.fillProductInfoSide(productDisplay, body);
-        this.fillProductAside(productDisplay, body);
         this.fillAdditionalSide(productDisplay, body);
       })
       .catch((error) => {
@@ -79,8 +71,7 @@ export default class ProductView extends View {
       this.injectProductSubtitle(productSide, attributes[0].value);
       this.injectProductInfo(productSide, attributes);
     }
-    console.log(body, masterVariant);
-
+    this.fillProductAside(productSide, body);
     wrapper.addInnerElement(productSide);
   }
 
@@ -127,76 +118,11 @@ export default class ProductView extends View {
     const { images } = masterVariant;
     if (!images) return;
 
-    // TESTING
-    // const imgParams = {
-    //   tag: 'img',
-    //   cssClasses: ['product__img'],
-    // };
-    // const img = new ElementCreator(imgParams);
-    // img.setImageLink(images[0].url, 'vinyl photo');
-    // productSide.addInnerElement(img);
     const mainCarousel = this.injectPhotoSlider(productSide, images);
     this.mainCarouselMpdal(mainCarousel, images);
 
     wrapper.addInnerElement(productSide);
   }
-
-  // private injectPhotoSlider(wrapper: ElementCreator, images: Image[]): void {
-  //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  //   const thubnailPar: ElementParamsType = {
-  //     tag: 'div',
-  //     cssClasses: ['splide'],
-  //     id: 'thumbnail-slider',
-  //   };
-  //   const thubnail = new ElementCreator(thubnailPar);
-  //   const trackPar: ElementParamsType = {
-  //     tag: 'div',
-  //     cssClasses: ['splide__track'],
-  //   };
-  //   const track = new ElementCreator(trackPar);
-  //   const listPar: ElementParamsType = {
-  //     tag: 'ul',
-  //     cssClasses: ['splide__list'],
-  //   };
-  //   const list = new ElementCreator(listPar);
-  //   const slidePar: ElementParamsType = {
-  //     tag: 'li',
-  //     cssClasses: ['splide__slide'],
-  //   };
-  //   const imgParams = {
-  //     tag: 'img',
-  //     cssClasses: ['product__img'],
-  //   };
-  //   images.forEach((img) => {
-  //     const imgItem = new ElementCreator(imgParams);
-  //     imgItem.setImageLink(img.url, img.label ? img.label : 'vinyl photo');
-  //     const slide = new ElementCreator(slidePar);
-  //     slide.addInnerElement(imgItem);
-  //     list.addInnerElement(slide);
-  //   });
-  //   track.addInnerElement(list);
-  //   thubnail.addInnerElement(track);
-  //   // const img = new ElementCreator(imgParams);
-  //   // img.setImageLink(images[0].url, 'vinyl photo');
-
-  //   new Splide(thubnail.getElement(), {
-  //     fixedWidth: 100,
-  //     fixedHeight: 60,
-  //     gap: 10,
-  //     rewind: true,
-  //     pagination: false,
-  //     cover: true,
-  //     isNavigation: true,
-  //     breakpoints: {
-  //       600: {
-  //         fixedWidth: 60,
-  //         fixedHeight: 44,
-  //       },
-  //     },
-  //   }).mount();
-
-  //   wrapper.addInnerElement(thubnail);
-  // }
 
   private injectPhotoSlider(wrapper: ElementCreator, images: Image[]) {
     const mainCarousel = new ElementCreator(sliderParams.maincarousel);
@@ -302,7 +228,6 @@ export default class ProductView extends View {
     const discountInfo = this.clientAPI.getDiscountById(prices.discounted.discount.id);
     discountInfo
       .then((data) => {
-        // console.log('dis', data);
         const { body } = data;
         if (body.value.type === 'relative') {
           const amount = body.value.permyriad / 100;
