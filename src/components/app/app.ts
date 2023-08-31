@@ -14,6 +14,8 @@ import AboutView from '../view/pages/about/AboutView';
 import Routes from '../router/utils/Routes';
 import { RouteCallbacks } from '../../types';
 import ProductView from '../view/product-page/ProductView';
+import ClientAPI from '../utils/Client';
+import '../import-files';
 
 export default class App {
   private header: HeaderView;
@@ -26,6 +28,8 @@ export default class App {
 
   private loginForm: LoginView;
 
+  private clientAPI: ClientAPI;
+
   constructor() {
     const routesClass = new Routes(this.getRoutesCallbacks());
     const routes = routesClass.getRoutes();
@@ -34,6 +38,8 @@ export default class App {
     this.header = new HeaderView(this.router);
     this.signupForm = new RegView(this.router);
     this.loginForm = new LoginView(this.router);
+
+    this.clientAPI = new ClientAPI();
   }
 
   public start(): void {
@@ -92,8 +98,9 @@ export default class App {
 
   private loadProductPage() {
     // TODO: connect productID from Catalog Page to Product Page 177a75d9-7bcc-4800-8031-91ac81f2bd29
+    // 30b29e00-020c-41aa-8da5-250ae76d2f39
     // 5673e423-c01e-4b35-9ef0-86b1043d08b4
-    const product = new ProductView(this.router, '5673e423-c01e-4b35-9ef0-86b1043d08b5').getElement();
+    const product = new ProductView(this.clientAPI, '30b29e00-020c-41aa-8da5-250ae76d2f39').getElement();
     this.setContent(PAGES.PRODUCT, product);
   }
 

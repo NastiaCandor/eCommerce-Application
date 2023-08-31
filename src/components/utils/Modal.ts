@@ -1,6 +1,3 @@
-// eslint-disable-next-line max-classes-per-file
-import '../../assets/img/x-icon.svg';
-
 export default class Modal {
   classes: string[];
 

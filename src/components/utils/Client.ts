@@ -6,7 +6,6 @@ import {
   ApiRoot,
   CustomerDraft,
   CustomerSignin,
-  // QueryParam,
   createApiBuilderFromCtpClient,
 } from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
@@ -36,16 +35,9 @@ export default class ClientAPI {
   public async getProductById(productID: string) {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
     const getProduct = apiRoot.productProjections().withId({ ID: productID }).get().execute();
-    // const getProduct2 = apiRoot.productProjections().withKey({ key: 'mx-bing-crosby' }).get().execute();
-    // getProduct2.then(console.log).catch(console.log);
-    // const getProduct2 = apiRoot
-    //   .productDiscounts()
-    //   .withId({ ID: '48023e90-13c9-4b23-9f68-6b92d7d30f07' })
-    //   .get()
-    //   .execute();
+    // const getProduct2 = apiRoot.productProjections().withKey({ key: 'test' }).get().execute();
     // getProduct2.then(console.log).catch(console.log);
     return getProduct;
-    // getProduct.then(console.log).catch(console.log);
   }
 
   public async getDiscountById(discountID: string) {

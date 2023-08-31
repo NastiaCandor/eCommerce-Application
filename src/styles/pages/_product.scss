@@ -50,6 +50,11 @@
   height: auto;
 }
 
+.product__no-image {
+  width: 100%;
+  cursor: quote($string: "Sorry");
+}
+
 // INFO SIDE
 
 .product__info-side {

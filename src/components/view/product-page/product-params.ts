@@ -1,5 +1,3 @@
-// import { ProductParamsType } from '../../../types';
-
 import { ElementParamsType } from '../../../types';
 
 type ProductParamsType = {
@@ -44,6 +42,8 @@ type ProductParamsType = {
   errorSection: ElementParamsType;
   errorTitle: ElementParamsType;
   errorText: ElementParamsType;
+  // NoImage
+  noImage: ElementParamsType;
 };
 
 const productParams: ProductParamsType = {
@@ -203,6 +203,11 @@ const productParams: ProductParamsType = {
     tag: 'p',
     cssClasses: ['product__error-text'],
     textContent: 'The product you are looking for do not available right now',
+  },
+  noImage: {
+    tag: 'img',
+    cssClasses: ['product__no-image'],
+    alt: 'No Image Available',
   },
 };
 

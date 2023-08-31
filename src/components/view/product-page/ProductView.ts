@@ -1,8 +1,6 @@
 import { Attribute, Price, ProductDiscount, ProductProjection, TypedMoney, Image } from '@commercetools/platform-sdk';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { Splide } from '@splidejs/splide';
 import { wrapperParams } from '../../constants';
-import Router from '../../router/Router';
 import ClientAPI from '../../utils/Client';
 import ElementCreator from '../../utils/ElementCreator';
 import View from '../View';
@@ -11,17 +9,14 @@ import sliderParams from './slider-params';
 import Modal from '../../utils/Modal';
 
 export default class ProductView extends View {
-  clientAPI: ClientAPI;
-
-  private router: Router;
+  private clientAPI: ClientAPI;
 
   private productKey: string;
 
-  constructor(router: Router, productKey: string) {
+  constructor(clientAPI: ClientAPI, productKey: string) {
     super(productParams.section);
-    this.router = router;
     this.productKey = productKey;
-    this.clientAPI = new ClientAPI();
+    this.clientAPI = clientAPI;
     this.render();
   }
 
@@ -46,7 +41,6 @@ export default class ProductView extends View {
 
   private injectProductSection(wrapper: ElementCreator) {
     const productDisplay = new ElementCreator(productParams.productDisplay);
-
     const getProduct = this.clientAPI.getProductById(this.productKey);
     getProduct
       .then((data) => {
@@ -69,8 +63,9 @@ export default class ProductView extends View {
     const productSide = new ElementCreator(productParams.infoSide);
     const { name, masterVariant } = body;
     this.injectProductTitle(productSide, name['en-US']);
-    const { attributes } = masterVariant;
-    if (attributes) {
+    if ('attributes' in masterVariant) {
+      const { attributes } = masterVariant;
+      if (!attributes) return;
       this.injectProductSubtitle(productSide, attributes[0].value);
       this.injectProductInfo(productSide, attributes);
     }
@@ -120,14 +115,27 @@ export default class ProductView extends View {
     const { masterVariant } = body;
     const { images } = masterVariant;
     if (!images) return;
-
-    const mainCarousel = this.injectPhotoSlider(productSide, images);
-    this.mainCarouselMpdal(mainCarousel, images);
+    this.injectPhoto(productSide, images);
 
     wrapper.addInnerElement(productSide);
   }
 
-  private injectPhotoSlider(wrapper: ElementCreator, images: Image[]) {
+  private injectPhoto(productSide: ElementCreator, images: Image[]): void {
+    if (images.length === 0) {
+      this.injectNoImage(productSide);
+    } else {
+      const mainCarousel = this.injectPhotoSlider(productSide, images);
+      this.mainCarouselModal(mainCarousel, images);
+    }
+  }
+
+  private injectNoImage(wrapper: ElementCreator): void {
+    const noImage = new ElementCreator(productParams.noImage);
+    noImage.setImageLink('../assets/img/no-image-available.png', 'No Image Available');
+    wrapper.addInnerElement(noImage);
+  }
+
+  private injectPhotoSlider(wrapper: ElementCreator, images: Image[]): ElementCreator {
     const mainCarousel = new ElementCreator(sliderParams.maincarousel);
     const track = new ElementCreator(sliderParams.track);
     const list = new ElementCreator(sliderParams.list);
@@ -178,7 +186,7 @@ export default class ProductView extends View {
     return mainCarousel;
   }
 
-  private mainCarouselMpdal(mainCarousel: ElementCreator, images: Image[]) {
+  private mainCarouselModal(mainCarousel: ElementCreator, images: Image[]): void {
     mainCarousel.getElement().addEventListener('click', () => {
       const modal = new Modal(['modal__product-slider']);
       const content = new ElementCreator(productParams.modalConent);
@@ -191,15 +199,30 @@ export default class ProductView extends View {
     const productSide = new ElementCreator(productParams.productAside);
     const { masterVariant } = body;
     this.injectAsideTitle(productSide);
-    const { prices, availability } = masterVariant;
-    if (prices) this.injectProductPrice(productSide, prices[0]);
-    if (availability !== undefined && availability.availableQuantity) {
-      this.injectAviabilityInfo(productSide, availability.availableQuantity);
+    if ('prices' in masterVariant) {
+      const { prices } = masterVariant;
+      if (prices) this.priceDisplay(productSide, prices);
+    }
+    if ('availability' in masterVariant) {
+      const { availability } = masterVariant;
+      if (availability !== undefined && availability.availableQuantity) {
+        this.injectAviabilityInfo(productSide, availability.availableQuantity);
+      }
     }
     const addCartBtn = new ElementCreator(productParams.addToCartBtn);
     productSide.addInnerElement(addCartBtn);
 
     wrapper.addInnerElement(productSide);
+  }
+
+  private priceDisplay(wrapper: ElementCreator, prices: Price[]): void {
+    if (prices.length === 0) {
+      const currPrice = new ElementCreator(productParams.productPriceCurrent).getElement();
+      currPrice.textContent = 'Sorry, there is no price yet';
+      wrapper.addInnerElement(currPrice);
+    } else {
+      this.injectProductPrice(wrapper, prices[0]);
+    }
   }
 
   private injectAsideTitle(wrapper: ElementCreator): void {
@@ -262,7 +285,7 @@ export default class ProductView extends View {
   }
 
   private formatMoney(price: TypedMoney): string {
-    const moneyNumber = price.centAmount / (10 * price.fractionDigits);
+    const moneyNumber = price.centAmount / 10 ** price.fractionDigits;
     const moneyText = new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: price.currencyCode,
