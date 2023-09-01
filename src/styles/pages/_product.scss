@@ -26,7 +26,7 @@
   display: grid;
   padding: 1rem;
   border-radius: 1.5rem 0 0 0rem;
-  @include media-mobile-L {
+  @include media-tablet-540-width {
     grid-column: 1 / 3;
     border-radius: 1.5rem 1.5rem 0 0rem;
   }
@@ -86,7 +86,7 @@
   padding: 1rem;
   grid-row: 1;
   grid-column: 2 / 3;
-  @include media-mobile-L {
+  @include media-tablet-540-width {
     grid-row: 2;
     grid-column: 1 / 3;
     border-radius: 0;
@@ -122,7 +122,7 @@
   background-color: #e489a1b4;
   padding: 1rem;
   border-radius: 1.3rem;
-  color: #fff;
+  color: #ffffff;
   margin-right: 1rem;
   position: relative;
   @include media-tablet {
@@ -130,10 +130,15 @@
     grid-column: 1 / 3;
     margin-right: 0;
   }
-  @include media-mobile-L {
+  @include media-tablet-540-width {
     grid-row: 3;
     grid-column: 1 / 2;
   }
+}
+
+.product__aside-title {
+  font-size: 2rem;
+  
 }
 
 .product__price-box {
@@ -144,6 +149,8 @@
   &_current {
     padding: 0.3rem;
     width: 100%;
+    font-size: 2rem;
+    color: #FFF;
     &._discounted-price {
       color: #c20000;
       @include font(3rem, 100%, 500);
@@ -181,10 +188,10 @@
   &-label {
     padding-right: 0.3rem;
     text-transform: capitalize;
-    @include font(1.8rem, 100%, 500);
+    @include font(1.6rem, 100%, 500);
   }
   &-text {
-    @include font(1.8rem, 100%, 500);
+    @include font(1.6rem, 100%, 500);
   }
 }
 
@@ -208,7 +215,7 @@
     grid-row: 3;
     grid-column: 1 / 3;
   }
-  @include media-mobile-L {
+  @include media-tablet-540-width {
     grid-row: 4;
     grid-column: 1 / 3;
   }
@@ -230,4 +237,12 @@
 
 .product__track-list-item {
   list-style: none;
+}
+
+// MODAL
+
+.modal__product-slider {
+  width: calc(100vh - 12rem);
+  // padding: 4rem;
+  height: 100vh;
 }

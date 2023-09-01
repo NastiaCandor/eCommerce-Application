@@ -100,7 +100,7 @@ export default class App {
     // TODO: connect productID from Catalog Page to Product Page 177a75d9-7bcc-4800-8031-91ac81f2bd29
     // 30b29e00-020c-41aa-8da5-250ae76d2f39
     // 5673e423-c01e-4b35-9ef0-86b1043d08b4
-    const product = new ProductView(this.clientAPI, '5673e423-c01e-4b35-9ef0-86b1043d08b4').getElement();
+    const product = new ProductView(this.clientAPI, '177a75d9-7bcc-4800-8031-91ac81f2bd29').getElement();
     this.setContent(PAGES.PRODUCT, product);
   }
 

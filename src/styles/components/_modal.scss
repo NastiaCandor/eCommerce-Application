@@ -7,7 +7,7 @@
   background-color: $color-backgroung-modal;
   display: flex;
   justify-content: center;
-  z-index: 3;
+  z-index: 50;
 }
 
 .modal {
@@ -15,7 +15,7 @@
   padding-top: 2rem;
   border-radius: 9px;
   width: 35%;
-  z-index: 3;
+  z-index: 50;
   @include media-tablet {
     width: 50%;
   }

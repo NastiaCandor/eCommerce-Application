@@ -13,6 +13,10 @@
   @media (max-width: $tablet-width) { @content; }
 }
 
+@mixin media-tablet-540-width {
+  @media (max-width: $tablet-540-width) { @content; }
+}
+
 @mixin media-mobile-L {
   @media (max-width: $mobile-L-width) { @content; }
 }
