@@ -203,13 +203,15 @@ export default class ProductView extends View {
       const { prices } = masterVariant;
       if (prices) this.priceDisplay(productSide, prices);
     }
+    const addCartBtn = new ElementCreator(productParams.addToCartBtn);
     if ('availability' in masterVariant) {
       const { availability } = masterVariant;
       if (availability !== undefined && availability.availableQuantity) {
         this.injectAviabilityInfo(productSide, availability.availableQuantity);
       }
+    } else {
+      addCartBtn.setAttribute('disabled', 'true');
     }
-    const addCartBtn = new ElementCreator(productParams.addToCartBtn);
     productSide.addInnerElement(addCartBtn);
 
     wrapper.addInnerElement(productSide);

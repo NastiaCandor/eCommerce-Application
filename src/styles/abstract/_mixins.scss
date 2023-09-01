@@ -16,3 +16,11 @@
 @mixin media-mobile-L {
   @media (max-width: $mobile-L-width) { @content; }
 }
+
+// ANIMATION
+
+@keyframes saleAnimatedBgColor {
+  0%   { background: #E7557C; }
+  50% { background: #e489a1; }
+  100% { background: #E7557C; }
+}
