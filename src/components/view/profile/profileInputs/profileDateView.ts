@@ -1,10 +1,10 @@
 import flatpickr from 'flatpickr';
-import ElementCreator from '../../../../../utils/ElementCreator';
-import View from '../../../../View';
-import fieldsetParams from '../input-params';
-import DateInputParams from './date-params';
+import ElementCreator from '../../../utils/ElementCreator';
+import View from '../../View';
+import fieldsetParams from '../../registration/form-component/input-component/input-params';
+import DateInputParams from '../../registration/form-component/input-component/date-fieldset-view/date-params';
 
-export default class DateInputView extends View {
+export default class ProfileDateView extends View {
   constructor() {
     super(fieldsetParams.fieldset);
     this.render();
@@ -38,7 +38,6 @@ export default class DateInputView extends View {
     const errorSpan = this.createErrorText();
     this.addInnerElement(errorSpan);
     this.validateDate(input, errorSpan);
-    this.showError(input, errorSpan);
   }
 
   private getDate13yo(): string {
@@ -62,6 +61,7 @@ export default class DateInputView extends View {
     input.setAttribute('type', type);
     input.setAttribute('id', id);
     input.setAttribute('required', fieldsetParams.input.required);
+    input.setAttribute('disabled', 'true');
     return input;
   }
 
@@ -86,7 +86,6 @@ export default class DateInputView extends View {
   private validateDate(element: HTMLInputElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
     element.addEventListener('input', () => {
-      console.log(element.value);
       const checkRes = this.checkDate(element.value);
       if (element.validity.valid || checkRes) {
         errorSpan.textContent = '';

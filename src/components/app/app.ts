@@ -1,4 +1,4 @@
-import { ACCESS_TOKEN, COOKIE_RESET_DATE } from '../constants';
+// import { ACCESS_TOKEN, COOKIE_RESET_DATE } from '../constants';
 import PAGES from '../router/utils/pages';
 import Router from '../router/Router';
 import CartView from '../view/cart/CartView';
@@ -72,7 +72,7 @@ export default class App {
   }
 
   private loadProfilePage() {
-    this.setContent(PAGES.PROFILE, new ProfileView().getElement());
+    this.setContent(PAGES.PROFILE, new ProfileView(this.router).getElement());
   }
 
   private loadShippingPage() {

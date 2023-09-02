@@ -7,7 +7,11 @@ const profileParams = {
   wrapper: {
     tag: 'div',
     cssClasses: ['profile__wrapper', 'wrapper'],
-    textContent: 'PROFILE IS HERE',
+  },
+
+  aside: {
+    tag: 'aside',
+    cssClasses: ['side-menu'],
   },
 };
 

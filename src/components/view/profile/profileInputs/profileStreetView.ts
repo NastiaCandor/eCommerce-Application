@@ -1,9 +1,9 @@
-import ElementCreator from '../../../../../../utils/ElementCreator';
-import View from '../../../../../View';
-import fieldsetParams from '../../input-params';
-import StreetInputParams from './street-params';
+import ElementCreator from '../../../utils/ElementCreator';
+import View from '../../View';
+import fieldsetParams from '../../registration/form-component/input-component/input-params';
+import StreetInputParams from '../../registration/form-component/input-component/address/street-input-view/street-params';
 
-export default class StreetInputView extends View {
+export default class ProfileStreetView extends View {
   constructor() {
     super(fieldsetParams.fieldset);
     this.render();
@@ -25,7 +25,6 @@ export default class StreetInputView extends View {
     const errorSpan = this.createErrorText();
     this.addInnerElement(errorSpan);
     this.validateStreet(input, errorSpan);
-    this.showError(input, errorSpan);
   }
 
   public createInput(type: string): HTMLInputElement {
