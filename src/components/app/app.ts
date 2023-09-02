@@ -49,6 +49,8 @@ export default class App {
     this.header = new HeaderView(this.router);
     this.signupForm = new RegView(this.router);
     this.loginForm = new LoginView(this.router);
+
+    this.clientAPI = new ClientAPI();
   }
 
   public async start() {
@@ -105,6 +107,14 @@ export default class App {
     this.setContent(PAGES.CATALOG, this.catalogView.getElement());
   }
 
+  private loadProductPage() {
+    // TODO: connect productID from Catalog Page to Product Page 177a75d9-7bcc-4800-8031-91ac81f2bd29
+    // 30b29e00-020c-41aa-8da5-250ae76d2f39
+    // 5673e423-c01e-4b35-9ef0-86b1043d08b4
+    const product = new ProductView(this.clientAPI, '177a75d9-7bcc-4800-8031-91ac81f2bd29').getElement();
+    this.setContent(PAGES.PRODUCT, product);
+  }
+
   private logoutUser() {
     this.router.stateDeleteToken();
     this.router.navigate(PAGES.MAIN);
@@ -133,7 +143,6 @@ export default class App {
       loadMainPage: this.loadMainPage.bind(this),
       loadCartPage: this.loadCartPage.bind(this),
       logoutUser: this.logoutUser.bind(this),
-
       mountCategory: this.mountCategory.bind(this),
     };
   }

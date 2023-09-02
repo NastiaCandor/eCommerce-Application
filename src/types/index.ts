@@ -43,6 +43,12 @@ export type NotFoundType = {
   backToMainBtn: ElementParamsType;
 };
 
+// export type ProductParamsType = {
+//   section: ElementParamsType;
+//   innerWrapper: ElementParamsType;
+//   title: ElementParamsType;
+// };
+
 // PAGE INTERFACES
 
 export type PagesInterface = {
@@ -54,6 +60,8 @@ export type PagesInterface = {
   LOG_OUT: string;
   PROFILE: string;
   CART: string;
+
+  PRODUCT: string;
 
   MAIN: string;
   CATALOG: string;
@@ -101,6 +109,5 @@ export type RouteCallbacks = {
   loadNotFoundPage: () => void;
   loadCatalogPage: () => void;
   logoutUser: () => void;
-
   mountCategory: (key: string) => void;
 };

@@ -37,6 +37,20 @@ export default class ClientAPI {
     return loginAPI;
   }
 
+  public async getProductById(productID: string) {
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const getProduct = apiRoot.productProjections().withId({ ID: productID }).get().execute();
+    // const getProduct2 = apiRoot.categories().get().execute();
+    // getProduct2.then(console.log).catch(console.log);
+    return getProduct;
+  }
+
+  public async getDiscountById(discountID: string) {
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const getProduct = apiRoot.productDiscounts().withId({ ID: discountID }).get().execute();
+    return getProduct;
+  }
+
   public getCustomers() {
     const args = {
       queryArgs: {

@@ -86,6 +86,12 @@ export default class Routes {
           this.callbacks.loadNotFoundPage();
         },
       },
+      {
+        path: `${PAGES.PRODUCT}`,
+        callback: () => {
+          this.callbacks.loadProductPage();
+        },
+      },
     ];
 
     this.prefetchedData
