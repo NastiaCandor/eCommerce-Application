@@ -6,7 +6,7 @@ module.exports = {
   devServer: {
     port: 8080,
     hot: true,
-    static: path.resolve(__dirname, 'dist'),
+    static: path.resolve(__dirname, 'dist/index.html'),
     historyApiFallback: true,
   },
 };

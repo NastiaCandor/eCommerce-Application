@@ -53,28 +53,6 @@ export default class UserIconsView extends View {
     });
   }
 
-  // remove after crosscheck. this function only generate icons for better cross-check expiriences;
-  public getUnnecessaryIconItems(): Map<string, HTMLElement> {
-    const key = 'anon';
-    const items: Map<string, HTMLElement> = new Map();
-    const names = userIconsParams[key].iconsNames;
-    names.forEach((name, i) => {
-      const item = new ElementCreator(userIconsParams.authItem);
-      const span = new ElementCreator(userIconsParams.authItem.span);
-      const imageItem = new ElementCreator(userIconsParams.authItem.itemImg);
-      imageItem.setImageLink(userIconsParams[key].iconsSrc[i], userIconsParams[key].iconsAlt[i]);
-      item.addInnerElement(imageItem);
-      item.addInnerElement(span);
-      span.setTextContent(name);
-      const nameKey = this.formatKeyToUpperCase(name);
-      const link = this.formatNameToLinkName(name);
-      item.setAttribute('href', `#${link}`);
-      items.set(nameKey, item.getElement());
-      this.iconsCollection.set(nameKey, item.getElement());
-    });
-    return items;
-  }
-
   private formatKeyToUpperCase(key: string): string {
     return key.replace(/\s/g, '_').toUpperCase();
   }

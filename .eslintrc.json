@@ -23,6 +23,7 @@
     "no-console": 0,
     "class-methods-use-this": 0,
     "@typescript-eslint/no-explicit-any": 2,
+    "consistent-return": "off",
     "comma-dangle": [2, "always-multiline"],
     "prettier/prettier" : 2,
     "max-len": [2, { "code": 120, "ignoreUrls": true, "ignoreStrings": true, "ignoreTemplateLiterals": true }],

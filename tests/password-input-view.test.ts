@@ -15,6 +15,6 @@ describe('PasswordClass', () => {
   it('should validate password correctly, password should have minimum 8 characters, at least 1 uppercase letter, 1 lowercase letter, and 1 number', () => {
     expect(passwordInput.checkPassword('12345678')).toBeFalsy();
     expect(passwordInput.checkPassword('12345678V')).toBeFalsy();
-    expect(passwordInput.checkPassword('12345678Vv')).toBeTruthy();
+    expect(passwordInput.checkPassword('12345678V!v')).toBeTruthy();
   });
 });
