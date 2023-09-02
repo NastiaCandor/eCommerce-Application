@@ -17,6 +17,7 @@ const PAGES: PagesInterface = {
 
   CATEGORY: '/catalog/category',
   CATEGORIES: 'catalog/category',
+  PRODUCT: '/catalog/product',
 };
 
 export default PAGES;
