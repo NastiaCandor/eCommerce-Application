@@ -11,7 +11,7 @@ export default class FilterView extends View {
   clientApi: ClientAPI;
 
   constructor(clientApi: ClientAPI) {
-    super(filterParams.aside);
+    super(filterParams.wrapper);
     this.clientApi = clientApi;
     this.fetchMinMaxPrices();
   }
@@ -21,25 +21,23 @@ export default class FilterView extends View {
     return this.getElement();
   }
 
-  protected configure() {
-    this.renderWrapper();
+  protected async configure() {
+    await this.renderWrapper();
   }
 
   private async renderWrapper(): Promise<void> {
-    const innerWrapper = new ElementCreator(filterParams.wrapper);
-    this.addWrapperHeading(innerWrapper);
+    this.addInnerElement(new ElementCreator(filterParams.wrapperHeading));
     const genres = await this.fetchAllGenres();
     const decades = await this.fetchAllDecades();
     const rangeInput = await this.createPriceRangeBox();
-    innerWrapper.addInnerElement(this.createFilterBox('Genres', genres));
-    innerWrapper.addInnerElement(this.createFilterBox('Decades', decades));
-    innerWrapper.addInnerElement(rangeInput);
-    this.addInnerElement(innerWrapper);
+    this.addInnerElement(this.createFilterBox('Genres', genres));
+    this.addInnerElement(this.createFilterBox('Decades', decades));
+    this.addInnerElement(rangeInput);
   }
 
   private async fetchAllGenres() {
     const id = await this.clientApi.getCategoryId('genres');
-    const data = await this.clientApi.getCategoryById(id);
+    const data = await this.clientApi.getGenresById(id);
     if (data !== undefined) {
       return data.map((item) => item.name['en-US']);
     }
@@ -61,7 +59,7 @@ export default class FilterView extends View {
 
   private async fetchAllDecades() {
     const id = await this.clientApi.getCategoryId('decades');
-    const data = await this.clientApi.getCategoryById(id);
+    const data = await this.clientApi.getGenresById(id);
     if (data !== undefined) {
       return data.map((item) => item.name['en-US']);
     }
@@ -107,16 +105,12 @@ export default class FilterView extends View {
       const checkbox = new ElementCreator(filterParams.filterCheckbox);
       checkbox.setAttribute('type', filterParams.filterCheckbox.type);
       checkbox.setAttribute('name', item);
-      label.addInnerElement(checkbox);
       label.setTextContent(item);
+      label.addInnerElement(checkbox);
       listItem.addInnerElement(label);
       list.addInnerElement(listItem);
     });
     filterBox.addInnerElement(list);
     return filterBox.getElement();
-  }
-
-  private addWrapperHeading(wrapper: ElementCreator) {
-    wrapper.addInnerElement(new ElementCreator(filterParams.wrapperHeading));
   }
 }

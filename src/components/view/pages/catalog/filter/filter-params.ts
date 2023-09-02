@@ -1,8 +1,4 @@
 const filterParams = {
-  aside: {
-    tag: 'aside',
-    cssClasses: ['filter'],
-  },
   wrapper: {
     tag: 'div',
     cssClasses: ['filter__wrapper'],

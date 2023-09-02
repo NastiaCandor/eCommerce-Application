@@ -85,6 +85,17 @@ export default class ClientAPI {
     return `Unable to fetch ${category}`;
   }
 
+  public async getAllCardsData() {
+    try {
+      const data = await this.apiRoot.products().get().execute();
+      if (data.statusCode === 200) {
+        return data.body.results;
+      }
+    } catch (e) {
+      console.log(`Error occured while fetching cards data: ${e}`);
+    }
+  }
+
   public async getMinPrice() {
     const cheapPriceQuary = {
       queryArgs: {
@@ -121,7 +132,7 @@ export default class ClientAPI {
     return console.error('Unable to fetch');
   }
 
-  public async getCategoryById(id: string) {
+  public async getGenresById(id: string) {
     const query = {
       queryArgs: {
         where: `parent(id="${id}")`,
@@ -132,6 +143,23 @@ export default class ClientAPI {
       if (data.statusCode === 200) {
         const response = data.body;
         return response.results;
+      }
+    } catch (e) {
+      console.log(`Unable to fetch ${id}, status code ${e}`);
+    }
+  }
+
+  public async getSpecificGenreById(id: string) {
+    const query = {
+      queryArgs: {
+        where: `categories(id="${id}")`,
+      },
+    };
+    try {
+      const data = await this.apiRoot.productProjections().get(query).execute();
+      if (data.statusCode === 200) {
+        const response = data.body;
+        return response;
       }
     } catch (e) {
       console.log(`Unable to fetch ${id}, status code ${e}`);

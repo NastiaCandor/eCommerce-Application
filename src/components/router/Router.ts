@@ -1,4 +1,4 @@
-import { Route, UserRequest } from '../../types';
+import { Path, Route, UserRequest } from '../../types';
 import State from '../state/State';
 import PAGES from './utils/pages';
 import { linksForSignedIn, linksForSignedOut } from './utils/redirectsUrl';
@@ -8,8 +8,8 @@ export default class Router {
 
   private state: State;
 
-  constructor(routes: Route[]) {
-    this.state = new State();
+  constructor(routes: Route[], state: State) {
+    this.state = state;
     this.routes = routes;
     this.startInit();
   }
@@ -28,27 +28,38 @@ export default class Router {
     this.routeTo(url);
   }
 
-  private parseUrl(url: string): UserRequest {
-    const result = <UserRequest>{};
-    const path = url.split('/');
-    [result.path = '', result.resource = ''] = path;
-    return result;
-  }
-
   public stateDeleteToken(): void {
     this.state.deleteAccessToken();
   }
 
   private routeTo(path: string) {
     const request = this.parseUrl(path);
-    const pathToFind = request.resource === '' ? request.path : `${request.path}/${request.resource}`;
-    const route = this.routes.find((item) => item.path === pathToFind);
+    let pathToFind = request.resource === '' ? `/${request.path}` : `${request.path}/${request.resource}`;
+    let route = this.routes.find((item) => item.path === pathToFind);
+    if (request.category) {
+      pathToFind = request.id
+        ? `/${pathToFind}/${request.category}/${request.id}`
+        : `/${pathToFind}/${request.category}`;
+      route = this.routes.find((item) => pathToFind === item.path);
+    }
     if (!route) {
       this.redirectToNotFound();
       return;
     }
-    this.state.setPageTitle(route.path);
+    if (request.category) {
+      this.state.setPageTitle(`${request.category}${request.id ?? ''}`, false);
+    } else {
+      this.state.setPageTitle(route.path);
+    }
+
     route.callback();
+  }
+
+  private parseUrl(url: string): UserRequest {
+    const result = <UserRequest>{};
+    const path = url.split('/');
+    [result.path = '', result.resource = '', result.category = '', result.id = ''] = path;
+    return result;
   }
 
   private redirectToNotFound(): void {
@@ -87,6 +98,10 @@ export default class Router {
       }
       this.urlChangeHandler();
     });
+  }
+
+  public updateRoutes(routes: Path[]) {
+    this.state.stashPaths(routes);
   }
 
   private get currentPath(): string {

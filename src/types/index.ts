@@ -59,16 +59,25 @@ export type PagesInterface = {
   CATALOG: string;
   SHIPPING: string;
   CONTACTS: string;
+
+  CATEGORY: string;
 };
 
 export type Route = {
   path: string;
-  callback: () => void;
+  callback: (key?: string) => void;
+};
+
+export type Path = {
+  key: string | undefined;
+  path: string | undefined;
 };
 
 export type UserRequest = {
   path: string;
   resource: string;
+  category: string;
+  id: string;
 };
 
 // ROUTES TYPES
@@ -84,4 +93,6 @@ export type RouteCallbacks = {
   loadNotFoundPage: () => void;
   loadCatalogPage: () => void;
   logoutUser: () => void;
+
+  mountCategory: (key: string) => void;
 };

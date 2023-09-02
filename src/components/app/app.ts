@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/return-await */
 import PAGES from '../router/utils/pages';
 import Router from '../router/Router';
 import CartView from '../view/cart/CartView';
@@ -12,7 +13,9 @@ import ProfileView from '../view/profile/ProfileView';
 import RegView from '../view/registration/reg-view';
 import AboutView from '../view/pages/about/AboutView';
 import Routes from '../router/utils/Routes';
-import { RouteCallbacks } from '../../types';
+import { Route, RouteCallbacks } from '../../types';
+import ClientAPI from '../utils/Client';
+import State from '../state/State';
 
 export default class App {
   private header: HeaderView;
@@ -25,14 +28,28 @@ export default class App {
 
   private loginForm: LoginView;
 
+  private clientApi: ClientAPI;
+
+  private routesClass: Routes;
+
+  private catalogView: CatalogView;
+
+  private routes: Route[];
+
+  private state: State;
+
   constructor() {
-    const routesClass = new Routes(this.getRoutesCallbacks());
-    const routes = routesClass.getRoutes();
-    this.router = new Router(routes);
+    this.clientApi = new ClientAPI();
+    this.state = new State();
+    this.routesClass = new Routes(this.getRoutesCallbacks(), this.clientApi, this.state);
+    this.routes = this.routesClass.getRoutes();
+    this.router = new Router(this.routes, this.state);
+    this.catalogView = new CatalogView(this.clientApi, this.router);
     this.contentContainer = new MainView();
     this.header = new HeaderView(this.router);
     this.signupForm = new RegView(this.router);
     this.loginForm = new LoginView(this.router);
+    this.updateRoutes();
   }
 
   public start(): void {
@@ -84,8 +101,8 @@ export default class App {
   }
 
   private loadCatalogPage() {
-    const catalog = new CatalogView().getElement();
-    this.setContent(PAGES.CATALOG, catalog);
+    // console.log(this.catalogView.getElement());
+    this.setContent(PAGES.CATALOG, this.catalogView.getElement());
   }
 
   private logoutUser() {
@@ -97,6 +114,13 @@ export default class App {
   private resetForms(): void {
     this.signupForm = new RegView(this.router);
     this.loginForm = new LoginView(this.router);
+  }
+
+  private async mountCategory(key: string) {
+    const view = await this.catalogView.mountCategory(key);
+    if (view instanceof HTMLElement) {
+      this.setContent(PAGES.CATALOG, view);
+    }
   }
 
   private getRoutesCallbacks(): RouteCallbacks {
@@ -111,6 +135,19 @@ export default class App {
       loadMainPage: this.loadMainPage.bind(this),
       loadCartPage: this.loadCartPage.bind(this),
       logoutUser: this.logoutUser.bind(this),
+
+      mountCategory: this.mountCategory.bind(this),
     };
+  }
+
+  public async updateRoutes() {
+    try {
+      const routes = await this.routesClass.fetchAvailiableCategories();
+      if (routes) {
+        this.router.updateRoutes(routes);
+      }
+    } catch (e) {
+      console.log('ehrer');
+    }
   }
 }

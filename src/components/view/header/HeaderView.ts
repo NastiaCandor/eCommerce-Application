@@ -148,7 +148,7 @@ export default class HeaderView extends View {
     const pageName = page.toUpperCase();
     this.linksCollection.forEach((value, key) => {
       value.classList.remove('active');
-      if (key === pageName || `${key}_BG` === pageName || this.formatBurgerItemKey(key) === pageName) {
+      if (`/${key}` === pageName || `/${key}_BG` === pageName || this.formatBurgerItemKey(key) === pageName) {
         value.classList.add('active');
       }
     });
