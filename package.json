@@ -65,6 +65,8 @@
     "@splidejs/splide": "^4.1.4",
     "flatpickr": "^4.6.13",
     "noty": "^3.2.0-beta-deprecated",
-    "postcode-validator": "^3.8.14"
+    "nouislider": "^15.7.1",
+    "postcode-validator": "^3.8.14",
+    "wnumb": "^1.2.0"
   }
 }
