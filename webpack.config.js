@@ -41,6 +41,7 @@ const config = {
     filename: 'app.js',
     path: path.resolve(__dirname, 'dist'),
     clean: true,
+    publicPath: '/',
     assetModuleFilename: (ext) => (ext === 'ico' ? 'assets/[name][ext]' : 'assets/img/[name][ext]'),
   },
   plugins: [
@@ -48,6 +49,7 @@ const config = {
       template: path.resolve(__dirname, './src/index.html'),
       filename: 'index.html',
       title: 'Vinyl Vibe Store',
+      base: '/'
     }),
     new CopyWebpackPlugin({
       patterns: [

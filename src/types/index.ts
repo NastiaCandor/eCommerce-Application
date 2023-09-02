@@ -67,18 +67,35 @@ export type PagesInterface = {
   CATALOG: string;
   SHIPPING: string;
   CONTACTS: string;
+
+  CATEGORY: string;
+  CATEGORIES: string;
 };
 
 export type Route = {
   path: string;
-  callback: () => void;
+  callback: (key?: string) => void;
 };
 
 export type UserRequest = {
   path: string;
   resource: string;
+  category: string;
+  id: string;
 };
 
+// PREFETCHED API CLIENT DATA
+
+export type PrefetchedData = {
+  genres: PrefetchedGenres[];
+};
+
+export type PrefetchedGenres = {
+  [key: string]: string;
+  name: string;
+  id: string;
+  key: string;
+};
 // ROUTES TYPES
 
 export type RouteCallbacks = {
@@ -92,5 +109,5 @@ export type RouteCallbacks = {
   loadNotFoundPage: () => void;
   loadCatalogPage: () => void;
   logoutUser: () => void;
-  loadProductPage: () => void;
+  mountCategory: (key: string) => void;
 };

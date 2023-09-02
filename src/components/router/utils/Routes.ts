@@ -1,15 +1,21 @@
-import { Route, RouteCallbacks } from '../../../types';
+import { PrefetchedGenres, Route, RouteCallbacks } from '../../../types';
 import PAGES from './pages';
+import ClientAPI from '../../utils/Client';
 
 export default class Routes {
-  constructor(private callbacks: RouteCallbacks) {
+  private callbacks: RouteCallbacks;
+
+  private prefetchedData: PrefetchedGenres[];
+
+  constructor(callbacks: RouteCallbacks, clientApi: ClientAPI) {
     this.callbacks = callbacks;
+    this.prefetchedData = clientApi.getPrefetchedData.genres;
   }
 
   public getRoutes(): Route[] {
-    return [
+    const routes = [
       {
-        path: '',
+        path: '/',
         callback: () => {
           this.callbacks.loadMainPage();
         },
@@ -57,6 +63,12 @@ export default class Routes {
         },
       },
       {
+        path: `${PAGES.CATEGORIES}`,
+        callback: () => {
+          this.callbacks.loadCatalogPage();
+        },
+      },
+      {
         path: `${PAGES.CONTACTS}`,
         callback: () => {
           this.callbacks.loadContactsPage();
@@ -81,5 +93,15 @@ export default class Routes {
         },
       },
     ];
+
+    this.prefetchedData
+      .map((route) => ({
+        path: `${PAGES.CATEGORY}/${route.key}`,
+        callback: () => {
+          this.callbacks.mountCategory(route.key);
+        },
+      }))
+      .forEach((item) => routes.push(item));
+    return routes;
   }
 }

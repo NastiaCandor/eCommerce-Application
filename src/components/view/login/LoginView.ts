@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import Noty from 'noty';
 import { EMAIL_VALIDATION_TEXT, PASSWORD_VALIDATION_TEXT, wrapperParams } from '../../constants';
 import PAGES from '../../router/utils/pages';
@@ -192,6 +193,7 @@ export default class LoginView extends View {
       text: messageText,
       timeout: 3000,
       progressBar: true,
+      // eslint-disable-next-line comma-dangle
       type: type === 'success' ? 'success' : 'error',
     }).show();
   }
@@ -212,6 +214,7 @@ export default class LoginView extends View {
             const message = `${loginParams.loginSuccessMessage}, ${data.body.customer.firstName} ${data.body.customer.lastName}!`;
             this.showSideBarMessage(message, 'success');
           } else {
+            // eslint-disable-next-line @typescript-eslint/no-redeclare
             const message = `${loginParams.loginSuccessMessage}!`;
             this.showSideBarMessage(message, 'success');
           }

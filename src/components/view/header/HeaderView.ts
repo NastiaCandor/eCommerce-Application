@@ -24,8 +24,6 @@ export default class HeaderView extends View {
 
   private burgerNavCollection: Map<string, HTMLElement>;
 
-  public unnecessaryItems: Map<string, HTMLElement>; // remove after cross-check
-
   constructor(router: Router) {
     super(headerParams.header);
     this.router = router;
@@ -33,11 +31,9 @@ export default class HeaderView extends View {
     this.navigationView = new NavigationView();
     this.userIconsView = new UserIconsView();
     this.burgerNavCollection = this.navigationView.getBurgerNavCollection;
-    this.unnecessaryItems = this.userIconsView.getUnnecessaryIconItems(); // remove after cross-check
     this.linksCollection = new Map([
       ...this.userIconsView.getIconsCollection,
       ...this.navigationView.getNavCollection,
-      ...this.unnecessaryItems,
       ...this.burgerNavCollection,
     ]);
     this.burgerMenu = this.createBurgerMenu();
@@ -146,19 +142,13 @@ export default class HeaderView extends View {
     if (previousIcons instanceof HTMLElement) {
       this.wrapper.getElement().replaceChild(updatedIcons.getElement(), previousIcons);
     }
-    this.unnecessaryItems = updatedIcons.getUnnecessaryIconItems();
-    this.linksCallbackHandler(this.unnecessaryItems);
-  }
-
-  public get getUnnItems(): Map<string, HTMLElement> {
-    return this.unnecessaryItems;
   }
 
   public updateLinksStatus(page: string): void {
     const pageName = page.toUpperCase();
     this.linksCollection.forEach((value, key) => {
       value.classList.remove('active');
-      if (key === pageName || `${key}_BG` === pageName || this.formatBurgerItemKey(key) === pageName) {
+      if (`/${key}` === pageName || `/${key}_BG` === pageName || this.formatBurgerItemKey(key) === pageName) {
         value.classList.add('active');
       }
     });

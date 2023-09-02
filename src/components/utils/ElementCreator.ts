@@ -70,7 +70,9 @@ export default class ElementCreator {
 
   public setTextContent(textContent: string): void {
     /* set the provided text content from string, if any. */
-    this.element.textContent = textContent;
+    if (typeof textContent === 'string') {
+      this.element.append(textContent);
+    }
   }
 
   public setMouseEvent(callback: (evt: Event) => void): void {
