@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/comma-dangle */
-/* eslint-disable object-curly-newline */
 /* eslint-disable comma-dangle */
+/* eslint-disable @typescript-eslint/comma-dangle */
 import {
   Address,
   ApiRoot,
@@ -14,14 +13,19 @@ import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/dec
 import { ctpClient, SECRET, ID } from './BuildClient';
 import { ACCESS_TOKEN } from '../constants';
 
+import { PrefetchedData, PrefetchedGenres } from '../../types';
+
 export default class ClientAPI {
   apiBuilder: ApiRoot;
 
   apiRoot: ByProjectKeyRequestBuilder;
 
+  prefetchedData: PrefetchedData;
+
   constructor() {
     this.apiBuilder = createApiBuilderFromCtpClient(ctpClient);
     this.apiRoot = this.apiBuilder.withProjectKey({ projectKey: 'ecommerce-quantum' });
+    this.prefetchedData = <PrefetchedData>{};
   }
 
   public async loginClient(clientEmail: string, clientPassword: string) {
@@ -164,6 +168,39 @@ export default class ClientAPI {
     } catch (e) {
       console.log(`Unable to fetch ${id}, status code ${e}`);
     }
+  }
+
+  public async prefetchData() {
+    try {
+      if (!this.prefetchedData.genres) {
+        await this.prefetchGenres();
+      }
+    } catch (e) {
+      console.error(`Error while gathering the prefetch data: ${e}`);
+    }
+  }
+
+  private async prefetchGenres() {
+    try {
+      const id = await this.getCategoryId('genres');
+      const categories = await this.getGenresById(id);
+      if (categories) {
+        this.prefetchedData.genres = categories.map((category) => {
+          const obj: PrefetchedGenres = {
+            key: `${category.key}`,
+            name: category.name['en-US'],
+            id: category.id,
+          };
+          return obj;
+        });
+      }
+    } catch (e) {
+      console.error(`Error while fetching genres: ${e}`);
+    }
+  }
+
+  public get getPrefetchedData() {
+    return this.prefetchedData;
   }
 
   public async obtainUserAccessToken(clientEmail: string, clientPassword: string) {

@@ -1,19 +1,15 @@
-import { Path, Route, RouteCallbacks } from '../../../types';
+import { PrefetchedGenres, Route, RouteCallbacks } from '../../../types';
 import PAGES from './pages';
 import ClientAPI from '../../utils/Client';
-import State from '../../state/State';
 
 export default class Routes {
   private callbacks: RouteCallbacks;
 
-  private clientApi: ClientAPI;
+  private prefetchedData: PrefetchedGenres[];
 
-  private state: State;
-
-  constructor(callbacks: RouteCallbacks, clientApi: ClientAPI, state: State) {
-    this.state = state;
+  constructor(callbacks: RouteCallbacks, clientApi: ClientAPI) {
     this.callbacks = callbacks;
-    this.clientApi = clientApi;
+    this.prefetchedData = clientApi.getPrefetchedData.genres;
   }
 
   public getRoutes(): Route[] {
@@ -67,15 +63,15 @@ export default class Routes {
         },
       },
       {
-        path: `${PAGES.CONTACTS}`,
+        path: `${PAGES.CATEGORIES}`,
         callback: () => {
-          this.callbacks.loadContactsPage();
+          this.callbacks.loadCatalogPage();
         },
       },
       {
-        path: `${PAGES.SHIPPING}`,
+        path: `${PAGES.CONTACTS}`,
         callback: () => {
-          this.callbacks.loadShippingPage();
+          this.callbacks.loadContactsPage();
         },
       },
       {
@@ -91,36 +87,15 @@ export default class Routes {
         },
       },
     ];
-    const paths: Path[] = this.state.getPaths();
-    if (paths) {
-      const stashedRoutes = paths.map((item) => {
-        const obj: Route = {
-          path: item.path as string,
-          callback: () => {
-            this.callbacks.mountCategory(item.key as string);
-          },
-        };
-        return obj;
-      });
-      stashedRoutes.forEach((item) => routes.push(item));
-    }
-    return routes;
-  }
 
-  public async fetchAvailiableCategories(): Promise<Path[] | void> {
-    try {
-      const id = await this.clientApi.getCategoryId('genres');
-      const data = await this.clientApi.getGenresById(id);
-      if (data) {
-        const genresKeys = data.map((item) => item.key);
-        const cb: Path[] = genresKeys.map((keyPath) => ({
-          path: `${PAGES.CATEGORY}/${keyPath}`,
-          key: keyPath,
-        }));
-        return cb;
-      }
-    } catch (e) {
-      console.error('here');
-    }
+    this.prefetchedData
+      .map((route) => ({
+        path: `${PAGES.CATEGORY}/${route.key}`,
+        callback: () => {
+          this.callbacks.mountCategory(route.key);
+        },
+      }))
+      .forEach((item) => routes.push(item));
+    return routes;
   }
 }

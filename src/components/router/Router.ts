@@ -1,4 +1,4 @@
-import { Path, Route, UserRequest } from '../../types';
+import { Route, UserRequest } from '../../types';
 import State from '../state/State';
 import PAGES from './utils/pages';
 import { linksForSignedIn, linksForSignedOut } from './utils/redirectsUrl';
@@ -20,7 +20,7 @@ export default class Router {
   }
 
   private processUrl(url: string): void {
-    if (this.signedInUserAccess(url) || this.signedOutUserAccess(url)) {
+    if (this.signedInUserAccess(`/${url}`) || this.signedOutUserAccess(`/${url}`)) {
       this.state.replaceState(PAGES.MAIN);
       this.routeTo(PAGES.MAIN);
       return;
@@ -48,6 +48,8 @@ export default class Router {
     }
     if (request.category) {
       this.state.setPageTitle(`${request.category}${request.id ?? ''}`, false);
+    } else if (request.resource) {
+      this.state.setPageTitle(`${request.path}`, false);
     } else {
       this.state.setPageTitle(route.path);
     }
@@ -98,10 +100,6 @@ export default class Router {
       }
       this.urlChangeHandler();
     });
-  }
-
-  public updateRoutes(routes: Path[]) {
-    this.state.stashPaths(routes);
   }
 
   private get currentPath(): string {

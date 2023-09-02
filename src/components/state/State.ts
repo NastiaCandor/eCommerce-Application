@@ -1,4 +1,3 @@
-import { Path } from '../../types';
 import { ACCESS_TOKEN, COOKIE_RESET_DATE } from '../constants';
 
 export default class State {
@@ -30,20 +29,5 @@ export default class State {
       return `Vinyl Vibe Store - ${url.slice(1).slice(0, 1).toUpperCase()}${url.replace('_', ' ').slice(2)}`;
     }
     return `Vinyl Vibe Store - ${url.toUpperCase().split('-').join(' ')}`;
-  }
-
-  public stashPaths(path: Path[]) {
-    if (!localStorage.getItem('routes')) {
-      localStorage.setItem('routes', JSON.stringify(path));
-    } else {
-      console.log('already');
-    }
-  }
-
-  public getPaths() {
-    if (localStorage.getItem('routes')) {
-      return JSON.parse(localStorage.getItem('routes') as string);
-    }
-    return console.log('not have any paths');
   }
 }

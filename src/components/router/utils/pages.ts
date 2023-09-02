@@ -16,6 +16,7 @@ const PAGES: PagesInterface = {
   CONTACTS: '/contacts',
 
   CATEGORY: '/catalog/category',
+  CATEGORIES: 'catalog/category',
 };
 
 export default PAGES;

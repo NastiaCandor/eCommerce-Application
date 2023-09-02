@@ -28,33 +28,34 @@ export default class App {
 
   private loginForm: LoginView;
 
-  private clientApi: ClientAPI;
-
   private routesClass: Routes;
 
   private catalogView: CatalogView;
+
+  private clientApi: ClientAPI;
 
   private routes: Route[];
 
   private state: State;
 
-  constructor() {
-    this.clientApi = new ClientAPI();
+  constructor(clientApi: ClientAPI) {
     this.state = new State();
-    this.routesClass = new Routes(this.getRoutesCallbacks(), this.clientApi, this.state);
+    this.clientApi = clientApi;
+    this.routesClass = new Routes(this.getRoutesCallbacks(), this.clientApi);
     this.routes = this.routesClass.getRoutes();
     this.router = new Router(this.routes, this.state);
-    this.catalogView = new CatalogView(this.clientApi, this.router);
     this.contentContainer = new MainView();
+    this.catalogView = new CatalogView(this.clientApi, this.router);
     this.header = new HeaderView(this.router);
     this.signupForm = new RegView(this.router);
     this.loginForm = new LoginView(this.router);
-    this.updateRoutes();
   }
 
-  public start(): void {
+  public async start() {
     this.header.render();
     this.contentContainer.render();
+    await this.catalogView.render();
+    this.router.navigate(window.location.pathname);
   }
 
   private setContent(page: string, view: HTMLElement) {
@@ -100,8 +101,7 @@ export default class App {
     this.setContent(PAGES.SHIPPING, notFound);
   }
 
-  private loadCatalogPage() {
-    // console.log(this.catalogView.getElement());
+  private async loadCatalogPage() {
     this.setContent(PAGES.CATALOG, this.catalogView.getElement());
   }
 
@@ -117,10 +117,8 @@ export default class App {
   }
 
   private async mountCategory(key: string) {
-    const view = await this.catalogView.mountCategory(key);
-    if (view instanceof HTMLElement) {
-      this.setContent(PAGES.CATALOG, view);
-    }
+    await this.catalogView.mountCategory(key);
+    this.setContent(PAGES.CATALOG, this.catalogView.getElement());
   }
 
   private getRoutesCallbacks(): RouteCallbacks {
@@ -138,16 +136,5 @@ export default class App {
 
       mountCategory: this.mountCategory.bind(this),
     };
-  }
-
-  public async updateRoutes() {
-    try {
-      const routes = await this.routesClass.fetchAvailiableCategories();
-      if (routes) {
-        this.router.updateRoutes(routes);
-      }
-    } catch (e) {
-      console.log('ehrer');
-    }
   }
 }

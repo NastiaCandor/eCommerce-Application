@@ -25,7 +25,6 @@ export default class MainView extends View {
   }
 
   public setContent(view: HTMLElement): void {
-    console.log(this.innerWrapper);
     this.innerWrapper.replaceChildren(view);
   }
 

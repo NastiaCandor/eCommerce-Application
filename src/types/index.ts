@@ -61,16 +61,12 @@ export type PagesInterface = {
   CONTACTS: string;
 
   CATEGORY: string;
+  CATEGORIES: string;
 };
 
 export type Route = {
   path: string;
   callback: (key?: string) => void;
-};
-
-export type Path = {
-  key: string | undefined;
-  path: string | undefined;
 };
 
 export type UserRequest = {
@@ -80,6 +76,18 @@ export type UserRequest = {
   id: string;
 };
 
+// PREFETCHED API CLIENT DATA
+
+export type PrefetchedData = {
+  genres: PrefetchedGenres[];
+};
+
+export type PrefetchedGenres = {
+  [key: string]: string;
+  name: string;
+  id: string;
+  key: string;
+};
 // ROUTES TYPES
 
 export type RouteCallbacks = {

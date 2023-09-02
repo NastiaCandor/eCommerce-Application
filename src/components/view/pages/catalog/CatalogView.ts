@@ -1,4 +1,5 @@
 import { Attribute, Price, ProductData } from '@commercetools/platform-sdk';
+import { PrefetchedGenres } from '../../../../types';
 import Router from '../../../router/Router';
 import ClientAPI from '../../../utils/Client';
 import ElementCreator from '../../../utils/ElementCreator';
@@ -11,41 +12,44 @@ export default class CatalogView extends View {
 
   private filterView: HTMLElement;
 
-  private cards: Promise<ElementCreator>;
-
   private router: Router;
 
-  private wrapper: ElementCreator;
+  private wrapper: ElementCreator | null;
 
   private categoriesBtn: Array<HTMLElement>;
+
+  private prefetchedGenres: PrefetchedGenres[];
 
   constructor(clientApi: ClientAPI, router: Router) {
     super(catalogParams.section);
     this.clientApi = clientApi;
+    this.prefetchedGenres = this.clientApi.getPrefetchedData.genres;
     this.filterView = new FilterView(this.clientApi).render();
     this.router = router;
-    this.cards = this.assamleCards();
-    this.wrapper = new ElementCreator(catalogParams.wrapper);
+    this.wrapper = null;
     this.categoriesBtn = [];
-    this.render();
   }
 
-  public render(): void {
-    this.configure();
+  public async render() {
+    await this.configure();
   }
 
-  protected configure(): void {
-    this.renderInnerWrapper();
+  protected async configure(productInfo?: ProductData[]) {
+    await this.init(productInfo);
+    await this.categoriesCbHandler();
   }
 
-  private async renderInnerWrapper(): Promise<void> {
+  private async init(productInfo?: ProductData[]): Promise<void> {
+    const wrapper = new ElementCreator(catalogParams.wrapper);
     const asideWrapper = new ElementCreator(catalogParams.aside);
-    const categories = await this.assembleCategories();
+    const categories = this.assembleCategories();
     if (categories) asideWrapper.addInnerElement(categories);
     asideWrapper.addInnerElement(this.filterView);
-    this.wrapper.addInnerElement([asideWrapper, await this.cards]);
-    this.addInnerElement(this.wrapper);
-    await this.categoriesCbHandler();
+    const productData = productInfo || undefined;
+    const assambledCards = await this.assamleCards(productData);
+    wrapper.addInnerElement([asideWrapper, assambledCards]);
+    this.wrapper = wrapper;
+    this.addInnerElement(wrapper);
   }
 
   private async fetchAllCardsData() {
@@ -90,32 +94,26 @@ export default class CatalogView extends View {
     return singer.getElement();
   }
 
-  private async assembleCategories(): Promise<HTMLElement> {
-    const id = await this.clientApi.getCategoryId('genres');
-    const data = await this.clientApi.getGenresById(id);
+  private assembleCategories(): HTMLElement {
+    const data = this.clientApi.getPrefetchedData.genres;
     const categoriesWrapper = new ElementCreator(catalogParams.categories.wrapper);
     const categoriesHeading = new ElementCreator(catalogParams.asideHeading);
     categoriesWrapper.addInnerElement(categoriesHeading);
     const categoryBox = new ElementCreator(catalogParams.categories.categoryBox);
     const list = new ElementCreator(catalogParams.categoriesList);
-    if (data !== undefined) {
-      const genres = data.map((item) => [item.name['en-US'], item.key]);
-      const listItems = genres.map(([name, key]) => {
-        const listItem = new ElementCreator(catalogParams.categoryListItem);
-        const categoryLink = new ElementCreator(catalogParams.categories.categoryLink);
-        if (name && key) {
-          categoryLink.setTextContent(name);
-          categoryLink.setAttribute('href', `catalog/category/${key}`);
-          categoryLink.setAttribute('data-genre', key);
-          listItem.addInnerElement(categoryLink);
-          this.categoriesBtn.push(categoryLink.getElement());
-        }
-        return listItem;
-      });
-      list.addInnerElement(listItems);
-      categoryBox.addInnerElement(list);
-      categoriesWrapper.addInnerElement(categoryBox);
-    }
+    const listItems = data.map((item) => {
+      const listItem = new ElementCreator(catalogParams.categoryListItem);
+      const categoryLink = new ElementCreator(catalogParams.categories.categoryLink);
+      categoryLink.setTextContent(item.name);
+      categoryLink.setAttribute('href', `/catalog/category/${item.key}`);
+      categoryLink.setAttribute('data-genre', item.key);
+      listItem.addInnerElement(categoryLink);
+      this.categoriesBtn.push(categoryLink.getElement());
+      return listItem;
+    });
+    list.addInnerElement(listItems);
+    categoryBox.addInnerElement(list);
+    categoriesWrapper.addInnerElement(categoryBox);
     return categoriesWrapper.getElement();
   }
 
@@ -125,9 +123,6 @@ export default class CatalogView extends View {
         btn.addEventListener('click', async (e) => {
           e.preventDefault();
           if (e.target instanceof HTMLAnchorElement) {
-            const id = await this.clientApi.getCategoryId(`${e.target.dataset.genre}`);
-            const pop = await this.clientApi.getSpecificGenreById(id);
-            console.log(pop);
             this.router.navigate(e.target.href);
           }
         });
@@ -136,28 +131,21 @@ export default class CatalogView extends View {
   }
 
   public async mountCategory(key: string) {
-    const categoryKey = await this.clientApi.getCategoryId(key);
-    const data = await this.clientApi.getSpecificGenreById(categoryKey);
-    if (data !== undefined) {
-      const results = data.results as ProductData[];
-      const res = (await this.assamleCards(results)).getElement();
-      const child = this.wrapper.getElement().childNodes[1];
-      const filter = this.filterView;
-      if (child) {
-        this.wrapper.getElement().replaceChild(res, child);
-        return;
+    const categoryKey = this.prefetchedGenres.find((item) => item.key === key);
+    const id = categoryKey?.id;
+    if (id) {
+      const data = await this.clientApi.getSpecificGenreById(id);
+      if (data) {
+        const dataResults = data.results as ProductData[];
+        await this.assamleCards(dataResults).then((cardsView) => {
+          if (this.wrapper) {
+            const replacedNode = this.wrapper.getElement().childNodes[1];
+            this.wrapper.getElement().replaceChild(cardsView.getElement(), replacedNode);
+            return;
+          }
+          this.configure(dataResults);
+        });
       }
-      const wrapper = new ElementCreator(catalogParams.wrapper);
-      const asideWrapper = new ElementCreator(catalogParams.aside);
-      this.categoriesBtn = [];
-      const categories = await this.assembleCategories();
-      if (categories) asideWrapper.addInnerElement([categories]);
-      asideWrapper.addInnerElement(filter);
-      console.log(this.filterView);
-      wrapper.addInnerElement([asideWrapper, res]);
-      this.wrapper = wrapper;
-      await this.categoriesCbHandler();
-      return wrapper.getElement();
     }
   }
 
