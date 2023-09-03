@@ -51,7 +51,7 @@
   column-gap: 0.5rem;
   background-color: transparent;
   color: #2c2b2b;
-  padding: 0.7rem;
+  padding: 0.5rem;
   border-radius: $border-radius3;
   font-size: 2rem;
 }
@@ -118,8 +118,8 @@
   border-radius: $border-radius3;
 }
 
-.address-spans__wrapper {
-  height: 3rem;
+.address-item__inner-wrapper {
+  // height: 3rem;
   display: flex;
   justify-content: space-between;
 }
@@ -130,11 +130,47 @@
   display: inline-block;
 }
 
-.inner__wrapper {
+.left-inner__wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.right-inner__wrapper,
+.spans-img__wrapper,
+.default-adrs__wrapper {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 0.5rem;
+}
+
+.right-inner__wrapper {
+  gap: 0.5rem;
+}
+
+.default-adrs__wrapper {
+  color: #545454;
+  font-size: 1.5rem;
+  margin-left: 0.4rem;
+  width: fit-content;
+  padding: 0.3rem;
+  border-radius: $border-radius3;
+}
+
+.default-adrs__wrapper:hover {
+  background-color: #f0f0f0;
+}
+
+.default-adrs__wrapper:disabled{
+  color: rgb(189, 47, 47);
+  cursor: no-drop;
+}
+
+.default-adrs__wrapper:disabled:hover{
+  color: rgb(189, 47, 47);
+  cursor: no-drop;
+  background-color: transparent;
 }
 
 .no-adrs__wrapper {

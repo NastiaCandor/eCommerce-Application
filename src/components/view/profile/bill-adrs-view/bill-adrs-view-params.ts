@@ -114,8 +114,7 @@ const BillAdrsParams = {
   },
 
   addAddressMessage: 'Billing address was created successfully!',
-  errorSignUpMessage: 'Please check your information and try again',
-  serverProblemMessage: 'Please check your connection and try again',
+  addAdrsErrorMessage: 'Please check your information and/or connection and try again',
 };
 
 export default BillAdrsParams;

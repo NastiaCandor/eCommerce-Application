@@ -52,34 +52,57 @@ export default class AddressItemView extends View {
     this.checkPostcodeEvents();
   }
 
-  public async renderInnerWrapper(street: string, city: string, country: string, postcode: string, currAdrs: string) {
-    const addressSpansWrapper = new ElementCreator(AddressItemParams.addressSpanWrapper);
-    this.addInnerElement(addressSpansWrapper);
+  public async renderInnerWrapper(
+    street: string,
+    city: string,
+    country: string,
+    postcode: string,
+    currAdrs: string,
+    defaultStatus: boolean
+  ) {
+    const addressInnerWrapper = new ElementCreator(AddressItemParams.addressInnerWrapper);
+    this.addInnerElement(addressInnerWrapper);
 
-    const leftPartWrapper = new ElementCreator(AddressItemParams.innerWrapper);
-    addressSpansWrapper.addInnerElement(leftPartWrapper);
+    const leftPartWrapper = new ElementCreator(AddressItemParams.leftInnerWrapper);
+    addressInnerWrapper.addInnerElement(leftPartWrapper);
+
+    const spansImgWrapper = new ElementCreator(AddressItemParams.spansImgWrapper);
+    leftPartWrapper.addInnerElement(spansImgWrapper);
+
+    const defaultAdrsBtn = new ElementCreator(AddressItemParams.defaultAdrsBtn);
+    leftPartWrapper.addInnerElement(defaultAdrsBtn);
+    defaultAdrsBtn.setAttribute('type', AddressItemParams.defaultAdrsBtn.type);
+    defaultAdrsBtn.setAttribute('addressId', currAdrs);
+    if (defaultStatus) {
+      defaultAdrsBtn.setTextContent('✓ Default');
+      defaultAdrsBtn.setAttribute('disabled', 'true');
+    } else defaultAdrsBtn.setTextContent('Set as Default');
+    defaultAdrsBtn.getElement().addEventListener('click', () => {
+      this.currentAdrsID = defaultAdrsBtn.getElement().getAttribute('addressId') as string;
+      this.setDefaultAdrs();
+    });
 
     const locationSVG = new ElementCreator(AddressItemParams.adrsLocationImg);
-    leftPartWrapper.addInnerElement(locationSVG);
+    spansImgWrapper.addInnerElement(locationSVG);
 
     const streetSpan = new ElementCreator(AddressItemParams.addressSpanStreet);
-    leftPartWrapper.addInnerElement(streetSpan);
+    spansImgWrapper.addInnerElement(streetSpan);
     streetSpan.setTextContent(`${street}, `);
 
     const citySpan = new ElementCreator(AddressItemParams.addressSpanCity);
-    leftPartWrapper.addInnerElement(citySpan);
+    spansImgWrapper.addInnerElement(citySpan);
     citySpan.setTextContent(`${city}, `);
 
     const countrySpan = new ElementCreator(AddressItemParams.addressSpanCountry);
-    leftPartWrapper.addInnerElement(countrySpan);
+    spansImgWrapper.addInnerElement(countrySpan);
     countrySpan.setTextContent(`${country} `);
 
     const postcodeSpan = new ElementCreator(AddressItemParams.addressSpanPostcode);
-    leftPartWrapper.addInnerElement(postcodeSpan);
+    spansImgWrapper.addInnerElement(postcodeSpan);
     postcodeSpan.setTextContent(postcode);
 
-    const buttonsWrapper = new ElementCreator(AddressItemParams.innerWrapper);
-    addressSpansWrapper.addInnerElement(buttonsWrapper);
+    const buttonsWrapper = new ElementCreator(AddressItemParams.rightInnerWrapper);
+    addressInnerWrapper.addInnerElement(buttonsWrapper);
 
     const editBtn = this.createEditBtn();
     buttonsWrapper.addInnerElement(editBtn);
@@ -91,7 +114,6 @@ export default class AddressItemView extends View {
     editBtn.getElement().addEventListener('click', async () => {
       this.currentVersion = await this.getCustomerVersion();
       this.currentAdrsID = editBtn.getElement().getAttribute('addressId') as string;
-      console.log(this.currentAdrsID);
       editBtn.setAttribute('disabled', 'true');
       adrsForm.addInnerElement(saveBtn);
       this.addInnerElement(adrsForm);
@@ -108,7 +130,6 @@ export default class AddressItemView extends View {
 
     deleteBtn.getElement().addEventListener('click', async () => {
       this.currentAdrsID = deleteBtn.getElement().getAttribute('addressId') as string;
-      console.log(this.currentAdrsID);
       this.currentVersion = await this.getCustomerVersion();
       this.deleteAdrs();
     });
@@ -126,6 +147,22 @@ export default class AddressItemView extends View {
       if (deleteAdrsAPI.statusCode === 200) {
         this.showDeleteAdrsMessage();
         this.getElement().remove();
+      }
+    } catch (error) {
+      this.showUpdateErrorMessage();
+    }
+  }
+
+  private async setDefaultAdrs() {
+    this.currentVersion = await this.getCustomerVersion();
+    try {
+      const deleteAdrsAPI = await this.clientAPI.setDefaultBillingAddress(
+        this.getCustomerIDCookie() as string,
+        this.currentVersion,
+        this.currentAdrsID
+      );
+      if (deleteAdrsAPI.statusCode === 200) {
+        this.showSetDefaultAdrsMessage();
       }
     } catch (error) {
       this.showUpdateErrorMessage();
@@ -274,7 +311,8 @@ export default class AddressItemView extends View {
           cityInput.value,
           countryInput.value,
           postalCode.value,
-          this.currentAdrsID
+          this.currentAdrsID,
+          false
         );
         this.showUpdateMessage();
       }
@@ -303,6 +341,16 @@ export default class AddressItemView extends View {
     }).show();
   }
 
+  private showSetDefaultAdrsMessage(): void {
+    new Noty({
+      theme: 'mint',
+      text: AddressItemParams.setDefaultAdrsMessage,
+      timeout: 3000,
+      progressBar: true,
+      type: 'success',
+    }).show();
+  }
+
   private showUpdateErrorMessage(): void {
     new Noty({
       theme: 'mint',
@@ -312,29 +360,6 @@ export default class AddressItemView extends View {
       type: 'error',
     }).show();
   }
-  // private enableInputs(el: HTMLInputElement) {
-  //   el.removeAttribute('disabled');
-  // }
-  // private async setFName(el: HTMLInputElement) {
-  //   this.getCustomer().then((data) => {
-  //     const firstName = data.firstName as string;
-  //     el.value = firstName;
-  //   });
-  // }
-
-  // private async setLName(el: HTMLInputElement) {
-  //   this.getCustomer().then((data) => {
-  //     const lastName = data.lastName as string;
-  //     el.value = lastName;
-  //   });
-  // }
-
-  // private async setDate(el: HTMLInputElement) {
-  //   this.getCustomer().then((data) => {
-  //     const dateOfBirth = data.dateOfBirth as string;
-  //     el.value = dateOfBirth;
-  //   });
-  // }
 
   private async getCustomerVersion() {
     const { version } = await this.getCustomer();

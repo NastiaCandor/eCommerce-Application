@@ -4,6 +4,17 @@ const AddressItemParams = {
     cssClasses: ['address-item__wrapper'],
   },
 
+  spansImgWrapper: {
+    tag: 'div',
+    cssClasses: ['spans-img__wrapper'],
+  },
+
+  defaultAdrsBtn: {
+    tag: 'button',
+    cssClasses: ['default-adrs__wrapper'],
+    type: 'button',
+  },
+
   form: {
     tag: 'form',
     cssClasses: ['profile-form'],
@@ -27,9 +38,14 @@ const AddressItemParams = {
     textContent: 'Save',
   },
 
-  innerWrapper: {
+  leftInnerWrapper: {
     tag: 'div',
-    cssClasses: ['inner__wrapper'],
+    cssClasses: ['left-inner__wrapper'],
+  },
+
+  rightInnerWrapper: {
+    tag: 'div',
+    cssClasses: ['right-inner__wrapper'],
   },
 
   buttonEdit: {
@@ -70,9 +86,9 @@ const AddressItemParams = {
     src: '../assets/img/location-pin.svg',
   },
 
-  addressSpanWrapper: {
+  addressInnerWrapper: {
     tag: 'div',
-    cssClasses: ['address-spans__wrapper'],
+    cssClasses: ['address-item__inner-wrapper'],
   },
 
   addressSpanStreet: {
@@ -95,9 +111,10 @@ const AddressItemParams = {
     cssClasses: ['address-span', 'address-span_city'],
   },
 
-  updateAdrsMessage: 'Billing address was updated successfully',
+  updateAdrsMessage: 'Billing address was changed successfully',
   updateErrorAdrsMessage: 'Something went wrong. Please try again',
   deleteAdrsMessage: 'Billing address was deleted successfully',
+  setDefaultAdrsMessage: 'Default billing address was updated successfully',
 };
 
 export default AddressItemParams;
