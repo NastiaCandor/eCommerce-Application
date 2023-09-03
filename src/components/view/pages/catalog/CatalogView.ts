@@ -27,10 +27,8 @@ export default class CatalogView extends View {
     super(catalogParams.section);
     this.clientApi = clientApi;
     this.prefetchedGenres = this.clientApi.getPrefetchedData.genres;
-    // test
     this.searchView = new SearchView(this.clientApi);
     this.searchFunctionality();
-    // tets
     this.filterView = new FilterView(this.clientApi).render();
     this.router = router;
     this.wrapper = null;
@@ -223,7 +221,6 @@ export default class CatalogView extends View {
           const { results } = data.body;
           if (results.length === 0) {
             this.showNoResults(search);
-            console.log('no results');
           } else {
             this.assamleCards(results as ProductData[]).then((cardsView) => {
               if (this.wrapper) {
