@@ -4,6 +4,7 @@
 import {
   Address,
   ApiRoot,
+  CustomerChangePassword,
   CustomerDraft,
   CustomerSignin,
   CustomerUpdate,
@@ -250,6 +251,18 @@ export default class ClientAPI {
       ],
     };
     const customerAPI = await apiRoot.customers().withId(args).post({ body }).execute();
+    return customerAPI;
+  }
+
+  public changePassword(customerID: string, customerVersion: number, currentPassword: string, newPassword: string) {
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const body: CustomerChangePassword = {
+      id: customerID,
+      version: customerVersion,
+      currentPassword,
+      newPassword,
+    };
+    const customerAPI = () => apiRoot.customers().password().post({ body }).execute();
     return customerAPI;
   }
 

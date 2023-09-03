@@ -9,15 +9,15 @@ import View from '../../View';
 import ClientAPI from '../../../utils/Client';
 import AddressItemParams from './address-item-params';
 import ElementCreator from '../../../utils/ElementCreator';
-import ProfileCityView from '../profileInputs/profileCityView';
-import ProfileCountryView from '../profileInputs/profileCountryView';
-import ProfileStreetView from '../profileInputs/profileStreetView';
-import ProfilePostcodeView from '../profileInputs/profilePostcodeView';
+import ProfileCityView from '../profile-inputs/profileCityView';
+import ProfileCountryView from '../profile-inputs/profileCountryView';
+import ProfileStreetView from '../profile-inputs/profileStreetView';
+import ProfilePostcodeView from '../profile-inputs/profilePostcodeView';
 import PostcodeInputParams from '../../registration/form-component/input-component/address/postcode-fieldset-view/postcode-params';
 import '../../../../assets/img/location-pin.svg';
 import '../../../../assets/img/delete.svg';
 
-export default class BillAddressItemView extends View {
+export default class ShipAddressItemView extends View {
   private clientAPI: ClientAPI;
 
   private currentVersion: number;
@@ -157,7 +157,7 @@ export default class BillAddressItemView extends View {
   private async setDefaultAdrs() {
     this.currentVersion = await this.getCustomerVersion();
     try {
-      const deleteAdrsAPI = await this.clientAPI.setDefaultBillingAddress(
+      const deleteAdrsAPI = await this.clientAPI.setDefaultShippingAddress(
         this.getCustomerIDCookie() as string,
         this.currentVersion,
         this.currentAdrsID

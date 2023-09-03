@@ -11,7 +11,7 @@ import View from '../../View';
 import ClientAPI from '../../../utils/Client';
 import ElementCreator from '../../../utils/ElementCreator';
 import ShipAdrsParams from './ship-adrs-view-params';
-import ShipAddressItemView from '../AddressItemView/ShipAddressItemView';
+import ShipAddressItemView from '../address-item-view/ShipAddressItemView';
 import '../../../../assets/img/location-pin.svg';
 import StreetInputView from '../../registration/form-component/input-component/address/street-input-view/street-input-view';
 import CityInputView from '../../registration/form-component/input-component/address/city-fieldset-view/city-input-view';
@@ -310,7 +310,6 @@ export default class ProfileShipAdrsView extends View {
         });
       }
     }
-    console.log(result);
     return result;
   }
 

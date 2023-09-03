@@ -5,12 +5,12 @@
 /* eslint-disable prefer-template */
 import Noty from 'noty';
 import View from '../../View';
-import ProfileEmailInputView from '../profileInputs/profileEmailView';
-import ProfileLNameView from '../profileInputs/profileLNameView';
-import ProfileDateView from '../profileInputs/profileDateView';
+import ProfileEmailInputView from '../profile-inputs/profileEmailView';
+import ProfileLNameView from '../profile-inputs/profileLNameView';
+import ProfileDateView from '../profile-inputs/profileDateView';
 import ClientAPI from '../../../utils/Client';
 import BasicInfoParams from './basic-info-params';
-import ProfileFNameView from '../profileInputs/profileFNameView';
+import ProfileFNameView from '../profile-inputs/profileFNameView';
 import ElementCreator from '../../../utils/ElementCreator';
 import '../../../../assets/img/pencil.svg';
 
