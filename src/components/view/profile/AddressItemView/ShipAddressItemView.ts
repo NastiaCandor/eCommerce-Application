@@ -17,7 +17,7 @@ import PostcodeInputParams from '../../registration/form-component/input-compone
 import '../../../../assets/img/location-pin.svg';
 import '../../../../assets/img/delete.svg';
 
-export default class AddressItemView extends View {
+export default class ShipAddressItemView extends View {
   private clientAPI: ClientAPI;
 
   private currentVersion: number;
@@ -157,7 +157,7 @@ export default class AddressItemView extends View {
   private async setDefaultAdrs() {
     this.currentVersion = await this.getCustomerVersion();
     try {
-      const deleteAdrsAPI = await this.clientAPI.setDefaultBillingAddress(
+      const deleteAdrsAPI = await this.clientAPI.setDefaultShippingAddress(
         this.getCustomerIDCookie() as string,
         this.currentVersion,
         this.currentAdrsID

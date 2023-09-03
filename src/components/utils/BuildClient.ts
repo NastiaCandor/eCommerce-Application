@@ -43,7 +43,7 @@ const passwordAuthMiddlewareOptions: PasswordAuthMiddlewareOptions = {
 const ctpClient = new ClientBuilder()
   .withClientCredentialsFlow(authMiddlewareOptions)
   .withHttpMiddleware(httpMiddlewareOptions)
-  .withLoggerMiddleware() // view all responses and requests
+  // .withLoggerMiddleware() // view all responses and requests
   .build();
 
 const authClient = new ClientBuilder().withPasswordFlow(passwordAuthMiddlewareOptions).build();

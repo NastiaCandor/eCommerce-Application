@@ -1,23 +1,51 @@
 const ShipAdrsParams = {
+  addressWrapper: {
+    tag: 'div',
+    cssClasses: ['ship-adrs__wrapper', 'profile-section__wrapper'],
+  },
+
+  addressItemsWrapper: {
+    tag: 'div',
+    cssClasses: ['adrs-items__wrapper'],
+  },
+
+  noAddresses: {
+    tag: 'div',
+    cssClasses: ['no-adrs__wrapper'],
+    textContent: "You don't have any shipping addresses.",
+  },
+
   form: {
     tag: 'form',
-    cssClasses: ['ship-adrs-form', 'profile-form'],
+    cssClasses: ['adrs-form', 'profile-form', 'add-adrs-form'],
   },
 
   heading: {
     tag: 'h4',
-    cssClasses: ['wrapper__hdn'],
-    basicInfo: {
-      text: 'Create account',
-    },
-    shipping: {
-      text: 'Shipping Address',
-    },
-    billing: {
-      text: 'Billing Address',
-    },
+    cssClasses: ['wrapper__hdn', 'profile__hdn'],
+    text: 'Shipping Addresses',
   },
 
+  wrapperTop: {
+    tag: 'div',
+    cssClasses: ['ship-adrs__top'],
+  },
+
+  popUpCloseBtn: {
+    tag: 'div',
+    cssClasses: ['popup-close__btn'],
+  },
+
+  popUpCloseBtnImg: {
+    tag: 'div',
+    cssClasses: ['popup-close__btn__img'],
+    textContent: '+',
+  },
+
+  popUpBack: {
+    tag: 'div',
+    cssClasses: ['popup-back'],
+  },
   addressDiv: {
     cssClasses: ['adrs-wrapper'],
   },
@@ -25,11 +53,29 @@ const ShipAdrsParams = {
     cssClasses: ['info-wrapper'],
   },
 
-  button: {
+  buttonSave: {
     tag: 'button',
-    cssClasses: ['reg-form__btn', 'button'],
+    cssClasses: ['save-profile__btn', 'button'],
     type: 'submit',
-    textContent: 'Sign Up',
+    textContent: 'Save',
+  },
+
+  buttonEdit: {
+    tag: 'button',
+    cssClasses: ['edit-profile__btn', 'button'],
+    type: 'button',
+  },
+  buttonEditSpan: {
+    tag: 'span',
+    cssClasses: ['edit-btn_span'],
+    textContent: 'Edit',
+  },
+
+  buttonEditImg: {
+    tag: 'img',
+    cssClasses: ['edit-btn__img'],
+    alt: 'edit-button',
+    src: '../assets/img/pencil.svg',
   },
 
   fieldset: {
@@ -48,10 +94,27 @@ const ShipAdrsParams = {
     textContent: '  Log in!',
   },
 
-  signUpMessage: 'Account has been created successfully!',
-  errorLoginMessage: 'Login attempt has failed. Please go to the login page and try again',
-  errorSignUpMessage: 'Please check your information and try again',
-  serverProblemMessage: 'Please check your connection and try again',
+  buttonAddAdrs: {
+    tag: 'button',
+    cssClasses: ['add-adrs__btn', 'button'],
+    type: 'button',
+  },
+
+  buttonAddAdrsImg: {
+    tag: 'img',
+    cssClasses: ['add-adrs__location__img'],
+    alt: 'location',
+    src: '../assets/img/location-pin.svg',
+  },
+
+  buttonAddAdrsSpan: {
+    tag: 'span',
+    cssClasses: ['add-adrs_span'],
+    textContent: 'Add new shipping address',
+  },
+
+  addAddressMessage: 'Shipping address was created successfully!',
+  addAdrsErrorMessage: 'Please check your information and/or connection and try again',
 };
 
 export default ShipAdrsParams;

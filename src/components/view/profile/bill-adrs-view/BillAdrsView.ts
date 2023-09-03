@@ -11,7 +11,7 @@ import View from '../../View';
 import ClientAPI from '../../../utils/Client';
 import ElementCreator from '../../../utils/ElementCreator';
 import BillAdrsParams from './bill-adrs-view-params';
-import AddressItemView from '../AddressItemView/AddressItemView';
+import BillAddressItemView from '../AddressItemView/BillAddressItemView';
 import '../../../../assets/img/location-pin.svg';
 import StreetInputView from '../../registration/form-component/input-component/address/street-input-view/street-input-view';
 import CityInputView from '../../registration/form-component/input-component/address/city-fieldset-view/city-input-view';
@@ -90,7 +90,7 @@ export default class ProfileBillAdrsView extends View {
       const cityName = adrs.city as string;
       const countryName = adrs.country as string;
       const postalCode = adrs.postalCode as string;
-      const adrsItem = new AddressItemView();
+      const adrsItem = new BillAddressItemView();
       adrsItem.renderInnerWrapper(streetName, cityName, countryName, postalCode, adrsID, defaultStatus);
       adrsItemsWrapper.addInnerElement(adrsItem);
     });
@@ -199,7 +199,7 @@ export default class ProfileBillAdrsView extends View {
           const cityName = adrs.city as string;
           const countryName = adrs.country as string;
           const postalCode = adrs.postalCode as string;
-          const adrsItem = new AddressItemView();
+          const adrsItem = new BillAddressItemView();
           adrsItem.renderInnerWrapper(streetName, cityName, countryName, postalCode, adrsID, 'false');
           this.getElement().replaceChildren();
           this.renderInnerWrapper();
@@ -318,7 +318,9 @@ export default class ProfileBillAdrsView extends View {
     const defaultadrsID = (await this.getCustomer()).defaultBillingAddressId as string;
     const { addresses } = await this.getCustomer();
     const result: Address[] = [];
-    // TO DO: проверка на отсутствие дефолтного адреса
+    if (defaultadrsID === undefined) {
+      return defaultadrsID;
+    }
     addresses.forEach((element) => {
       if (element.id === defaultadrsID) {
         result.push(element);

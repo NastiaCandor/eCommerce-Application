@@ -151,6 +151,24 @@ export default class ClientAPI {
     return customerAPI;
   }
 
+  public async addShippingAddressID(customerID: string, customerVersion: number, lastAddressID: string) {
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const args = {
+      ID: customerID,
+    };
+    const body: CustomerUpdate = {
+      version: customerVersion,
+      actions: [
+        {
+          action: 'addShippingAddressId',
+          addressId: lastAddressID,
+        },
+      ],
+    };
+    const customerAPI = await apiRoot.customers().withId(args).post({ body }).execute();
+    return customerAPI;
+  }
+
   public async setDefaultBillingAddress(customerID: string, customerVersion: number, addressID: string) {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
     const args = {
@@ -161,6 +179,24 @@ export default class ClientAPI {
       actions: [
         {
           action: 'setDefaultBillingAddress',
+          addressId: addressID,
+        },
+      ],
+    };
+    const customerAPI = await apiRoot.customers().withId(args).post({ body }).execute();
+    return customerAPI;
+  }
+
+  public async setDefaultShippingAddress(customerID: string, customerVersion: number, addressID: string) {
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const args = {
+      ID: customerID,
+    };
+    const body: CustomerUpdate = {
+      version: customerVersion,
+      actions: [
+        {
+          action: 'setDefaultShippingAddress',
           addressId: addressID,
         },
       ],

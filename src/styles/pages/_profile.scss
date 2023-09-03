@@ -107,7 +107,8 @@
 
 //ADDRESSES IN PROFILE
 
-.bill-adrs__top {
+.bill-adrs__top,
+.ship-adrs__top {
   padding-bottom: 2rem;
 }
 
@@ -162,12 +163,12 @@
   background-color: #f0f0f0;
 }
 
-.default-adrs__wrapper:disabled{
+.default-adrs__wrapper:disabled {
   color: rgb(189, 47, 47);
   cursor: no-drop;
 }
 
-.default-adrs__wrapper:disabled:hover{
+.default-adrs__wrapper:disabled:hover {
   color: rgb(189, 47, 47);
   cursor: no-drop;
   background-color: transparent;
