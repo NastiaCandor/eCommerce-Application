@@ -80,11 +80,11 @@ export default class ProfileBillAdrsView extends View {
     const adrsArr = this.getBillingAddresses();
     (await adrsArr).forEach((adrs) => {
       const adrsID = adrs.id as string;
-      let defaultStatus = false;
+      let defaultStatus = 'false';
       if (adrsID === defaultID) {
-        defaultStatus = true;
+        defaultStatus = 'true';
       } else if (adrsID !== defaultID) {
-        defaultStatus = false;
+        defaultStatus = 'false';
       }
       const streetName = adrs.streetName as string;
       const cityName = adrs.city as string;
@@ -99,14 +99,14 @@ export default class ProfileBillAdrsView extends View {
 
   private createAdrsItemsWrapper() {
     const adrsItemsWrapper = new ElementCreator(BillAdrsParams.addressItemsWrapper);
-    const element = adrsItemsWrapper.getElement() as Element;
-    element.addEventListener('click', (el: Event) => {
-      const { target } = el;
-      if ((target as HTMLElement).classList.contains('default-adrs__wrapper')) {
-        this.getElement().replaceChildren();
-        this.renderInnerWrapper();
-      }
-    });
+    // const element = adrsItemsWrapper.getElement() as Element;
+    // element.addEventListener('click', (el: Event) => {
+    //   const { target } = el;
+    //   if ((target as HTMLElement).classList.contains('default-adrs__wrapper')) {
+    //     this.getElement().replaceChildren();
+    //     this.renderInnerWrapper();
+    //   }
+    // });
     return adrsItemsWrapper;
   }
 
@@ -200,7 +200,7 @@ export default class ProfileBillAdrsView extends View {
           const countryName = adrs.country as string;
           const postalCode = adrs.postalCode as string;
           const adrsItem = new AddressItemView();
-          adrsItem.renderInnerWrapper(streetName, cityName, countryName, postalCode, adrsID, false);
+          adrsItem.renderInnerWrapper(streetName, cityName, countryName, postalCode, adrsID, 'false');
           this.getElement().replaceChildren();
           this.renderInnerWrapper();
         });

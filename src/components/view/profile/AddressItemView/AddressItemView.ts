@@ -58,8 +58,9 @@ export default class AddressItemView extends View {
     country: string,
     postcode: string,
     currAdrs: string,
-    defaultStatus: boolean
+    defaultStatus: string
   ) {
+    this.setAttribute('default', defaultStatus);
     const addressInnerWrapper = new ElementCreator(AddressItemParams.addressInnerWrapper);
     this.addInnerElement(addressInnerWrapper);
 
@@ -73,7 +74,7 @@ export default class AddressItemView extends View {
     leftPartWrapper.addInnerElement(defaultAdrsBtn);
     defaultAdrsBtn.setAttribute('type', AddressItemParams.defaultAdrsBtn.type);
     defaultAdrsBtn.setAttribute('addressId', currAdrs);
-    if (defaultStatus) {
+    if (defaultStatus === 'true') {
       defaultAdrsBtn.setTextContent('✓ Default');
       defaultAdrsBtn.setAttribute('disabled', 'true');
     } else defaultAdrsBtn.setTextContent('Set as Default');
@@ -163,6 +164,7 @@ export default class AddressItemView extends View {
       );
       if (deleteAdrsAPI.statusCode === 200) {
         this.showSetDefaultAdrsMessage();
+        window.location.reload();
       }
     } catch (error) {
       this.showUpdateErrorMessage();
@@ -306,13 +308,15 @@ export default class AddressItemView extends View {
       );
       if (sendCustomerAPI.statusCode === 200) {
         console.log(sendCustomerAPI.body);
+        const status = this.getElement();
+        console.log(status);
         this.renderInnerWrapper(
           streetInput.value,
           cityInput.value,
           countryInput.value,
           postalCode.value,
           this.currentAdrsID,
-          false
+          this.getElement().getAttribute('default') as string
         );
         this.showUpdateMessage();
       }
