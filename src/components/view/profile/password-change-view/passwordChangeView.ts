@@ -11,6 +11,7 @@ import CurrentProfilePasswordView from '../profile-inputs/passwords-inputs/currP
 import NewProfilePasswordView from '../profile-inputs/passwords-inputs/newProfilePasswordView';
 import ConfirmProfilePasswordView from '../profile-inputs/passwords-inputs/confirmProfilePasswordView';
 import ElementCreator from '../../../utils/ElementCreator';
+// import { ACCESS_TOKEN, COOKIE_RESET_DATE } from '../../../constants';
 import '../../../../assets/img/pencil.svg';
 
 export default class ProfilePasswordFormView extends View {
@@ -59,13 +60,6 @@ export default class ProfilePasswordFormView extends View {
     const saveBtn = this.createSaveBtn().getElement();
     this.addInnerElement(saveBtn);
 
-    // editBtn.addEventListener('click', async () => {
-    //   this.currentVersion = await this.getCustomerVersion();
-    //   this.enableInputs(emailInput);
-    //   saveBtn.removeAttribute('disabled');
-    //   editBtn.setAttribute('disabled', 'true');
-    // });
-
     this.submitForm();
   }
 
@@ -93,8 +87,6 @@ export default class ProfilePasswordFormView extends View {
     const customerID = (await this.getCustomerIDCookie()) as string;
     const getCustomerAPI = this.clientAPI.getCustomerByID(customerID);
     const customer = (await getCustomerAPI()).body;
-    console.log(customer);
-
     return customer;
   }
 
@@ -111,8 +103,11 @@ export default class ProfilePasswordFormView extends View {
         if (data.statusCode === 200) {
           console.log(data.body);
           this.showUpdateMessage(PasswordChangeParams.updateSuccessMessage);
+          // document.cookie = `${ACCESS_TOKEN}${COOKIE_RESET_DATE}`;
+          // await this.clientAPI.obtainUserAccessToken(data.body.email, newPassword.value);
+          // wanted to set new token, but it trigerrs a bug - after receiving a new token,
+          // when you go to any other page, you end up unauthorised
         } else if (data.statusCode === 400) {
-          console.log(400);
           this.showUpdateErrorMessage(PasswordChangeParams.wrongCurrPasswordErrorMessage);
         }
       })
@@ -187,7 +182,6 @@ export default class ProfilePasswordFormView extends View {
     const arr = this.getInputsArr();
     const newPasswordInput = arr[1];
     const confirmPasswordInput = arr[2];
-    console.log(newPasswordInput.value === confirmPasswordInput.value);
     return newPasswordInput.value === confirmPasswordInput.value;
   }
 
@@ -199,8 +193,6 @@ export default class ProfilePasswordFormView extends View {
         this.showUpdateErrorMessage(PasswordChangeParams.noMatchErrorMessage);
         return;
       }
-      // saveBtnEl.setAttribute('disabled', 'true');
-      // editBtnEl.removeAttribute('disabled');
       if (formEl.checkValidity() && this.checkInputsValidity() && this.checkPasswordsMatch()) {
         this.changePassword(this.getInputsArr()[0], this.getInputsArr()[1]);
       }
@@ -210,17 +202,7 @@ export default class ProfilePasswordFormView extends View {
   private createSaveBtn(): ElementCreator {
     const btn = new ElementCreator(PasswordChangeParams.buttonSave);
     btn.setAttribute('type', PasswordChangeParams.buttonSave.type);
-    // btn.setAttribute('disabled', 'true');
     btn.setTextContent(PasswordChangeParams.buttonSave.textContent);
     return btn;
   }
 }
-// "statusCode": 400,
-// "message": "The given current password does not match.",
-// "errors": [
-//     {
-//         "code": "InvalidCurrentPassword",
-//         "message": "The given current password does not match."
-//     }
-// ]
-// }

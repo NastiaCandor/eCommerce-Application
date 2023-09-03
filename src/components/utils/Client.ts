@@ -325,6 +325,8 @@ export default class ClientAPI {
   }
 
   public setCustomerIDCookie(id: string): void {
+    console.log(document.cookie);
+
     const expirationTime = new Date(Date.now() + 172800 * 1000).toUTCString();
     document.cookie = `${CUSTOMER_ID}=${id}; expires=${expirationTime}; path=/;`;
   }
