@@ -40,8 +40,37 @@ export default class ClientAPI {
   public async getProductById(productID: string) {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
     const getProduct = apiRoot.productProjections().withId({ ID: productID }).get().execute();
-    // const getProduct2 = apiRoot.categories().get().execute();
-    // getProduct2.then(console.log).catch(console.log);
+    return getProduct;
+  }
+
+  public async getSearchProduct(search: string, limitNum: number) {
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const getProduct = apiRoot
+      .productProjections()
+      .search()
+      .get({
+        queryArgs: {
+          fuzzy: true,
+          // fuzzyLevel: 2,
+          limit: limitNum,
+          // offset: 5,
+          'text.en-US': search,
+        },
+      })
+      .execute();
+    // variants.scopedPriceDiscounted:true
+    const getProduct2 = apiRoot
+      .productProjections()
+      .search()
+      .get({
+        queryArgs: {
+          limit: 100,
+          priceCurrency: 'USD',
+          filter: ['variants.scopedPriceDiscounted:true'],
+        },
+      })
+      .execute();
+    getProduct2.then(console.log).catch(console.log);
     return getProduct;
   }
 

@@ -6,6 +6,7 @@ import ElementCreator from '../../../utils/ElementCreator';
 import View from '../../View';
 import catalogParams from './catalog-params';
 import FilterView from './filter/FilterView';
+import SearchView from './search/SearchView';
 
 export default class CatalogView extends View {
   private clientApi: ClientAPI;
@@ -20,10 +21,16 @@ export default class CatalogView extends View {
 
   private prefetchedGenres: PrefetchedGenres[];
 
+  private searchView: SearchView;
+
   constructor(clientApi: ClientAPI, router: Router) {
     super(catalogParams.section);
     this.clientApi = clientApi;
     this.prefetchedGenres = this.clientApi.getPrefetchedData.genres;
+    // test
+    this.searchView = new SearchView(this.clientApi);
+    this.searchFunctionality();
+    // tets
     this.filterView = new FilterView(this.clientApi).render();
     this.router = router;
     this.wrapper = null;
@@ -41,15 +48,25 @@ export default class CatalogView extends View {
 
   private async init(productInfo?: ProductData[]): Promise<void> {
     const wrapper = new ElementCreator(catalogParams.wrapper);
-    const asideWrapper = new ElementCreator(catalogParams.aside);
-    const categories = this.assembleCategories();
-    if (categories) asideWrapper.addInnerElement(categories);
-    asideWrapper.addInnerElement(this.filterView);
+    const sideBar = this.assamleSideBar();
+    const assambledCards = await this.assembleDefaultCardsView(productInfo);
+    wrapper.addInnerElement([sideBar, assambledCards]);
+    this.wrapper = wrapper;
+    wrapper.addInnerElement(this.searchView);
+    this.addInnerElement(wrapper);
+  }
+
+  public async assembleDefaultCardsView(productInfo?: ProductData[]) {
     const productData = productInfo || undefined;
     const assambledCards = await this.assamleCards(productData);
-    wrapper.addInnerElement([asideWrapper, assambledCards]);
-    this.wrapper = wrapper;
-    this.addInnerElement(wrapper);
+    return assambledCards;
+  }
+
+  public assamleSideBar() {
+    const asideWrapper = new ElementCreator(catalogParams.aside);
+    const categories = this.assembleCategories();
+    asideWrapper.addInnerElement(categories);
+    return asideWrapper;
   }
 
   private async fetchAllCardsData() {
@@ -179,5 +196,56 @@ export default class CatalogView extends View {
       priceWrapper.addInnerElement(price);
     }
     return priceWrapper.getElement();
+  }
+
+  private searchFunctionality() {
+    this.searchView.render();
+    const [box] = this.searchView.getChildren();
+    const [input, btn] = box.childNodes;
+    input.addEventListener('keypress', (e) => {
+      const { key } = e as KeyboardEvent;
+      if (key === 'Enter') {
+        e.preventDefault();
+        this.getSearchedProducts(<HTMLInputElement>input);
+      }
+    });
+    btn.addEventListener('click', () => {
+      this.getSearchedProducts(<HTMLInputElement>input);
+    });
+  }
+
+  private getSearchedProducts(input: HTMLInputElement) {
+    const search = (<HTMLInputElement>input).value;
+    if (search) {
+      const response = this.clientApi.getSearchProduct(search, 50);
+      response
+        .then((data) => {
+          const { results } = data.body;
+          if (results.length === 0) {
+            this.showNoResults();
+          }
+          this.assamleCards(results as ProductData[]).then((cardsView) => {
+            if (this.wrapper) {
+              const replacedNode = this.wrapper.getElement().childNodes[1];
+              this.wrapper.getElement().replaceChild(cardsView.getElement(), replacedNode);
+            }
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      // search is blank
+      this.assamleCards().then((cardsView) => {
+        if (this.wrapper) {
+          const replacedNode = this.wrapper.getElement().childNodes[1];
+          this.wrapper.getElement().replaceChild(cardsView.getElement(), replacedNode);
+        }
+      });
+    }
+  }
+
+  private showNoResults() {
+    console.log('no results');
   }
 }
