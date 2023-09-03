@@ -14,6 +14,9 @@ $search-btn-width: 8rem;
   padding: 1rem;
   font-size: 1.8rem;
   width: calc(100% - $search-btn-width);
+  &:focus {
+    outline: none;
+  }
 }
 
 .search__btn {
@@ -21,8 +24,24 @@ $search-btn-width: 8rem;
   background-size: 80% 80%;
   background-repeat: no-repeat;
   background-position: 50% 50%;
-  // padding: 1rem;
   width: $search-btn-width;
   height: 100%;
   position: absolute;
+}
+
+// NO RESULT
+
+.no-res__container {
+  padding: 1rem;
+}
+
+.no-res__title {
+  @include font(2rem, 150%, 600);
+}
+
+.no-res__text {
+  @include font(1.8rem, 150%, 400);
+  span {
+    color: $color-input-error;
+  }
 }

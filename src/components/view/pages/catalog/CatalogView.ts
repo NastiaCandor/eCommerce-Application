@@ -222,14 +222,16 @@ export default class CatalogView extends View {
         .then((data) => {
           const { results } = data.body;
           if (results.length === 0) {
-            this.showNoResults();
+            this.showNoResults(search);
+            console.log('no results');
+          } else {
+            this.assamleCards(results as ProductData[]).then((cardsView) => {
+              if (this.wrapper) {
+                const replacedNode = this.wrapper.getElement().childNodes[1];
+                this.wrapper.getElement().replaceChild(cardsView.getElement(), replacedNode);
+              }
+            });
           }
-          this.assamleCards(results as ProductData[]).then((cardsView) => {
-            if (this.wrapper) {
-              const replacedNode = this.wrapper.getElement().childNodes[1];
-              this.wrapper.getElement().replaceChild(cardsView.getElement(), replacedNode);
-            }
-          });
         })
         .catch((error) => {
           console.log(error);
@@ -245,7 +247,15 @@ export default class CatalogView extends View {
     }
   }
 
-  private showNoResults() {
-    console.log('no results');
+  private showNoResults(search: string) {
+    const container = new ElementCreator(catalogParams.noResults.container);
+    const title = new ElementCreator(catalogParams.noResults.title);
+    const message = new ElementCreator(catalogParams.noResults.message);
+    message.getElement().innerHTML = `No Results for <span>"${search}"</span>. Please, try another search.`;
+    container.addInnerElement([title, message]);
+    if (this.wrapper) {
+      const replacedNode = this.wrapper.getElement().childNodes[1];
+      this.wrapper.getElement().replaceChild(container.getElement(), replacedNode);
+    }
   }
 }
