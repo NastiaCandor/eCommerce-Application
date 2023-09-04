@@ -27,8 +27,4 @@ export default class RegView extends View {
     wrapper.addInnerElement(new FormView(this.router));
     this.addInnerElement(wrapper);
   }
-  // unnecessary method ?  >
-  // private insertForm(parent: ElementCreator): void {
-  //   parent.addInnerElement(new FormView());
-  // }
 }

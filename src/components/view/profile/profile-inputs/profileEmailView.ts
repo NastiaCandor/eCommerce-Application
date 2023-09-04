@@ -1,11 +1,11 @@
 import Noty from 'noty';
-import ElementCreator from '../../../../../utils/ElementCreator';
-import View from '../../../../View';
-import fieldsetParams from '../input-params';
-import EmailInputParams from './email-params';
-import ClientAPI from '../../../../../utils/Client';
+import ElementCreator from '../../../utils/ElementCreator';
+import View from '../../View';
+import fieldsetParams from '../../registration/form-component/input-component/input-params';
+import EmailInputParams from '../../registration/form-component/input-component/email-fieldset-view/email-params';
+import ClientAPI from '../../../utils/Client';
 
-export default class EmailInputView extends View {
+export default class ProfileEmailInputView extends View {
   clientAPI: ClientAPI;
 
   constructor() {
@@ -31,11 +31,11 @@ export default class EmailInputView extends View {
     this.addInnerElement(errorSpan);
     this.validateEmail(input, errorSpan);
     this.showError(input, errorSpan);
-    this.checkEmailExist(input, errorSpan);
   }
 
   protected createInput(type: string): HTMLInputElement {
     const input = new ElementCreator(fieldsetParams.input).getElement() as HTMLInputElement;
+    input.setAttribute('disabled', 'true');
     input.setAttribute('type', type);
     input.setAttribute('id', type);
     input.setAttribute('minLength', EmailInputParams.input.minLength);
@@ -84,12 +84,16 @@ export default class EmailInputView extends View {
     }).show();
   }
 
-  private async checkEmailExist(element: HTMLInputElement, errorSpan: HTMLElement) {
+  public async checkEmailExist(element: HTMLInputElement, errorSpan: HTMLElement, currentEmail: string) {
     element.addEventListener('blur', () => {
       const getCustomerEmailAPI = this.clientAPI.getCustomerByEmail(element.value);
       getCustomerEmailAPI()
-        .then((data) => {
+        .then(async (data) => {
           if (data.statusCode === 200) {
+            if (currentEmail === element.value) {
+              console.log('this is my current email');
+              return;
+            }
             if (data.body.results.length !== 0) {
               this.showError(element, errorSpan, EmailInputParams.errorText);
             }
@@ -106,7 +110,7 @@ export default class EmailInputView extends View {
   }
 
   public showError(email: HTMLInputElement, errorMessageEl: HTMLElement, errorText?: string) {
-    if (!email.getAttribute('readonly')) {
+    if (!email.getAttribute('disabled')) {
       const errorSpan = errorMessageEl;
       if (email.validity.valueMissing) {
         errorSpan.textContent = 'Enter your e-mail address';
