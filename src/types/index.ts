@@ -88,6 +88,16 @@ export type UserRequest = {
 
 export type PrefetchedData = {
   genres: PrefetchedGenres[];
+  attributes: PrefetchedAttributes<string>;
+  prices: PrefetchedPrices;
+};
+
+export type PrefetchedPrices = {
+  max: number;
+  min: number;
+  avg: number;
+  maxFractured: number;
+  minFractured: number;
 };
 
 export type PrefetchedGenres = {
@@ -96,6 +106,25 @@ export type PrefetchedGenres = {
   id: string;
   key: string;
 };
+
+export type PrefetchedAttributes<T> = {
+  [key: string]: T[];
+  condition: T[];
+  label: T[];
+  lp: T[];
+};
+
+// export type Conditions = {
+//   condition: string[];
+// };
+
+// export type Labels = {
+//   labels: string[];
+// };
+
+// export type Lps = {
+//   lps: string[];
+// };
 // ROUTES TYPES
 
 export type RouteCallbacks = {
@@ -109,5 +138,6 @@ export type RouteCallbacks = {
   loadNotFoundPage: () => void;
   loadCatalogPage: () => void;
   logoutUser: () => void;
+  loadProductPage: () => void;
   mountCategory: (key: string) => void;
 };

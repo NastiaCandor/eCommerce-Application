@@ -41,15 +41,25 @@ export default class CatalogView extends View {
 
   private async init(productInfo?: ProductData[]): Promise<void> {
     const wrapper = new ElementCreator(catalogParams.wrapper);
-    const asideWrapper = new ElementCreator(catalogParams.aside);
-    const categories = this.assembleCategories();
-    if (categories) asideWrapper.addInnerElement(categories);
-    asideWrapper.addInnerElement(this.filterView);
-    const productData = productInfo || undefined;
-    const assambledCards = await this.assamleCards(productData);
-    wrapper.addInnerElement([asideWrapper, assambledCards]);
+    const sideBar = this.assamleSideBar();
+    const assambledCards = await this.assembleDefaultCardsView(productInfo);
+    wrapper.addInnerElement([sideBar, assambledCards]);
     this.wrapper = wrapper;
     this.addInnerElement(wrapper);
+  }
+
+  public async assembleDefaultCardsView(productInfo?: ProductData[]) {
+    const productData = productInfo || undefined;
+    const assambledCards = await this.assamleCards(productData);
+    return assambledCards;
+  }
+
+  public assamleSideBar() {
+    const asideWrapper = new ElementCreator(catalogParams.aside);
+    const categories = this.assembleCategories();
+    asideWrapper.addInnerElement(categories);
+    asideWrapper.addInnerElement(this.filterView);
+    return asideWrapper;
   }
 
   private async fetchAllCardsData() {
@@ -139,6 +149,7 @@ export default class CatalogView extends View {
         const dataResults = data.results as ProductData[];
         await this.assamleCards(dataResults).then((cardsView) => {
           if (this.wrapper) {
+            // !!
             const replacedNode = this.wrapper.getElement().childNodes[1];
             this.wrapper.getElement().replaceChild(cardsView.getElement(), replacedNode);
             return;

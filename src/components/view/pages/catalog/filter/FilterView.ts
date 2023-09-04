@@ -1,19 +1,23 @@
 import * as noUiSlider from 'nouislider';
 import { PipsMode } from 'nouislider';
-import 'nouislider/dist/nouislider.css';
 import wnumb from 'wnumb';
+import 'nouislider/dist/nouislider.css';
+import { PrefetchedData } from '../../../../../types';
 import ClientAPI from '../../../../utils/Client';
 import ElementCreator from '../../../../utils/ElementCreator';
 import View from '../../../View';
 import { filterParams } from './filter-params';
 
 export default class FilterView extends View {
-  clientApi: ClientAPI;
+  private prefetchedData: PrefetchedData;
 
-  constructor(clientApi: ClientAPI) {
+  private labelBoxes: HTMLElement[];
+
+  constructor(private clientApi: ClientAPI) {
     super(filterParams.wrapper);
     this.clientApi = clientApi;
-    this.fetchMinMaxPrices();
+    this.prefetchedData = this.clientApi.getPrefetchedData;
+    this.labelBoxes = [];
   }
 
   public render() {
@@ -27,90 +31,123 @@ export default class FilterView extends View {
 
   private async renderWrapper(): Promise<void> {
     this.addInnerElement(new ElementCreator(filterParams.wrapperHeading));
-    const genres = await this.fetchAllGenres();
-    const decades = await this.fetchAllDecades();
-    const rangeInput = await this.createPriceRangeBox();
-    this.addInnerElement(this.createFilterBox('Genres', genres));
-    this.addInnerElement(this.createFilterBox('Decades', decades));
+    const rangeInput = this.createPriceRangeBox();
+    const [condition, label, lp] = Object.keys(this.prefetchedData.attributes).map((item) => this.capitalizeStr(item));
+    this.addInnerElement(this.createFilterBox(condition, this.prefetchedData.attributes.condition));
+    this.addInnerElement(this.createFilterBox(label, this.prefetchedData.attributes.label));
+    this.addInnerElement(this.createFilterBox(lp, this.prefetchedData.attributes.lp));
     this.addInnerElement(rangeInput);
+    this.addInnerElement(this.assambleBtnWrapper());
   }
 
-  private async fetchAllGenres() {
-    const id = await this.clientApi.getCategoryId('genres');
-    const data = await this.clientApi.getGenresById(id);
-    if (data !== undefined) {
-      return data.map((item) => item.name['en-US']);
+  private capitalizeStr(str: string): string {
+    if (str.length <= 3) {
+      return str.toUpperCase();
     }
-    return [];
+    return str.slice(0, 1).toUpperCase().concat(str.slice(1));
   }
 
-  private async fetchMinMaxPrices() {
-    const CENTS_IN_DOLLAR = 100;
-    const minPrice = await this.clientApi.getMinPrice();
-    const maxPrice = await this.clientApi.getMaxPrice();
-    if (minPrice && maxPrice) {
-      return {
-        minimal: minPrice / CENTS_IN_DOLLAR,
-        maximum: maxPrice / CENTS_IN_DOLLAR,
-        delta: (minPrice + maxPrice) / CENTS_IN_DOLLAR / 2,
-      };
-    }
+  private formatPrice(cents: number) {
+    return +(cents / 100).toFixed(2);
   }
 
-  private async fetchAllDecades() {
-    const id = await this.clientApi.getCategoryId('decades');
-    const data = await this.clientApi.getGenresById(id);
-    if (data !== undefined) {
-      return data.map((item) => item.name['en-US']);
-    }
-    return [];
-  }
-
-  private async createPriceRangeBox() {
-    const filterBox = new ElementCreator(filterParams.filterBox);
+  private createPriceRangeBox() {
+    const filterBox = new ElementCreator(filterParams.filterBoxPrice);
     const rangeBox = new ElementCreator(filterParams.filterRangeInput).getElement();
-    const label = new ElementCreator(filterParams.filterLabel);
     const heading = new ElementCreator(filterParams.rangeHeading);
-    label.addInnerElement(heading);
-    const minMaxPriceData = await this.fetchMinMaxPrices();
-    if (minMaxPriceData) {
-      noUiSlider.create(rangeBox, {
-        start: [minMaxPriceData.maximum / 4, minMaxPriceData.maximum / 2],
-        range: {
-          min: minMaxPriceData.minimal,
-          max: minMaxPriceData.maximum,
-        },
-        tooltips: [wnumb({ decimals: 2, prefix: '$' }), true],
-        pips: {
-          mode: PipsMode.Steps,
-          density: 1,
-          format: wnumb({
-            decimals: 2,
-            prefix: '$',
-          }),
-        },
-      });
-    }
-    filterBox.addInnerElement([label, rangeBox]);
+    filterBox.addInnerElement(heading);
+    noUiSlider.create(rangeBox, {
+      start: [
+        this.formatPrice(this.prefetchedData.prices.minFractured),
+        this.formatPrice(this.prefetchedData.prices.maxFractured),
+      ],
+      range: {
+        min: this.formatPrice(this.prefetchedData.prices.min),
+        max: this.formatPrice(this.prefetchedData.prices.max),
+      },
+      tooltips: [wnumb({ decimals: 2, prefix: '$' }), true],
+      pips: {
+        mode: PipsMode.Steps,
+        density: 10,
+        format: wnumb({
+          decimals: 2,
+          prefix: '$',
+        }),
+      },
+    });
+
+    filterBox.addInnerElement(rangeBox);
     return filterBox.getElement();
   }
 
   private createFilterBox(filterHeading: string, filterItems: string[]) {
     const filterBox = new ElementCreator(filterParams.filterBox);
-    filterBox.setTextContent(filterHeading);
+    const labelHeading = new ElementCreator(filterParams.filterBoxHeading);
+    labelHeading.setTextContent(filterHeading);
+    filterBox.addInnerElement(labelHeading);
     const list = new ElementCreator(filterParams.filterBoxList);
     filterItems.forEach((item) => {
       const listItem = new ElementCreator(filterParams.filterBoxItem);
       const label = new ElementCreator(filterParams.filterLabel);
       const checkbox = new ElementCreator(filterParams.filterCheckbox);
+      const labelText = new ElementCreator(filterParams.filterBoxText);
       checkbox.setAttribute('type', filterParams.filterCheckbox.type);
+      label.setAttribute('for', item);
       checkbox.setAttribute('name', item);
-      label.setTextContent(item);
+      checkbox.setAttribute('id', item);
+      labelText.setTextContent(item);
+      label.addInnerElement(labelText);
       label.addInnerElement(checkbox);
       listItem.addInnerElement(label);
+      const listItemElement = <HTMLInputElement>listItem.getElement();
+      this.checkboxHandler(listItemElement);
+      this.labelBoxes.push(<HTMLInputElement>label.getElement());
       list.addInnerElement(listItem);
     });
     filterBox.addInnerElement(list);
     return filterBox.getElement();
+  }
+
+  private assambleBtnWrapper() {
+    const wrapper = new ElementCreator(filterParams.submitResetBtnWrapper);
+    const submitBtn = this.createSubmitBtn();
+    const resetBtn = this.createResetBtn();
+
+    wrapper.addInnerElement([submitBtn, resetBtn]);
+    return wrapper;
+  }
+
+  private createSubmitBtn() {
+    const submitBtn = new ElementCreator(filterParams.submitBtn).getElement();
+    return submitBtn;
+  }
+
+  private createResetBtn() {
+    const resetBtn = new ElementCreator(filterParams.resetBtn).getElement();
+    this.resetBtnHandler(resetBtn);
+    return resetBtn;
+  }
+
+  private resetBtnHandler(element: HTMLElement) {
+    element.addEventListener('click', () => {
+      this.labelBoxes.forEach((item) => {
+        const checkbox = item.querySelector('input');
+        if (item.classList.contains('active')) item.classList.remove('active');
+        if (checkbox && checkbox instanceof HTMLInputElement) checkbox.checked = false;
+      });
+    });
+  }
+
+  private checkboxHandler(element: HTMLInputElement): void {
+    element.addEventListener('change', (evt) => {
+      const { target } = evt;
+      if (target instanceof HTMLInputElement) {
+        if (target.checked) {
+          target.parentElement?.classList.add('active');
+        } else {
+          target.parentElement?.classList.remove('active');
+        }
+      }
+    });
   }
 }

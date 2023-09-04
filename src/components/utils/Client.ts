@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable comma-dangle */
 /* eslint-disable @typescript-eslint/comma-dangle */
 import {
@@ -123,8 +124,9 @@ export default class ClientAPI {
     };
     try {
       const data = await this.apiRoot.productProjections().search().get(cheapPriceQuary).execute();
-      if (data.statusCode === 200 && data.body.results[0].masterVariant.prices) {
-        return data.body.results[0].masterVariant.prices[0].value.centAmount;
+      const { prices } = data.body.results[0].masterVariant;
+      if (data.statusCode === 200 && prices) {
+        return prices[0].value.centAmount;
       }
     } catch (e) {
       console.log(`An error has occured ${e}`);
@@ -133,16 +135,33 @@ export default class ClientAPI {
   }
 
   public async getMaxPrice() {
-    const expensivePriceQuary = {
+    const discountedPricesQuary = {
       queryArgs: {
-        sort: ['price desc'],
+        where: 'masterVariant(prices(discounted(value(centAmount > 1))))',
+        limit: 100,
+      },
+    };
+    const discountlessPricesQuary = {
+      queryArgs: {
+        sort: ['price asc'],
         limit: 1,
       },
     };
     try {
-      const data = await this.apiRoot.productProjections().search().get(expensivePriceQuary).execute();
-      if (data.statusCode === 200 && data.body.results[0].masterVariant.prices) {
-        return data.body.results[0].masterVariant.prices[0].value.centAmount;
+      const discounted = await this.apiRoot.productProjections().get(discountedPricesQuary).execute();
+      const discountless = await this.apiRoot.productProjections().search().get(discountlessPricesQuary).execute();
+      if (discounted.statusCode === 200 && discountless.statusCode === 200) {
+        const pricesArray = discounted.body.results.map((item) => {
+          if (item.masterVariant.prices) {
+            return item.masterVariant.prices[0].discounted?.value.centAmount || 0;
+          }
+          return 0;
+        });
+        let maxPrice = Math.max(...pricesArray);
+        if (discountless.body.results[0].masterVariant.price) {
+          maxPrice = Math.max(discountless.body.results[0].masterVariant.price.value.centAmount, maxPrice);
+        }
+        return maxPrice;
       }
     } catch (e) {
       console.log(`An error has occured ${e}`);
@@ -186,9 +205,10 @@ export default class ClientAPI {
 
   public async prefetchData() {
     try {
-      if (!this.prefetchedData.genres) {
-        await this.prefetchGenres();
-      }
+      if (!this.prefetchedData.genres) await this.prefetchGenres();
+      if (!this.prefetchedData.attributes) await this.prefetchProductAttributes();
+      if (!this.prefetchedData.prices) await this.prefetchMinMaxPrices();
+      this.fetchFilterQuary();
     } catch (e) {
       console.error(`Error while gathering the prefetch data: ${e}`);
     }
@@ -213,8 +233,102 @@ export default class ClientAPI {
     }
   }
 
-  public get getPrefetchedData() {
-    return this.prefetchedData;
+  public async getProductVariantAttributes() {
+    const query = {
+      queryArgs: {
+        limit: 100,
+      },
+    };
+    try {
+      const data = await this.apiRoot.productProjections().get(query).execute();
+      if (data.statusCode === 200) {
+        return data.body.results;
+      }
+    } catch (e) {
+      console.log(`An error has occured ${e}`);
+    }
+  }
+
+  private async prefetchProductAttributes() {
+    try {
+      const fetchedAttributes = await this.getProductVariantAttributes();
+      if (fetchedAttributes) {
+        const [conditionsSet, labelSet, LpsSet] = [new Set<string>(), new Set<string>(), new Set<string>()];
+        fetchedAttributes.forEach((attribute) => {
+          const { attributes } = attribute.masterVariant;
+          if (attributes) {
+            attributes.forEach((attr) => {
+              if (attr.name === 'condition') conditionsSet.add(attr.value.trim());
+              if (attr.name === 'label') labelSet.add(attr.value.trim());
+              if (attr.name === 'LP') LpsSet.add(attr.value.key.trim());
+            });
+          }
+        });
+        const conditionArr: string[] = [];
+        const labelArr: string[] = [];
+        const lpsArr: string[] = [];
+
+        conditionsSet.forEach((condition) => conditionArr.push(condition));
+        labelSet.forEach((label) => labelArr.push(label));
+        LpsSet.forEach((lp) => lpsArr.push(lp));
+        this.prefetchedData.attributes = {
+          condition: conditionArr,
+          label: labelArr,
+          lp: lpsArr,
+        };
+      }
+    } catch (e) {
+      console.error(`Error while fetching genres: ${e}`);
+    }
+  }
+
+  private async prefetchMinMaxPrices() {
+    try {
+      const minPrice = await this.getMinPrice();
+      const maxPrice = await this.getMaxPrice();
+      if (minPrice && maxPrice) {
+        const avgPrice = minPrice + maxPrice / 2;
+        const minFracturedPrice = avgPrice / 2;
+        const maxFracturedPrice = avgPrice + avgPrice / 2;
+        const prices = {
+          min: minPrice,
+          avg: avgPrice,
+          max: maxPrice,
+          minFractured: minFracturedPrice,
+          maxFractured: maxFracturedPrice,
+        };
+        this.prefetchedData.prices = prices;
+      }
+    } catch (e) {
+      console.error(`Error while prefetching min-max prices: ${e}`);
+    }
+  }
+
+  public async fetchFilterQuary() {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const val = ['takin-off-herbie-hancock'];
+    console.log(typeof val);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const query = {
+      queryArgs: {
+        where: ['masterVariant(attributes(name="label" and value="Blue Note Records"))'],
+        // where: ['key = :name and '],
+        // filter: ['variants.attributes.label:"Blue Note Records"'],
+        // filter: ['key:name,var.name="takin-off-herbie-hancock"'],
+        // markMatchingVariants: true,
+        // limit: 100,
+        // isSearchable: true,
+      },
+    };
+
+    try {
+      const data = await this.apiRoot.productProjections().get(query).execute();
+      if (data.statusCode === 200) {
+        console.log(data.body.results);
+      }
+    } catch (e) {
+      console.error(`Unable to fetch filter quary: ${e}`);
+    }
   }
 
   public async obtainUserAccessToken(clientEmail: string, clientPassword: string) {
@@ -244,5 +358,9 @@ export default class ClientAPI {
 
   private setAccessTokenCookie(token: string, time: number): void {
     document.cookie = `${ACCESS_TOKEN}=${token}; expires=${new Date(Date.now() + time).toUTCString()}; path=/;`;
+  }
+
+  public get getPrefetchedData() {
+    return this.prefetchedData;
   }
 }
