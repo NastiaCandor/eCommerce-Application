@@ -4,12 +4,16 @@
 import {
   Address,
   ApiRoot,
+  CustomerChangePassword,
   CustomerDraft,
   CustomerSignin,
+  CustomerUpdate,
   createApiBuilderFromCtpClient,
   // CategoryPagedQueryResponse,
 } from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
+import { ctpClient } from './BuildClient';
+import { ACCESS_TOKEN, CUSTOMER_ID } from '../constants';
 // import { ApiRequest } from '@commercetools/platform-sdk/dist/declarations/src/generated/shared/utils/requests-utils';
 import { ctpClient, SECRET, ID } from './BuildClient';
 import { ACCESS_TOKEN } from '../constants';
@@ -41,8 +45,22 @@ export default class ClientAPI {
   public async getProductById(productID: string) {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
     const getProduct = apiRoot.productProjections().withId({ ID: productID }).get().execute();
-    // const getProduct2 = apiRoot.categories().get().execute();
-    // getProduct2.then(console.log).catch(console.log);
+    return getProduct;
+  }
+
+  public async getSearchProduct(search: string, limitNum: number) {
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const getProduct = apiRoot
+      .productProjections()
+      .search()
+      .get({
+        queryArgs: {
+          fuzzy: true,
+          limit: limitNum,
+          'text.en-US': search,
+        },
+      })
+      .execute();
     return getProduct;
   }
 
@@ -60,6 +78,227 @@ export default class ClientAPI {
     };
     const customersAPI = () => this.apiRoot.customers().get(args).execute();
     return customersAPI;
+  }
+
+  public getCustomerByEmail(customerEmail: string) {
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const args = {
+      queryArgs: {
+        where: `email="${customerEmail}"`,
+      },
+    };
+    const customersAPI = () => apiRoot.customers().get(args).execute();
+    return customersAPI;
+  }
+
+  public getCustomerByID(customerID: string) {
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const args = {
+      ID: customerID,
+    };
+    const customerAPI = () => apiRoot.customers().withId(args).get().execute();
+    return customerAPI;
+  }
+
+  public async updateCustomerBasicInfo(
+    customerVersion: number,
+    customerID: string,
+    newEmail: string,
+    newFirstName: string,
+    newLastName: string,
+    newDateOfBirth: string
+  ) {
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const args = {
+      ID: customerID,
+    };
+    const body: CustomerUpdate = {
+      version: customerVersion,
+      actions: [
+        {
+          action: 'changeEmail',
+          email: newEmail,
+        },
+        {
+          action: 'setFirstName',
+          firstName: newFirstName,
+        },
+        {
+          action: 'setLastName',
+          lastName: newLastName,
+        },
+        {
+          action: 'setDateOfBirth',
+          dateOfBirth: newDateOfBirth,
+        },
+      ],
+    };
+    const customerAPI = await apiRoot.customers().withId(args).post({ body }).execute();
+    return customerAPI;
+  }
+
+  public async updateCustomerAddress(
+    customerID: string,
+    customerVersion: number,
+    adrsID: string,
+    newStreet: string,
+    newCity: string,
+    newCountry: string,
+    newPostcode: string
+  ) {
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const args = {
+      ID: customerID,
+    };
+    const body: CustomerUpdate = {
+      version: customerVersion,
+      actions: [
+        {
+          action: 'changeAddress',
+          addressId: adrsID,
+          address: {
+            streetName: newStreet,
+            city: newCity,
+            country: newCountry,
+            postalCode: newPostcode,
+          },
+        },
+      ],
+    };
+    const customerAPI = await apiRoot.customers().withId(args).post({ body }).execute();
+    return customerAPI;
+  }
+
+  public async addBillingAddressID(customerID: string, customerVersion: number, lastAddressID: string) {
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const args = {
+      ID: customerID,
+    };
+    const body: CustomerUpdate = {
+      version: customerVersion,
+      actions: [
+        {
+          action: 'addBillingAddressId',
+          addressId: lastAddressID,
+        },
+      ],
+    };
+    const customerAPI = await apiRoot.customers().withId(args).post({ body }).execute();
+    return customerAPI;
+  }
+
+  public async addShippingAddressID(customerID: string, customerVersion: number, lastAddressID: string) {
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const args = {
+      ID: customerID,
+    };
+    const body: CustomerUpdate = {
+      version: customerVersion,
+      actions: [
+        {
+          action: 'addShippingAddressId',
+          addressId: lastAddressID,
+        },
+      ],
+    };
+    const customerAPI = await apiRoot.customers().withId(args).post({ body }).execute();
+    return customerAPI;
+  }
+
+  public async setDefaultBillingAddress(customerID: string, customerVersion: number, addressID: string) {
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const args = {
+      ID: customerID,
+    };
+    const body: CustomerUpdate = {
+      version: customerVersion,
+      actions: [
+        {
+          action: 'setDefaultBillingAddress',
+          addressId: addressID,
+        },
+      ],
+    };
+    const customerAPI = await apiRoot.customers().withId(args).post({ body }).execute();
+    return customerAPI;
+  }
+
+  public async setDefaultShippingAddress(customerID: string, customerVersion: number, addressID: string) {
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const args = {
+      ID: customerID,
+    };
+    const body: CustomerUpdate = {
+      version: customerVersion,
+      actions: [
+        {
+          action: 'setDefaultShippingAddress',
+          addressId: addressID,
+        },
+      ],
+    };
+    const customerAPI = await apiRoot.customers().withId(args).post({ body }).execute();
+    return customerAPI;
+  }
+
+  public async addAddress(
+    customerID: string,
+    customerVersion: number,
+    newStreet: string,
+    newCity: string,
+    newCountry: string,
+    newPostcode: string
+  ) {
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const args = {
+      ID: customerID,
+    };
+    const body: CustomerUpdate = {
+      version: customerVersion,
+      actions: [
+        {
+          action: 'addAddress',
+          address: {
+            streetName: newStreet,
+            city: newCity,
+            country: newCountry,
+            postalCode: newPostcode,
+          },
+        },
+      ],
+    };
+    const customerAPI = await apiRoot.customers().withId(args).post({ body }).execute();
+    return customerAPI;
+  }
+
+  public async deleteCustomerAddress(customerID: string, customerVersion: number, adrsID: string) {
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const args = {
+      ID: customerID,
+    };
+    const body: CustomerUpdate = {
+      version: customerVersion,
+      actions: [
+        {
+          action: 'removeAddress',
+          addressId: adrsID,
+        },
+      ],
+    };
+    const customerAPI = await apiRoot.customers().withId(args).post({ body }).execute();
+    return customerAPI;
+  }
+
+  public changePassword(customerID: string, customerVersion: number, currentPassword: string, newPassword: string) {
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const body: CustomerChangePassword = {
+      id: customerID,
+      version: customerVersion,
+      currentPassword,
+      newPassword,
+    };
+    const customerAPI = () => apiRoot.customers().password().post({ body }).execute();
+    return customerAPI;
   }
 
   public async registerClient(
@@ -351,7 +590,15 @@ export default class ClientAPI {
   }
 
   private setAccessTokenCookie(token: string, time: number): void {
-    document.cookie = `${ACCESS_TOKEN}=${token}; expires=${new Date(Date.now() + time).toUTCString()}; path=/;`;
+    const expirationTime = new Date(Date.now() + time * 1000).toUTCString();
+    document.cookie = `${ACCESS_TOKEN}=${token}; expires=${expirationTime}; path=/;`;
+  }
+
+  public setCustomerIDCookie(id: string): void {
+    console.log(document.cookie);
+
+    const expirationTime = new Date(Date.now() + 172800 * 1000).toUTCString();
+    document.cookie = `${CUSTOMER_ID}=${id}; expires=${expirationTime}; path=/;`;
   }
 
   public get getPrefetchedData() {

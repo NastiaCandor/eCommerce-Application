@@ -8,6 +8,8 @@
   font-size: calc(1vw + 2px);
   padding: 1rem;
 
+  grid-row: 2;
+
   & > * {
     padding-bottom: 1rem;
   }

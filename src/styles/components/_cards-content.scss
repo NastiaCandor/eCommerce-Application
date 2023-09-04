@@ -6,6 +6,8 @@
   flex-wrap: wrap;
   gap: 1em 1em;
 
+  grid-row: 2;
+
   .card__content {
     display: flex;
     flex-direction: column;

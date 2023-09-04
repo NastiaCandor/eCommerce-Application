@@ -30,7 +30,7 @@ export default class FirstNameInputView extends View {
     this.showError(input, errorSpan);
   }
 
-  private createInput(type: string, id: string): HTMLInputElement {
+  protected createInput(type: string, id: string): HTMLInputElement {
     const input = new ElementCreator(fieldsetParams.input).getElement() as HTMLInputElement;
     input.setAttribute('type', type);
     input.setAttribute('id', id);

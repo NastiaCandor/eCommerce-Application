@@ -43,12 +43,6 @@ export type NotFoundType = {
   backToMainBtn: ElementParamsType;
 };
 
-// export type ProductParamsType = {
-//   section: ElementParamsType;
-//   innerWrapper: ElementParamsType;
-//   title: ElementParamsType;
-// };
-
 // PAGE INTERFACES
 
 export type PagesInterface = {

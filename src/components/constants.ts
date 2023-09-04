@@ -9,6 +9,8 @@ const wrapperParams = {
 const CATEGORY_KEY = '{category_key}';
 
 const ACCESS_TOKEN = 'access_token';
+const CUSTOMER_ID = 'customer_id';
+// const CUSTOMER_VERSION = 'customer_version';
 
 const EMAIL_VALIDATION_TEXT = 'Email address is invalid. Please enter a valid email address, e.g. "user@example.com"';
 
@@ -22,5 +24,6 @@ export {
   PASSWORD_VALIDATION_TEXT,
   wrapperParams,
   COOKIE_RESET_DATE,
+  CUSTOMER_ID,
   CATEGORY_KEY,
 };

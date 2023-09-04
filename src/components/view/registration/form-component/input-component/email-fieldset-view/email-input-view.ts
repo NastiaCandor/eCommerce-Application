@@ -34,7 +34,7 @@ export default class EmailInputView extends View {
     this.checkEmailExist(input, errorSpan);
   }
 
-  private createInput(type: string): HTMLInputElement {
+  protected createInput(type: string): HTMLInputElement {
     const input = new ElementCreator(fieldsetParams.input).getElement() as HTMLInputElement;
     input.setAttribute('type', type);
     input.setAttribute('id', type);
@@ -86,13 +86,11 @@ export default class EmailInputView extends View {
 
   private async checkEmailExist(element: HTMLInputElement, errorSpan: HTMLElement) {
     element.addEventListener('blur', () => {
-      const getCustomersAPI = this.clientAPI.getCustomers();
-      getCustomersAPI()
+      const getCustomerEmailAPI = this.clientAPI.getCustomerByEmail(element.value);
+      getCustomerEmailAPI()
         .then((data) => {
           if (data.statusCode === 200) {
-            const emailsArr: string[] = [];
-            data.body.results.forEach((customer) => emailsArr.push(customer.email));
-            if (emailsArr.includes(element.value)) {
+            if (data.body.results.length !== 0) {
               this.showError(element, errorSpan, EmailInputParams.errorText);
             }
           }
@@ -108,23 +106,25 @@ export default class EmailInputView extends View {
   }
 
   public showError(email: HTMLInputElement, errorMessageEl: HTMLElement, errorText?: string) {
-    const errorSpan = errorMessageEl;
-    if (email.validity.valueMissing) {
-      errorSpan.textContent = 'Enter your e-mail address';
+    if (!email.getAttribute('readonly')) {
+      const errorSpan = errorMessageEl;
+      if (email.validity.valueMissing) {
+        errorSpan.textContent = 'Enter your e-mail address';
+      }
+      if (email.validity.typeMismatch) {
+        errorSpan.textContent = 'Email address is invalid. Please enter a valid email address, e.g. "user@example.com"';
+      }
+      if (email.validity.tooShort) {
+        errorSpan.textContent = `Email should be at least ${email.minLength} characters long; you entered ${email.value.length}`;
+      }
+      if (!this.checkEmail(email.value)) {
+        errorSpan.textContent = 'Email address is invalid. Please enter a valid email address, e.g. "user@example.com"';
+      }
+      if (errorText) {
+        errorSpan.textContent = errorText;
+      }
+      errorSpan.classList.add(EmailInputParams.errorSpan.cssClassesActive);
+      email.classList.add(EmailInputParams.input.cssClassesInvalid);
     }
-    if (email.validity.typeMismatch) {
-      errorSpan.textContent = 'Email address is invalid. Please enter a valid email address, e.g. "user@example.com"';
-    }
-    if (email.validity.tooShort) {
-      errorSpan.textContent = `Email should be at least ${email.minLength} characters long; you entered ${email.value.length}`;
-    }
-    if (!this.checkEmail(email.value)) {
-      errorSpan.textContent = 'Email address is invalid. Please enter a valid email address, e.g. "user@example.com"';
-    }
-    if (errorText) {
-      errorSpan.textContent = errorText;
-    }
-    errorSpan.classList.add(EmailInputParams.errorSpan.cssClassesActive);
-    email.classList.add(EmailInputParams.input.cssClassesInvalid);
   }
 }

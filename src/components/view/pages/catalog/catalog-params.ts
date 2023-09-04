@@ -104,6 +104,21 @@ const catalogParams = {
       textContent: '>',
     },
   },
+  noResults: {
+    container: {
+      tag: 'div',
+      cssClasses: ['no-res__container'],
+    },
+    title: {
+      tag: 'h4',
+      cssClasses: ['no-res__title'],
+      textContent: 'Sorry, no result found',
+    },
+    message: {
+      tag: 'p',
+      cssClasses: ['no-res__text'],
+    },
+  },
 };
 
 export default catalogParams;

@@ -57,7 +57,7 @@ export default class DateInputView extends View {
     return todayDate;
   }
 
-  private createInput(type: string, id: string): HTMLInputElement {
+  public createInput(type: string, id: string): HTMLInputElement {
     const input = new ElementCreator(fieldsetParams.input).getElement() as HTMLInputElement;
     input.setAttribute('type', type);
     input.setAttribute('id', id);
