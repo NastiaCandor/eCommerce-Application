@@ -5,12 +5,13 @@ import ClientAPI from '../../../utils/Client';
 import ElementCreator from '../../../utils/ElementCreator';
 import View from '../../View';
 import catalogParams from './catalog-params';
+import { filterParams } from './filter/filter-params';
 import FilterView from './filter/FilterView';
 
 export default class CatalogView extends View {
   private clientApi: ClientAPI;
 
-  private filterView: HTMLElement;
+  private filterView: FilterView;
 
   private router: Router;
 
@@ -24,7 +25,7 @@ export default class CatalogView extends View {
     super(catalogParams.section);
     this.clientApi = clientApi;
     this.prefetchedGenres = this.clientApi.getPrefetchedData.genres;
-    this.filterView = new FilterView(this.clientApi).render();
+    this.filterView = new FilterView(this.clientApi);
     this.router = router;
     this.wrapper = null;
     this.categoriesBtn = [];
@@ -42,23 +43,23 @@ export default class CatalogView extends View {
   private async init(productInfo?: ProductData[]): Promise<void> {
     const wrapper = new ElementCreator(catalogParams.wrapper);
     const sideBar = this.assamleSideBar();
-    const assambledCards = await this.assembleDefaultCardsView(productInfo);
+    const assambledCards = await this.assamleCards(productInfo);
     wrapper.addInnerElement([sideBar, assambledCards]);
     this.wrapper = wrapper;
     this.addInnerElement(wrapper);
   }
 
-  public async assembleDefaultCardsView(productInfo?: ProductData[]) {
-    const productData = productInfo || undefined;
-    const assambledCards = await this.assamleCards(productData);
-    return assambledCards;
-  }
+  // public async assembleDefaultCardsView(productInfo?: ProductData[]) {
+  //   const productData = productInfo || undefined;
+  //   const assambledCards = await this.assamleCards(productData);
+  //   return assambledCards;
+  // }
 
   public assamleSideBar() {
     const asideWrapper = new ElementCreator(catalogParams.aside);
     const categories = this.assembleCategories();
-    asideWrapper.addInnerElement(categories);
-    asideWrapper.addInnerElement(this.filterView);
+    const buttons = this.assambleBtnWrapper();
+    asideWrapper.addInnerElement([categories, this.filterView.render(), buttons]);
     return asideWrapper;
   }
 
@@ -149,15 +150,18 @@ export default class CatalogView extends View {
         const dataResults = data.results as ProductData[];
         await this.assamleCards(dataResults).then((cardsView) => {
           if (this.wrapper) {
-            // !!
-            const replacedNode = this.wrapper.getElement().childNodes[1];
-            this.wrapper.getElement().replaceChild(cardsView.getElement(), replacedNode);
-            return;
+            this.replaceCards(this.wrapper, cardsView);
+          } else {
+            this.configure(dataResults);
           }
-          this.configure(dataResults);
         });
       }
     }
+  }
+
+  public replaceCards(wrapper: ElementCreator, cardsView: ElementCreator) {
+    const replacedNode = wrapper.getElement().childNodes[1];
+    wrapper.getElement().replaceChild(cardsView.getElement(), replacedNode);
   }
 
   private assambleSongTitle(data: ProductData): HTMLElement {
@@ -190,5 +194,48 @@ export default class CatalogView extends View {
       priceWrapper.addInnerElement(price);
     }
     return priceWrapper.getElement();
+  }
+
+  private assambleBtnWrapper() {
+    const wrapper = new ElementCreator(filterParams.submitResetBtnWrapper);
+    const submitBtn = this.createSubmitBtn();
+    const resetBtn = this.createResetBtn();
+
+    wrapper.addInnerElement([resetBtn, submitBtn]);
+    return wrapper;
+  }
+
+  private createSubmitBtn() {
+    const submitBtn = new ElementCreator(filterParams.submitBtn).getElement();
+    this.submitBtnHandler(submitBtn);
+    return submitBtn;
+  }
+
+  private createResetBtn() {
+    const resetBtn = new ElementCreator(filterParams.resetBtn).getElement();
+    this.resetBtnHandler(resetBtn);
+    return resetBtn;
+  }
+
+  public resetBtnHandler(element: HTMLElement) {
+    element.addEventListener('click', () => {
+      this.filterView.resetInputs();
+      this.filterView.resetQuary();
+    });
+  }
+
+  public submitBtnHandler(element: HTMLElement) {
+    element.addEventListener('click', async () => {
+      this.filterView.createQuaryString();
+      const cardsData = await this.filterView.getFilterData();
+      if (cardsData) {
+        await this.assamleCards(cardsData as ProductData[]).then((cardsView) => {
+          if (this.wrapper) {
+            this.replaceCards(this.wrapper, cardsView);
+          }
+        });
+      }
+    });
+    this.filterView.resetQuary();
   }
 }

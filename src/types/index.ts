@@ -107,25 +107,14 @@ export type PrefetchedGenres = {
   key: string;
 };
 
-export type PrefetchedAttributes<T> = {
+export interface PrefetchedAttributes<T> {
   [key: string]: T[];
   condition: T[];
   label: T[];
   lp: T[];
-};
+}
 
-// export type Conditions = {
-//   condition: string[];
-// };
-
-// export type Labels = {
-//   labels: string[];
-// };
-
-// export type Lps = {
-//   lps: string[];
-// };
-// ROUTES TYPES
+export type QuaryObject = PrefetchedAttributes<string>;
 
 export type RouteCallbacks = {
   loadLoginPage: () => void;

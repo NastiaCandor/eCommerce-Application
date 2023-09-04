@@ -208,7 +208,6 @@ export default class ClientAPI {
       if (!this.prefetchedData.genres) await this.prefetchGenres();
       if (!this.prefetchedData.attributes) await this.prefetchProductAttributes();
       if (!this.prefetchedData.prices) await this.prefetchMinMaxPrices();
-      this.fetchFilterQuary();
     } catch (e) {
       console.error(`Error while gathering the prefetch data: ${e}`);
     }
@@ -304,14 +303,14 @@ export default class ClientAPI {
     }
   }
 
-  public async fetchFilterQuary() {
+  public async fetchFilterQuary(array: string[]) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const val = ['takin-off-herbie-hancock'];
-    console.log(typeof val);
+    // Sound of Vinyl
+    console.log(typeof array);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const query = {
       queryArgs: {
-        where: ['masterVariant(attributes(name="label" and value="Blue Note Records"))'],
+        where: array,
         // where: ['key = :name and '],
         // filter: ['variants.attributes.label:"Blue Note Records"'],
         // filter: ['key:name,var.name="takin-off-herbie-hancock"'],
@@ -320,14 +319,15 @@ export default class ClientAPI {
         // isSearchable: true,
       },
     };
-
-    try {
-      const data = await this.apiRoot.productProjections().get(query).execute();
-      if (data.statusCode === 200) {
-        console.log(data.body.results);
+    if (array.length > 0) {
+      try {
+        const data = await this.apiRoot.productProjections().get(query).execute();
+        if (data.statusCode === 200) {
+          return data.body.results;
+        }
+      } catch (e) {
+        console.error(`Unable to fetch filter quary: ${e}`);
       }
-    } catch (e) {
-      console.error(`Unable to fetch filter quary: ${e}`);
     }
   }
 
