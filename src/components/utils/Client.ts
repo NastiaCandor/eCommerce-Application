@@ -14,7 +14,7 @@ import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/dec
 import { ctpClient, SECRET, ID } from './BuildClient';
 import { ACCESS_TOKEN } from '../constants';
 
-import { PrefetchedData, PrefetchedGenres } from '../../types';
+import { EndPointsObject, PrefetchedData, PrefetchedGenres } from '../../types';
 
 export default class ClientAPI {
   apiBuilder: ApiRoot;
@@ -303,31 +303,25 @@ export default class ClientAPI {
     }
   }
 
-  public async fetchFilterQuary(array: string[]) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    // Sound of Vinyl
-    console.log(typeof array);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public async fetchFilterQuary(endPoints: EndPointsObject) {
+    console.log(endPoints);
     const query = {
       queryArgs: {
-        where: array,
-        // where: ['key = :name and '],
-        // filter: ['variants.attributes.label:"Blue Note Records"'],
-        // filter: ['key:name,var.name="takin-off-herbie-hancock"'],
-        // markMatchingVariants: true,
-        // limit: 100,
-        // isSearchable: true,
+        filter: endPoints.filter,
+        priceCurrency: 'USD',
+        sort: ['variants.scopedPrice.currentValue.centAmount asc'],
+        limit: 100,
       },
     };
-    if (array.length > 0) {
-      try {
-        const data = await this.apiRoot.productProjections().get(query).execute();
-        if (data.statusCode === 200) {
-          return data.body.results;
-        }
-      } catch (e) {
-        console.error(`Unable to fetch filter quary: ${e}`);
+
+    try {
+      const data = await this.apiRoot.productProjections().search().get(query).execute();
+      if (data.statusCode === 200) {
+        console.log(data.body.results);
+        return data.body.results;
       }
+    } catch (e) {
+      console.error(`Unable to fetch filter quary: ${e}`);
     }
   }
 

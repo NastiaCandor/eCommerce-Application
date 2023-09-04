@@ -114,7 +114,13 @@ export interface PrefetchedAttributes<T> {
   lp: T[];
 }
 
-export type QuaryObject = PrefetchedAttributes<string>;
+export type EndPointsObject = {
+  filter: string[];
+};
+
+export interface QueryObject extends PrefetchedAttributes<string> {
+  price: string[];
+}
 
 export type RouteCallbacks = {
   loadLoginPage: () => void;

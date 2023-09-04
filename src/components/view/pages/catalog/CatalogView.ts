@@ -94,7 +94,11 @@ export default class CatalogView extends View {
   private assambleImage(data: ProductData): HTMLElement {
     const image = new ElementCreator(catalogParams.card.img);
     if (data.masterVariant.images) {
-      image.setImageLink(data.masterVariant.images[0].url, data.name['en-US']);
+      if (data.masterVariant.images[0].url !== undefined) {
+        image.setImageLink(data.masterVariant.images[0].url, data.name['en-US']);
+      } else {
+        console.log('not Found!');
+      }
     }
     return image.getElement();
   }
@@ -220,7 +224,7 @@ export default class CatalogView extends View {
   public resetBtnHandler(element: HTMLElement) {
     element.addEventListener('click', () => {
       this.filterView.resetInputs();
-      this.filterView.resetQuary();
+      this.filterView.resetEndpoints();
     });
   }
 
@@ -229,6 +233,7 @@ export default class CatalogView extends View {
       this.filterView.createQuaryString();
       const cardsData = await this.filterView.getFilterData();
       if (cardsData) {
+        this.filterView.resetEndpoints();
         await this.assamleCards(cardsData as ProductData[]).then((cardsView) => {
           if (this.wrapper) {
             this.replaceCards(this.wrapper, cardsView);
@@ -236,6 +241,5 @@ export default class CatalogView extends View {
         });
       }
     });
-    this.filterView.resetQuary();
   }
 }

@@ -3,7 +3,7 @@ import * as noUiSlider from 'nouislider';
 import { PipsMode } from 'nouislider';
 import wnumb from 'wnumb';
 import 'nouislider/dist/nouislider.css';
-import { PrefetchedData, QuaryObject } from '../../../../../types';
+import { EndPointsObject, PrefetchedData, QueryObject } from '../../../../../types';
 import ClientAPI from '../../../../utils/Client';
 import ElementCreator from '../../../../utils/ElementCreator';
 import View from '../../../View';
@@ -14,17 +14,17 @@ export default class FilterView extends View {
 
   private labelBoxes: HTMLElement[];
 
-  private quaryStrings: string[];
+  private endPoints: EndPointsObject;
 
-  private quaryObject: QuaryObject;
+  private queryObject: QueryObject;
 
   constructor(private clientApi: ClientAPI) {
     super(filterParams.wrapper);
     this.clientApi = clientApi;
     this.prefetchedData = this.clientApi.getPrefetchedData;
     this.labelBoxes = [];
-    this.quaryObject = <QuaryObject>{};
-    this.quaryStrings = [];
+    this.queryObject = <QueryObject>{};
+    this.endPoints = <EndPointsObject>{};
   }
 
   public render() {
@@ -62,28 +62,40 @@ export default class FilterView extends View {
     const rangeBox = new ElementCreator(filterParams.filterRangeInput).getElement();
     const heading = new ElementCreator(filterParams.rangeHeading);
     filterBox.addInnerElement(heading);
-    noUiSlider.create(rangeBox, {
-      start: [
-        this.formatPrice(this.prefetchedData.prices.minFractured),
-        this.formatPrice(this.prefetchedData.prices.maxFractured),
-      ],
-      range: {
-        min: this.formatPrice(this.prefetchedData.prices.min),
-        max: this.formatPrice(this.prefetchedData.prices.max),
-      },
-      tooltips: [wnumb({ decimals: 2, prefix: '$' }), true],
-      pips: {
-        mode: PipsMode.Steps,
-        density: 10,
-        format: wnumb({
-          decimals: 2,
-          prefix: '$',
-        }),
-      },
-    });
+    noUiSlider
+      .create(rangeBox, {
+        start: [
+          this.formatPrice(this.prefetchedData.prices.minFractured),
+          this.formatPrice(this.prefetchedData.prices.maxFractured),
+        ],
+        range: {
+          min: this.formatPrice(this.prefetchedData.prices.min),
+          max: this.formatPrice(this.prefetchedData.prices.max),
+        },
+        tooltips: [wnumb({ decimals: 2, prefix: '$' }), true],
+        pips: {
+          mode: PipsMode.Steps,
+          density: 10,
+          format: wnumb({
+            decimals: 2,
+            prefix: '$',
+          }),
+        },
+      })
+      .on('change.one', (evt) => this.priceRangeHandler(evt));
 
     filterBox.addInnerElement(rangeBox);
     return filterBox.getElement();
+  }
+
+  private priceRangeHandler(evt: (string | number)[]) {
+    const [min, max] = evt;
+    const leftValue = (Number(min) * 100).toFixed(2).toString();
+    const rightValue = (Number(max) * 100).toFixed(2).toString();
+    this.queryObject.price = [];
+    this.addWriteToQueryObject('price', leftValue);
+    this.addWriteToQueryObject('price', rightValue);
+    console.log(this.queryObject);
   }
 
   private createFilterBox(filterHeading: string, filterItems: string[]) {
@@ -120,56 +132,67 @@ export default class FilterView extends View {
       if (item.classList.contains('active')) item.classList.remove('active');
       if (checkbox && checkbox instanceof HTMLInputElement) checkbox.checked = false;
     });
-    this.quaryObject = <QuaryObject>{};
-    this.resetQuary();
+    this.resetEndpoints();
+    const { price } = this.queryObject;
+    this.queryObject = <QueryObject>{
+      price,
+    };
   }
 
-  public resetQuary() {
-    this.quaryStrings = [];
+  public resetEndpoints() {
+    this.endPoints = <EndPointsObject>{
+      where: [],
+      filter: [],
+    };
   }
 
   public createQuaryString() {
-    const valuePairs = Object.entries(this.quaryObject);
-    const strArr = valuePairs.map(([key, values]) => {
-      const valueStrings = values.map((value) => `value="${value}"`).join(' or ');
+    const valuePairs = Object.entries(this.queryObject);
+
+    if (!this.endPoints.filter) {
+      this.endPoints.filter = [];
+    }
+    valuePairs.forEach(([key, values]) => {
+      console.log(this.endPoints);
       if (key === 'LP') {
-        const lpValues = values.map((value) => `name="${value}"`).join(' or ');
-        console.log(lpValues);
-        return `masterVariant(attributes(name="${key}" and (${lpValues})))`;
+        const lpValues = values.map((value) => `"${value}"`).join(',');
+        this.endPoints.filter.push(`variants.attributes.${key}.key:${lpValues}`);
+      } else if (key === 'price') {
+        const [minPrice, maxPrice] = values;
+        this.endPoints.filter.push(`variants.scopedPrice.currentValue.centAmount:range(${minPrice} to ${maxPrice})`);
+      } else {
+        const valueStrings = values.map((value) => `"${value}"`).join(',');
+        this.endPoints.filter.push(`variants.attributes.${key}:${valueStrings}`);
       }
-      return `masterVariant(attributes(name="${key}" and (${valueStrings})))`;
     });
-    this.quaryStrings = strArr;
-    console.log(this.quaryStrings);
   }
 
   private formatKey(key: string): string {
     return key.length < 3 ? key.toUpperCase() : key;
   }
 
-  private addWriteToQuaryObject(key: string, value: string): void {
+  private addWriteToQueryObject(key: string, value: string): void {
     const formatKey = this.formatKey(key);
-    if (!this.quaryObject[formatKey] && value) {
-      Object.defineProperty(this.quaryObject, formatKey, {
+    if (!this.queryObject[formatKey] && value) {
+      Object.defineProperty(this.queryObject, formatKey, {
         enumerable: true,
         writable: true,
         configurable: true,
         value: [value],
       });
     } else {
-      this.quaryObject[formatKey].push(value);
+      this.queryObject[formatKey].push(value);
     }
   }
 
-  private removeWriteFromQuaryObject(key: string, value: string): void {
+  private removeWriteFromqueryObject(key: string, value: string): void {
     const formatKey = this.formatKey(key);
-    if (this.quaryObject[formatKey].some((item) => item === value)) {
-      this.quaryObject[formatKey] = this.quaryObject[formatKey].filter((item) => item !== value);
-      if (this.quaryObject[formatKey].length === 0) {
-        delete this.quaryObject[formatKey];
+    if (this.queryObject[formatKey].some((item) => item === value)) {
+      this.queryObject[formatKey] = this.queryObject[formatKey].filter((item) => item !== value);
+      if (this.queryObject[formatKey].length === 0) {
+        delete this.queryObject[formatKey];
       }
     }
-    console.log(this.quaryObject);
   }
 
   private checkboxHandler(element: HTMLInputElement): void {
@@ -181,23 +204,26 @@ export default class FilterView extends View {
         if (target.checked) {
           target.parentElement?.classList.add('active');
           if (datasetId && typeof datasetId === 'string') {
-            this.addWriteToQuaryObject(datasetId, <string>target.dataset[datasetId]);
+            this.addWriteToQueryObject(datasetId, <string>target.dataset[datasetId]);
           }
         } else {
           target.parentElement?.classList.remove('active');
           if (datasetId) {
-            this.removeWriteFromQuaryObject(datasetId, <string>target.dataset[datasetId]);
+            this.removeWriteFromqueryObject(datasetId, <string>target.dataset[datasetId]);
           }
         }
       }
-      this.createQuaryString();
     });
   }
 
   public async getFilterData() {
-    const data = await this.clientApi.fetchFilterQuary(this.quaryStrings);
-    if (data) {
-      return data;
+    try {
+      const data = await this.clientApi.fetchFilterQuary(this.endPoints);
+      if (data) {
+        return data;
+      }
+    } catch (e) {
+      console.error(`Can't load filter data: ${e}`);
     }
   }
 }
