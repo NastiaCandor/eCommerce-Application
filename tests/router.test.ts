@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import Router from '../src/components/router/Router';
+import State from '../src/components/state/State';
 import { Route } from '../src/types';
 
 describe('Router', () => {
   let router: Router;
   let mockLogger: Route[];
   let url: string;
+  let state: State;
 
   beforeEach(() => {
     mockLogger = [
@@ -14,8 +16,9 @@ describe('Router', () => {
         callback: jest.fn(),
       },
     ];
-    router = new Router(mockLogger);
-    url = 'catalog/2';
+    router = new Router(mockLogger, state);
+    state = new State();
+    url = 'catalog/category/rock/deep-purple';
   });
 
   afterEach(() => {
@@ -37,7 +40,7 @@ describe('Router', () => {
     // @ts-ignore
     const startInitSpy = jest.spyOn(MockRouter.prototype, 'startInit');
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const mockRouterInstance = new MockRouter(mockLogger);
+    const mockRouterInstance = new MockRouter(mockLogger, state);
     expect(startInitSpy).toHaveBeenCalled();
   });
 
@@ -58,7 +61,7 @@ describe('Router', () => {
   it('parseUrl should return the proper data object, represents the path and resource', () => {
     // @ts-ignore
     const result = router.parseUrl(url);
-    expect(result).toStrictEqual({ path: 'catalog', resource: '2' });
+    expect(result).toStrictEqual({ path: 'catalog', resource: 'category', category: 'rock', id: 'deep-purple' });
   });
 
   it('urlChangeHandler should trigger the getCurrentPath method', () => {

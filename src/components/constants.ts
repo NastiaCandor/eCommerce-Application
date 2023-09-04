@@ -1,9 +1,12 @@
+/* eslint-disable prettier/prettier */
 // CONSTANTS
 
 const wrapperParams = {
   tag: 'div',
   cssClasses: ['wrapper'],
 };
+
+const CATEGORY_KEY = '{category_key}';
 
 const ACCESS_TOKEN = 'access_token';
 const CUSTOMER_ID = 'customer_id';
@@ -22,5 +25,5 @@ export {
   wrapperParams,
   COOKIE_RESET_DATE,
   CUSTOMER_ID,
-  // CUSTOMER_VERSION,
+  CATEGORY_KEY,
 };

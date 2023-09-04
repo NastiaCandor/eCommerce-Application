@@ -1,0 +1,43 @@
+.catalog__aside {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  grid-area: catalog-aside;
+  align-items: center;
+  background-color: $color-burger-background;
+  font-size: calc(1vw + 2px);
+  padding: 1rem;
+
+  grid-row: 2;
+
+  & > * {
+    padding-bottom: 1rem;
+  }
+  .filter-box {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    
+    & > ul {
+      min-width: 10em;
+    }
+  }
+}
+.noUi-tooltip {
+  display: none !important;
+}
+.noUi-active .noUi-tooltip {
+  display: block !important;
+}
+
+input[type=checkbox]
+{
+  /* Double-sized Checkboxes */
+  -ms-transform: scale(2); /* IE */
+  -moz-transform: scale(2); /* FF */
+  -webkit-transform: scale(2); /* Safari and Chrome */
+  -o-transform: scale(2); /* Opera */
+  transform: scale(2);
+  margin: 10px;
+  padding: 10px;
+}

@@ -23,6 +23,7 @@
     "@types/jest": "^29.5.3",
     "@types/jsdom": "^21.1.1",
     "@types/node-fetch": "^2.6.4",
+    "@types/wnumb": "^1.2.1",
     "@typescript-eslint/eslint-plugin": "^5.59.9",
     "@typescript-eslint/parser": "^5.59.9",
     "copy-webpack-plugin": "^11.0.0",
@@ -62,8 +63,11 @@
     "@commercetools/platform-sdk": "^5.0.0",
     "@commercetools/sdk-auth": "^4.0.1",
     "@commercetools/sdk-client-v2": "^2.2.0",
+    "@splidejs/splide": "^4.1.4",
     "flatpickr": "^4.6.13",
     "noty": "^3.2.0-beta-deprecated",
-    "postcode-validator": "^3.8.14"
+    "nouislider": "^15.7.1",
+    "postcode-validator": "^3.8.14",
+    "wnumb": "^1.2.0"
   }
 }

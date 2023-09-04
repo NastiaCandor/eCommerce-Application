@@ -21,16 +21,24 @@ $color-login-link-text: #E7557C;
 $color-login-link-text-hover: #a80531;
 $color-login-error: #870411;
 // buttons
-$color-button-background: #F3913E;
+$color-button-background: #F3913E;$color-button-background-disabled: #ba621699;
 $color-button-background-hover: #e2710f;
 $color-button-text: #FFF;
+// modal
+$color-backgroung-modal: #29292999;
 
 
 // MEDIA WIDTHS
+$laptop-width: 1024px;
 $tablet-width: 768px;
+$tablet-540-width: 540px;
+$mobile-L-width: 425px;
+$laptop: 1024px;
 $tablet: 768px;
 $form-width: 46rem;
 
 
 //BORDER RADIUS 
 $border-radius3: 3px;
+$mobile: 380px;
+$form-width: 46rem;

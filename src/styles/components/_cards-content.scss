@@ -1,0 +1,106 @@
+.product__cards {
+  grid-area: cards;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1em 1em;
+
+  grid-row: 2;
+
+  .card__content {
+    display: flex;
+    flex-direction: column;
+    width: 15%;
+    padding: 1rem;
+    font-size: calc(1vw + 5px);
+    background-color: $color-registration-background-address;
+    box-shadow: 1px 1px 1px 1px rgba($color: #000000, $alpha: 0.3);
+    border-radius: 5px;
+    cursor: pointer;
+    filter: contrast(0.8);
+
+    transition: all 0.5s ease ;
+    & > * {
+      padding: 5px;
+    }
+    &:hover {
+      filter: contrast(1);
+      transform: scale(1.01) rotateZ(1deg);
+      box-shadow: 1px 1px 2px 2px rgba($color: #000000, $alpha: 0.5);
+    }
+
+    @media screen and (max-width: $laptop) {
+      width: 25%;
+    }
+    @media screen and (max-width: $tablet) {
+      width: 33%;
+    }
+    @media screen and (max-width: $mobile) {
+      width: 80%;
+    }
+    .card__content_prices {
+      display: flex;
+      justify-content: end;
+      column-gap: 1em;
+      font-size: calc(0.8vw + 2px);
+      .card__content_price {
+        background-color: $color-login-background;
+        border-radius: 5px;
+        padding: 0.5rem;
+        &.striked {
+          position: relative;
+          color: rgba($color: #000000, $alpha: 0.5);
+          background-color: transparent;
+
+          &::after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background-color: #000000;
+            top: 50%;
+            left: 0;
+            transform: rotateZ(-15deg);
+          }
+        }
+      }
+    }
+    .card__content_title {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      font-size: calc(1vw + 2px);
+      transition: all 0.3s ease;
+    }
+    .card__content_singer {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      font-size: calc(1vw);
+    }
+    img {
+      display: block;
+      width: 90%;
+      align-self: center;
+      pointer-events: none;
+    }
+
+    .product__add-to-cart-btn {
+      background: no-repeat url('../assets/img/shopping-cart-16-svgrepo-com.svg');
+      background-size: 40%;
+      width: auto;
+      background-position: center;
+      padding: 2.5rem;
+      background-color: $color-button-background;
+      align-self: center;
+      &:hover {
+        background-color: $color-button-background-hover;
+      }
+      @media screen and (max-width: $tablet) {
+        padding: 1.5rem;
+      }
+    }
+  }
+
+}
