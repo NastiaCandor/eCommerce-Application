@@ -2,8 +2,8 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  align-items: flex-start;
   grid-area: catalog-aside;
-  align-items: center;
   background-color: $color-burger-background;
   font-size: calc(1vw + 2px);
   padding: 1rem;
@@ -13,31 +13,75 @@
   & > * {
     padding-bottom: 1rem;
   }
+  .product__categories {
+    width: 100%;
+    & > li {
+      display: block;
+    }
+  };
+  .product__category_item {
+    display: inline-block;
+    width: 100%;
+  }
   .filter-box {
     margin-bottom: 2rem;
     display: flex;
     flex-direction: column;
-    
-    & > ul {
-      min-width: 10em;
+    & input[type="checkbox"] {
+      margin: 0.1rem 1rem;
     }
+    & .active {
+      background-color: $color-login-background;
+    }
+  }
+  & .filter-box__content_label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  .filter-box__content__items {
+    max-height: 20vh;
+    overflow-y: scroll;
+    background-color: $color-active-link;
+  }
+  .filter-box__content_item {
+    display: flex;
+    width: 100%;
+    user-select: none;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid gray;
+    cursor: pointer;
+  }
+  .filter-box__span {
+    padding: 0.1rem 1rem;
+  }
+  .filter-box__buttons {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+  }
+  .filter-box_heading {
+    padding: 1rem 0;
   }
 }
 .noUi-tooltip {
   display: none !important;
+  font-size: 1.5rem;
+}
+
+.noUi-pips.noUi-pips-horizontal {
+  display: none;
 }
 .noUi-active .noUi-tooltip {
   display: block !important;
 }
 
-input[type=checkbox]
-{
-  /* Double-sized Checkboxes */
-  -ms-transform: scale(2); /* IE */
-  -moz-transform: scale(2); /* FF */
-  -webkit-transform: scale(2); /* Safari and Chrome */
-  -o-transform: scale(2); /* Opera */
-  transform: scale(2);
-  margin: 10px;
-  padding: 10px;
+.noUi-value.noUi-value-horizontal.noUi-value-large {
+  font-size: 2rem;
+  left: 1vw !important;
+}
+.noUi-value.noUi-value-horizontal.noUi-value-large:last-child {
+  left: 10vw !important;
 }

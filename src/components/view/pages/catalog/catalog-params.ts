@@ -13,9 +13,11 @@ const catalogParams = {
   },
   categoriesList: {
     tag: 'ul',
+    cssClasses: ['filter-box__content__items'],
   },
   categoryListItem: {
     tag: 'li',
+    cssClasses: ['filter-box__content_item'],
   },
   wrapper: {
     tag: 'div',

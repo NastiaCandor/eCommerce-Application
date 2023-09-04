@@ -82,6 +82,16 @@ export type UserRequest = {
 
 export type PrefetchedData = {
   genres: PrefetchedGenres[];
+  attributes: PrefetchedAttributes<string>;
+  prices: PrefetchedPrices;
+};
+
+export type PrefetchedPrices = {
+  max: number;
+  min: number;
+  avg: number;
+  maxFractured: number;
+  minFractured: number;
 };
 
 export type PrefetchedGenres = {
@@ -90,7 +100,21 @@ export type PrefetchedGenres = {
   id: string;
   key: string;
 };
-// ROUTES TYPES
+
+export interface PrefetchedAttributes<T> {
+  [key: string]: T[];
+  condition: T[];
+  label: T[];
+  lp: T[];
+}
+
+export type EndPointsObject = {
+  filter: string[];
+};
+
+export interface QueryObject extends PrefetchedAttributes<string> {
+  price: string[];
+}
 
 export type RouteCallbacks = {
   loadLoginPage: () => void;
