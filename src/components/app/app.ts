@@ -1,3 +1,4 @@
+// import { ACCESS_TOKEN, COOKIE_RESET_DATE } from '../constants';
 /* eslint-disable @typescript-eslint/return-await */
 import PAGES from '../router/utils/pages';
 import Router from '../router/Router';
@@ -89,7 +90,7 @@ export default class App {
   }
 
   private loadProfilePage() {
-    this.setContent(PAGES.PROFILE, new ProfileView().getElement());
+    this.setContent(PAGES.PROFILE, new ProfileView(this.router).getElement());
   }
 
   private loadShippingPage() {

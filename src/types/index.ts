@@ -43,12 +43,6 @@ export type NotFoundType = {
   backToMainBtn: ElementParamsType;
 };
 
-// export type ProductParamsType = {
-//   section: ElementParamsType;
-//   innerWrapper: ElementParamsType;
-//   title: ElementParamsType;
-// };
-
 // PAGE INTERFACES
 
 export type PagesInterface = {
@@ -107,25 +101,20 @@ export type PrefetchedGenres = {
   key: string;
 };
 
-export type PrefetchedAttributes<T> = {
+export interface PrefetchedAttributes<T> {
   [key: string]: T[];
   condition: T[];
   label: T[];
   lp: T[];
+}
+
+export type EndPointsObject = {
+  filter: string[];
 };
 
-// export type Conditions = {
-//   condition: string[];
-// };
-
-// export type Labels = {
-//   labels: string[];
-// };
-
-// export type Lps = {
-//   lps: string[];
-// };
-// ROUTES TYPES
+export interface QueryObject extends PrefetchedAttributes<string> {
+  price: string[];
+}
 
 export type RouteCallbacks = {
   loadLoginPage: () => void;

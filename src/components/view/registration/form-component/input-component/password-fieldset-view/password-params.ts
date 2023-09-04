@@ -1,6 +1,7 @@
 const passwordInputParams = {
   input: {
     type: 'password',
+    id: 'password',
     cssClassesInvalid: 'reg-form__input-invalid',
   },
 

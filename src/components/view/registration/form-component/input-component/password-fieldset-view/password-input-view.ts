@@ -21,7 +21,7 @@ export default class PasswordInputView extends View {
     // eslint-disable-next-line max-len
     const label = this.createLabel(passwordInputParams.label.for, passwordInputParams.label.textContent);
     this.addInnerElement(label);
-    const input = this.createInput(passwordInputParams.input.type);
+    const input = this.createInput(passwordInputParams.input.type, passwordInputParams.input.id);
     this.addInnerElement(input);
     const errorSpan = this.createErrorText();
     this.addInnerElement(errorSpan);
@@ -29,22 +29,22 @@ export default class PasswordInputView extends View {
     this.showError(input, errorSpan);
   }
 
-  private createInput(type: string): HTMLInputElement {
+  protected createInput(type: string, id: string): HTMLInputElement {
     const input = new ElementCreator(fieldsetParams.input).getElement() as HTMLInputElement;
     input.setAttribute('type', type);
-    input.setAttribute('id', type);
+    input.setAttribute('id', id);
     input.setAttribute('required', fieldsetParams.input.required);
     return input;
   }
 
-  private createLabel(forAttr: string, text: string): ElementCreator {
+  protected createLabel(forAttr: string, text: string): ElementCreator {
     const label = new ElementCreator(fieldsetParams.label);
     label.setAttribute('for', forAttr);
     label.setTextContent(text);
     return label;
   }
 
-  private createErrorText(): HTMLElement {
+  protected createErrorText(): HTMLElement {
     const errorSpan = new ElementCreator(fieldsetParams.errorSpan).getElement();
     return errorSpan;
   }
@@ -55,7 +55,7 @@ export default class PasswordInputView extends View {
     return result;
   }
 
-  private validatePassword(element: HTMLInputElement, errorMessage: HTMLElement) {
+  protected validatePassword(element: HTMLInputElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
     element.addEventListener('input', () => {
       if (element.validity.valid && this.checkPassword(element.value)) {

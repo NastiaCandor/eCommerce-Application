@@ -8,6 +8,8 @@
   font-size: calc(1vw + 2px);
   padding: 1rem;
 
+  grid-row: 2;
+
   & > * {
     padding-bottom: 1rem;
   }
@@ -57,6 +59,7 @@
   }
   .filter-box__buttons {
     display: flex;
+    width: 100%;
     justify-content: space-around;
   }
   .filter-box_heading {

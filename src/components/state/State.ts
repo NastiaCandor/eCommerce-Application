@@ -1,8 +1,9 @@
-import { ACCESS_TOKEN, COOKIE_RESET_DATE } from '../constants';
+import { ACCESS_TOKEN, CUSTOMER_ID, COOKIE_RESET_DATE } from '../constants';
 
 export default class State {
   public deleteAccessToken(): void {
     document.cookie = `${ACCESS_TOKEN}${COOKIE_RESET_DATE}`;
+    document.cookie = `${CUSTOMER_ID}${COOKIE_RESET_DATE}`;
   }
 
   public isAccessTokenValid(): boolean {

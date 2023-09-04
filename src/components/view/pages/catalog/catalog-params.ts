@@ -104,6 +104,7 @@ const catalogParams = {
       textContent: '>',
     },
   },
+
   mobileBtn: {
     tag: 'button',
     cssClasses: ['mobile-menu__btn', 'show-btn'],
@@ -114,6 +115,21 @@ const catalogParams = {
     cssClasses: ['mobile-menu__btn__img'],
     alt: 'filter-settings',
     src: '../../../../assets/img/settings.svg',
+
+  noResults: {
+    container: {
+      tag: 'div',
+      cssClasses: ['no-res__container'],
+    },
+    title: {
+      tag: 'h4',
+      cssClasses: ['no-res__title'],
+      textContent: 'Sorry, no result found',
+    },
+    message: {
+      tag: 'p',
+      cssClasses: ['no-res__text'],
+    },
   },
 };
 
