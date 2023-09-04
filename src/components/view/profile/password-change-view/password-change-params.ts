@@ -1,7 +1,7 @@
 const PasswordChangeParams = {
   form: {
     tag: 'form',
-    cssClasses: ['basic-info-form', 'profile-section__wrapper'],
+    cssClasses: ['basic-info-form', 'profile-section__wrapper', 'no-show'],
   },
 
   heading: {

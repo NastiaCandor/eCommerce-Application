@@ -48,8 +48,6 @@ export default class ProfilePasswordFormView extends View {
     const topPart = this.createTopPart();
     this.addInnerElement(topPart);
 
-    const editBtn = this.createEditBtn().getElement();
-    topPart.addInnerElement(editBtn);
     const { currPasswordInput } = this;
     this.addInnerElement(currPasswordInput);
     const { newPasswordInput } = this;
@@ -69,18 +67,6 @@ export default class ProfilePasswordFormView extends View {
     heading.setTextContent(PasswordChangeParams.heading.text);
     headingWrapper.addInnerElement(heading);
     return headingWrapper;
-  }
-
-  private createEditBtn(): ElementCreator {
-    const editBtn = new ElementCreator(PasswordChangeParams.buttonEdit);
-    editBtn.setAttribute('type', PasswordChangeParams.buttonEdit.type);
-    const btnSpan = new ElementCreator(PasswordChangeParams.buttonEditSpan);
-    editBtn.addInnerElement(btnSpan);
-    const btnImage = new ElementCreator(PasswordChangeParams.buttonEditImg);
-    btnImage.setAttribute('src', PasswordChangeParams.buttonEditImg.src);
-    btnImage.setAttribute('alt', PasswordChangeParams.buttonEditImg.alt);
-    editBtn.addInnerElement(btnImage);
-    return editBtn;
   }
 
   private async getCustomer() {

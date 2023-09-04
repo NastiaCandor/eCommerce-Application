@@ -1,7 +1,7 @@
 const ShipAdrsParams = {
   addressWrapper: {
     tag: 'div',
-    cssClasses: ['ship-adrs__wrapper', 'profile-section__wrapper'],
+    cssClasses: ['ship-adrs__wrapper', 'profile-section__wrapper', 'no-show'],
   },
 
   addressItemsWrapper: {

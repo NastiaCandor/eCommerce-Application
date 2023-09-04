@@ -3,6 +3,7 @@
   flex-direction: row;
   background-color: white;
   box-shadow: -1px -1px 0px 0px #e6e2a0;
+  min-height: 95vh;
 }
 
 .profile__wrapper {
@@ -15,6 +16,36 @@
 .side-menu {
   width: 25rem;
   background-color: #dddc8b;
+}
+.nav-item__profile {
+  width: fit-content;
+}
+
+.nav-item__profile:hover {
+  color: rgb(23, 23, 23);
+  font-weight: bold;
+}
+
+.nav-item__profile::after {
+  color: rgb(88, 88, 88);
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  display: block;
+  height: 2px;
+  background: rgb(88, 88, 88);
+  width: 0;
+  left: 50%;
+  transition:
+    width 0.3s ease 0s,
+    left 0.3s ease 0s;
+}
+
+.nav__profile {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  row-gap: 4rem;
 }
 
 .profile-section__wrapper {
@@ -235,6 +266,14 @@
   display: flex;
 }
 
+.no-show {
+  display: none;
+}
+
+.active-item {
+  font-weight: bold;
+}
+
 .popup-close__btn {
   position: absolute;
   width: 31px;
@@ -257,4 +296,40 @@
 
 .popup-close__btn:hover {
   color: rgb(88, 88, 88);
+}
+
+@media screen and (max-width: $tablet) {
+  .profile {
+    flex-direction: column;
+  }
+
+  .profile__wrapper {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .side-menu {
+    width: 100%;
+  }
+
+  .nav__profile {
+    align-items: center;
+    padding: 1rem 0.5rem;
+    row-gap: 1.5rem;
+  }
+
+  .nav-item__profile {
+    font-size: 1.4rem;
+  }
+  .spans-img__wrapper {
+    flex-wrap: wrap;
+  }
+
+  .add-adrs-form {
+    max-width: 90%;
+    width: 90%;
+     top: 0;
+    left: 5%;
+    margin-left: 0;
+  }
 }

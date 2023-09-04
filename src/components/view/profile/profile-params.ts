@@ -13,6 +13,18 @@ const profileParams = {
     tag: 'aside',
     cssClasses: ['side-menu'],
   },
+
+  nav: {
+    tag: 'nav',
+    cssClasses: ['nav', 'nav__profile'],
+  },
+
+  navItem: {
+    tag: 'a',
+    cssClasses: ['nav_item', 'nav-item__profile'],
+  },
+
+  navItemsNames: ['Personal details', 'Billing addresses', 'Shipping addresses', 'Password management'],
 };
 
 export default profileParams;

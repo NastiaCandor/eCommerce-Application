@@ -1,7 +1,7 @@
 const BillAdrsParams = {
   addressWrapper: {
     tag: 'div',
-    cssClasses: ['bill-adrs__wrapper', 'profile-section__wrapper'],
+    cssClasses: ['bill-adrs__wrapper', 'profile-section__wrapper', 'no-show'],
   },
 
   addressItemsWrapper: {
