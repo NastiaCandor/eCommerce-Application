@@ -18,7 +18,7 @@
     & > li {
       display: block;
     }
-  };
+  }
   .product__category_item {
     display: inline-block;
     width: 100%;
@@ -27,7 +27,7 @@
     margin-bottom: 2rem;
     display: flex;
     flex-direction: column;
-    & input[type="checkbox"] {
+    & input[type='checkbox'] {
       margin: 0.1rem 1rem;
     }
     & .active {
@@ -84,4 +84,123 @@
 }
 .noUi-value.noUi-value-horizontal.noUi-value-large:last-child {
   left: 10vw !important;
+}
+
+.mobile-menu__btn {
+  border-radius: 3px;
+  width: 5rem;
+  height: 5rem;
+  background-color: rgb(209, 208, 208);
+  position: fixed;
+  top: 5.3rem;
+  left: 0.6rem;
+  z-index: 100;
+  padding: 0;
+  display: none;
+}
+
+.mobile-menu__btn__img {
+  width: 4rem;
+  height: 4rem;
+}
+
+@media screen and (max-width: $tablet) {
+  .catalog__aside {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-bottom: 0rem !important;
+    background-color: #f4f0df;
+  }
+
+  .catalog__aside .product__categories {
+    width: fit-content;
+    min-width: 8rem;
+  }
+
+  .catalog__aside .filter-box__content__items {
+    background-color:#faf8f1;
+  }
+
+  .catalog__aside .filter-box__content_item {
+    border-bottom: none;
+    margin-bottom: 0.5rem;
+  }
+
+  .catalog__aside .filter-box__content_label {
+    justify-content: flex-start;
+  }
+
+  .product__categories .heading {
+    margin-bottom: 1rem;
+  }
+
+  .filter__wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .filter-boxes__wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    // padding: 1rem;
+  }
+
+  .catalog__aside h3,
+  .catalog__aside h4 {
+    font-size: 1.6rem;
+  }
+  .catalog__aside h4 {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+  .catalog__aside .filter-box_heading {
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+
+  .catalog__aside a,
+  .catalog__aside li {
+    font-size: 1.4rem;
+  }
+
+  .catalog__aside .filter-box input[type='checkbox'] {
+    margin: 0.1rem 0.5rem;
+    width: 1.8rem !important;
+    height: 1.8rem !important;
+  }
+  .catalog__aside .filter-box__span {
+    padding: 0.1rem 0.2rem;
+  }
+
+  .filter-box__buttons {
+    width: fit-content;
+    gap: 1rem;
+    padding-top: 1rem;
+  }
+
+  .filter-box__button-submit,
+  .filter-box__buttons-reset {
+    border-radius: 3px;
+    width: 10rem;
+    height: 4rem;
+    padding: 0;
+    background-color: #b49275;
+  }
+  .no-show {
+    display: none;
+  }
+  .mobile-menu__btn {
+    display: block;
+  }
+
+  .mobile-menu {
+    position: absolute;
+    z-index: 20;
+    top: 10.4rem;
+  }
 }

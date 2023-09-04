@@ -4,7 +4,7 @@ const catalogParams = {
   },
   aside: {
     tag: 'aside',
-    cssClasses: ['catalog__aside'],
+    cssClasses: ['catalog__aside', 'no-show'],
   },
   asideHeading: {
     tag: 'h3',
@@ -104,6 +104,18 @@ const catalogParams = {
       textContent: '>',
     },
   },
+
+  mobileBtn: {
+    tag: 'button',
+    cssClasses: ['mobile-menu__btn', 'show-btn'],
+  },
+
+  mobileBtnImg: {
+    tag: 'img',
+    cssClasses: ['mobile-menu__btn__img'],
+    alt: 'filter-settings',
+    src: '../../../../assets/img/settings.svg',
+
   noResults: {
     container: {
       tag: 'div',

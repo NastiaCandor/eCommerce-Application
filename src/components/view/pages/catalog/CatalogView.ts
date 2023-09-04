@@ -7,6 +7,7 @@ import View from '../../View';
 import catalogParams from './catalog-params';
 import { filterParams } from './filter/filter-params';
 import FilterView from './filter/FilterView';
+import '../../../../assets/img/settings.svg';
 import SearchView from './search/SearchView';
 
 export default class CatalogView extends View {
@@ -47,7 +48,16 @@ export default class CatalogView extends View {
 
   private async init(productInfo?: ProductData[]): Promise<void> {
     const wrapper = new ElementCreator(catalogParams.wrapper);
+    const mobileMenuBtn = this.createMobileMenuBtn();
+    wrapper.addInnerElement(mobileMenuBtn);
     const sideBar = this.assamleSideBar();
+
+
+    mobileMenuBtn.getElement().addEventListener('click', () => {
+      sideBar.getElement().classList.toggle('no-show');
+      sideBar.getElement().classList.toggle('mobile-menu');
+    });
+  
     const assambledCards = await this.assamleCards(productInfo);
     wrapper.addInnerElement([sideBar, assambledCards]);
     this.wrapper = wrapper;
@@ -200,6 +210,11 @@ export default class CatalogView extends View {
     return priceWrapper.getElement();
   }
 
+  private createMobileMenuBtn() {
+    const btn = new ElementCreator(catalogParams.mobileBtn);
+    const btnImg = new ElementCreator(catalogParams.mobileBtnImg);
+    btn.addInnerElement(btnImg);
+    return btn;
   private assambleBtnWrapper() {
     const wrapper = new ElementCreator(filterParams.submitResetBtnWrapper);
     const submitBtn = this.createSubmitBtn();
