@@ -40,8 +40,22 @@ export default class ClientAPI {
   public async getProductById(productID: string) {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
     const getProduct = apiRoot.productProjections().withId({ ID: productID }).get().execute();
-    // const getProduct2 = apiRoot.categories().get().execute();
-    // getProduct2.then(console.log).catch(console.log);
+    return getProduct;
+  }
+
+  public async getSearchProduct(search: string, limitNum: number) {
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const getProduct = apiRoot
+      .productProjections()
+      .search()
+      .get({
+        queryArgs: {
+          fuzzy: true,
+          limit: limitNum,
+          'text.en-US': search,
+        },
+      })
+      .execute();
     return getProduct;
   }
 
