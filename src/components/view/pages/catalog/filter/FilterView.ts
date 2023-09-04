@@ -95,7 +95,6 @@ export default class FilterView extends View {
     this.queryObject.price = [];
     this.addWriteToQueryObject('price', leftValue);
     this.addWriteToQueryObject('price', rightValue);
-    console.log(this.queryObject);
   }
 
   private createFilterBox(filterHeading: string, filterItems: string[]) {
@@ -133,15 +132,13 @@ export default class FilterView extends View {
       if (checkbox && checkbox instanceof HTMLInputElement) checkbox.checked = false;
     });
     this.resetEndpoints();
-    const { price } = this.queryObject;
     this.queryObject = <QueryObject>{
-      price,
+      price: [this.prefetchedData.prices.minFractured.toString(), this.prefetchedData.prices.maxFractured.toString()],
     };
   }
 
   public resetEndpoints() {
     this.endPoints = <EndPointsObject>{
-      where: [],
       filter: [],
     };
   }
@@ -153,7 +150,6 @@ export default class FilterView extends View {
       this.endPoints.filter = [];
     }
     valuePairs.forEach(([key, values]) => {
-      console.log(this.endPoints);
       if (key === 'LP') {
         const lpValues = values.map((value) => `"${value}"`).join(',');
         this.endPoints.filter.push(`variants.attributes.${key}.key:${lpValues}`);

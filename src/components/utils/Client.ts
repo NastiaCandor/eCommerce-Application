@@ -12,11 +12,9 @@ import {
   // CategoryPagedQueryResponse,
 } from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
-import { ctpClient } from './BuildClient';
+import { ctpClient, ID, SECRET } from './BuildClient';
 import { ACCESS_TOKEN, CUSTOMER_ID } from '../constants';
 // import { ApiRequest } from '@commercetools/platform-sdk/dist/declarations/src/generated/shared/utils/requests-utils';
-import { ctpClient, SECRET, ID } from './BuildClient';
-import { ACCESS_TOKEN } from '../constants';
 
 import { EndPointsObject, PrefetchedData, PrefetchedGenres } from '../../types';
 

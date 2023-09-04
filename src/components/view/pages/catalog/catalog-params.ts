@@ -4,7 +4,7 @@ const catalogParams = {
   },
   aside: {
     tag: 'aside',
-    cssClasses: ['catalog__aside', 'no-show'],
+    cssClasses: ['catalog__aside'],
   },
   asideHeading: {
     tag: 'h3',
@@ -115,7 +115,7 @@ const catalogParams = {
     cssClasses: ['mobile-menu__btn__img'],
     alt: 'filter-settings',
     src: '../../../../assets/img/settings.svg',
-
+  },
   noResults: {
     container: {
       tag: 'div',

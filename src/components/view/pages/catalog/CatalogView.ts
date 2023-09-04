@@ -51,13 +51,11 @@ export default class CatalogView extends View {
     const mobileMenuBtn = this.createMobileMenuBtn();
     wrapper.addInnerElement(mobileMenuBtn);
     const sideBar = this.assamleSideBar();
-
-
     mobileMenuBtn.getElement().addEventListener('click', () => {
       sideBar.getElement().classList.toggle('no-show');
       sideBar.getElement().classList.toggle('mobile-menu');
     });
-  
+
     const assambledCards = await this.assamleCards(productInfo);
     wrapper.addInnerElement([sideBar, assambledCards]);
     this.wrapper = wrapper;
@@ -174,7 +172,7 @@ export default class CatalogView extends View {
   }
 
   public replaceCards(wrapper: ElementCreator, cardsView: ElementCreator) {
-    const replacedNode = wrapper.getElement().childNodes[1];
+    const replacedNode = wrapper.getElement().childNodes[2];
     wrapper.getElement().replaceChild(cardsView.getElement(), replacedNode);
   }
 
@@ -215,6 +213,8 @@ export default class CatalogView extends View {
     const btnImg = new ElementCreator(catalogParams.mobileBtnImg);
     btn.addInnerElement(btnImg);
     return btn;
+  }
+
   private assambleBtnWrapper() {
     const wrapper = new ElementCreator(filterParams.submitResetBtnWrapper);
     const submitBtn = this.createSubmitBtn();
@@ -256,7 +256,8 @@ export default class CatalogView extends View {
         });
       }
     });
-    
+  }
+
   private searchFunctionality() {
     this.searchView.render();
     const [box] = this.searchView.getChildren();
@@ -285,7 +286,7 @@ export default class CatalogView extends View {
           } else {
             this.assamleCards(results as ProductData[]).then((cardsView) => {
               if (this.wrapper) {
-                const replacedNode = this.wrapper.getElement().childNodes[1];
+                const replacedNode = this.wrapper.getElement().childNodes[2];
                 this.wrapper.getElement().replaceChild(cardsView.getElement(), replacedNode);
               }
             });
@@ -298,7 +299,7 @@ export default class CatalogView extends View {
       // search is blank
       this.assamleCards().then((cardsView) => {
         if (this.wrapper) {
-          const replacedNode = this.wrapper.getElement().childNodes[1];
+          const replacedNode = this.wrapper.getElement().childNodes[2];
           this.wrapper.getElement().replaceChild(cardsView.getElement(), replacedNode);
         }
       });
@@ -312,7 +313,7 @@ export default class CatalogView extends View {
     message.getElement().innerHTML = `No Results for <span>"${search}"</span>. Please, try another search.`;
     container.addInnerElement([title, message]);
     if (this.wrapper) {
-      const replacedNode = this.wrapper.getElement().childNodes[1];
+      const replacedNode = this.wrapper.getElement().childNodes[2];
       this.wrapper.getElement().replaceChild(container.getElement(), replacedNode);
     }
   }
