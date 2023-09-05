@@ -87,7 +87,7 @@
     font-size: 1.2rem;
   }
 
-.filter-box input[type='checkbox'] {
+  .filter-box input[type='checkbox'] {
     margin: 0.1rem 0.5rem;
     width: 1.8rem !important;
     height: 1.8rem !important;
@@ -137,9 +137,9 @@
   border-radius: 3px;
   width: 5rem;
   height: 5rem;
-  background-color: rgb(209, 208, 208);
-  position: absolute;
-    top: 8rem;
+  background-color: rgb(230 230 230);
+  position: fixed;
+  top: 13.5rem;
   left: 0.1rem;
   z-index: 100;
   padding: 0;
@@ -155,6 +155,14 @@
   .catalog__aside {
     display: none;
     margin-bottom: 0rem !important;
+    width: 100vw;
+    position: absolute;
+    height: auto;
+    transition: 0.3s;
+  }
+
+  .filter-box__content__items {
+    width: calc(100vw - 2rem);
   }
 
   .catalog__aside a,
@@ -166,15 +174,31 @@
     padding: 0.1rem 0.2rem;
   }
 
-  .no-show__aside {
+  .catalog__aside.no-show__aside {
     display: flex;
     position: absolute;
     z-index: 20;
     top: 4rem;
-    height: 100%;   
+    height: 100%;
+    top: -10rem;
   }
 
   .mobile-menu__btn {
     display: block;
+  }
+
+  .mobile-btn__active {
+    width: 100vw;
+    top: 0rem;
+    transition: 0.3s;
+    & img {
+      display: none;
+    }
+    &::after {
+      content: 'Close filters';
+      font-size: 1.6rem;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
   }
 }

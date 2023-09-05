@@ -6,3 +6,9 @@
   position: relative;
 }
 
+@media screen and (max-width: $tablet) {
+ .catalog__wrapper {
+  grid-template-columns: 1fr;
+ }
+}
+

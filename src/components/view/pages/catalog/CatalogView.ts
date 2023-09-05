@@ -54,7 +54,7 @@ export default class CatalogView extends View {
     const sideBar = this.assamleSideBar();
     mobileMenuBtn.getElement().addEventListener('click', () => {
       sideBar.getElement().classList.toggle('no-show__aside');
-      // sideBar.getElement().classList.toggle('mobile-menu');
+      mobileMenuBtn.getElement().classList.toggle('mobile-btn__active');
     });
 
     window.addEventListener('resize', () => {
