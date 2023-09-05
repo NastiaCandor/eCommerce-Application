@@ -8,6 +8,7 @@ describe('Router', () => {
   let mockLogger: Route[];
   let url: string;
   let state: State;
+  let map: Map<string, string>;
 
   beforeEach(() => {
     mockLogger = [
@@ -16,7 +17,7 @@ describe('Router', () => {
         callback: jest.fn(),
       },
     ];
-    router = new Router(mockLogger, state);
+    router = new Router(mockLogger, state, map);
     state = new State();
     url = 'catalog/category/rock/deep-purple';
   });
@@ -40,7 +41,7 @@ describe('Router', () => {
     // @ts-ignore
     const startInitSpy = jest.spyOn(MockRouter.prototype, 'startInit');
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const mockRouterInstance = new MockRouter(mockLogger, state);
+    const mockRouterInstance = new MockRouter(mockLogger, state, map);
     expect(startInitSpy).toHaveBeenCalled();
   });
 

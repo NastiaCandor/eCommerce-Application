@@ -20,8 +20,12 @@ export default class State {
     window.history.replaceState(null, '', url);
   }
 
-  public setPageTitle(url: string, slice = true): void {
-    document.title = this.formatPageTitle(url, slice);
+  public setPageTitle(str: string, formated = false, toSlice = true): void {
+    if (formated) {
+      document.title = str;
+      return;
+    }
+    document.title = this.formatPageTitle(str, toSlice);
   }
 
   public formatPageTitle(url: string, slice = true): string {
