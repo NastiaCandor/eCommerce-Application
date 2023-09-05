@@ -1,5 +1,5 @@
-import { Attribute, Price, ProductData } from '@commercetools/platform-sdk';
-import { PrefetchedGenres } from '../../../../types';
+import { Attribute, LocalizedString, Price, ProductProjection } from '@commercetools/platform-sdk';
+import { ImageArr, PrefetchedGenres } from '../../../../types';
 import Router from '../../../router/Router';
 import ClientAPI from '../../../utils/Client';
 import ElementCreator from '../../../utils/ElementCreator';
@@ -9,6 +9,7 @@ import { filterParams } from './filter/filter-params';
 import FilterView from './filter/FilterView';
 import '../../../../assets/img/settings.svg';
 import SearchView from './search/SearchView';
+import PAGES from '../../../router/utils/pages';
 
 export default class CatalogView extends View {
   private clientApi: ClientAPI;
@@ -41,12 +42,12 @@ export default class CatalogView extends View {
     await this.configure();
   }
 
-  protected async configure(productInfo?: ProductData[]) {
+  protected async configure(productInfo?: ProductProjection[]) {
     await this.init(productInfo);
     await this.categoriesCbHandler();
   }
 
-  private async init(productInfo?: ProductData[]): Promise<void> {
+  private async init(productInfo?: ProductProjection[]): Promise<void> {
     const wrapper = new ElementCreator(catalogParams.wrapper);
     const mobileMenuBtn = this.createMobileMenuBtn();
     wrapper.addInnerElement(mobileMenuBtn);
@@ -74,36 +75,46 @@ export default class CatalogView extends View {
   private async fetchAllCardsData() {
     const data = await this.clientApi.getAllCardsData();
     if (data) {
-      return data.map((item) => item.masterData.current);
+      return data.map((item) => item);
     }
   }
 
-  private async assamleCards(fetchedData?: ProductData[]) {
+  private async assamleCards(fetchedData?: ProductProjection[]) {
     const cardsData = fetchedData || (await this.fetchAllCardsData());
     const cardsWrapper = new ElementCreator(catalogParams.productCards);
-    if (cardsData) {
+    if (cardsData && <ProductProjection[]>cardsData) {
       cardsData.forEach((data) => {
         const productCard = new ElementCreator(catalogParams.card.wrapper);
+        productCard.setAttribute('data-id', data.id);
         if (data.masterVariant.attributes && data.masterVariant.images) {
-          const songTitle = this.assambleSongTitle(data);
+          const songTitle = this.assambleSongTitle(data.name);
           const attributesArray = data.masterVariant.attributes.map((item) => item);
           const singer = this.assambleSingerTitle(attributesArray);
-          const image = this.assambleImage(data);
+          const image = this.assambleImage(data.masterVariant.images, data.name);
           const priceElement = this.assamblePrice(data.masterVariant.prices);
           const cartBtn = this.assambleCartBtn();
           productCard.addInnerElement([singer, songTitle, image, priceElement, cartBtn]);
           cardsWrapper.addInnerElement(productCard);
         }
+        productCard.setMouseEvent((evt) => this.cardsClickHandler(evt));
       });
     }
     return cardsWrapper;
   }
 
-  private assambleImage(data: ProductData): HTMLElement {
+  private cardsClickHandler(evt: Event) {
+    if (evt.target instanceof HTMLElement) {
+      const card = evt.target;
+      const { id } = card.dataset;
+      this.router.navigate(PAGES.PRODUCT, id);
+    }
+  }
+
+  private assambleImage(data: ImageArr[], name: LocalizedString): HTMLElement {
     const image = new ElementCreator(catalogParams.card.img);
-    if (data.masterVariant.images) {
-      if (data.masterVariant.images[0].url !== undefined) {
-        image.setImageLink(data.masterVariant.images[0].url, data.name['en-US']);
+    if (data) {
+      if (data[0].url !== undefined) {
+        image.setImageLink(data[0].url, name['en-US']);
       } else {
         console.log('not Found!');
       }
@@ -158,8 +169,8 @@ export default class CatalogView extends View {
     const id = categoryKey?.id;
     if (id) {
       const data = await this.clientApi.getSpecificGenreById(id);
-      if (data) {
-        const dataResults = data.results as ProductData[];
+      if (data && data.results.length > 0) {
+        const dataResults = data.results;
         await this.assamleCards(dataResults).then((cardsView) => {
           if (this.wrapper) {
             this.replaceCards(this.wrapper, cardsView);
@@ -176,9 +187,9 @@ export default class CatalogView extends View {
     wrapper.getElement().replaceChild(cardsView.getElement(), replacedNode);
   }
 
-  private assambleSongTitle(data: ProductData): HTMLElement {
+  private assambleSongTitle(title: LocalizedString): HTMLElement {
     const songTitle = new ElementCreator(catalogParams.card.title);
-    songTitle.setTextContent(data.name['en-US']);
+    songTitle.setTextContent(title['en-US']);
     return songTitle.getElement();
   }
 
@@ -247,13 +258,22 @@ export default class CatalogView extends View {
     element.addEventListener('click', async () => {
       this.filterView.createQuaryString();
       const cardsData = await this.filterView.getFilterData();
-      if (cardsData) {
+      if (cardsData && cardsData.length > 0) {
         this.filterView.resetEndpoints();
-        await this.assamleCards(cardsData as ProductData[]).then((cardsView) => {
+        await this.assamleCards(cardsData).then((cardsView) => {
           if (this.wrapper) {
             this.replaceCards(this.wrapper, cardsView);
           }
         });
+      }
+      if (cardsData && cardsData.length === 0) {
+        this.showNoResults('', true);
+        const view = await this.assamleCards();
+        setTimeout(() => {
+          if (this.wrapper && view) {
+            this.replaceCards(this.wrapper, view);
+          }
+        }, 4000);
       }
     });
   }
@@ -284,7 +304,7 @@ export default class CatalogView extends View {
           if (results.length === 0) {
             this.showNoResults(search);
           } else {
-            this.assamleCards(results as ProductData[]).then((cardsView) => {
+            this.assamleCards(results).then((cardsView) => {
               if (this.wrapper) {
                 const replacedNode = this.wrapper.getElement().childNodes[2];
                 this.wrapper.getElement().replaceChild(cardsView.getElement(), replacedNode);
@@ -306,11 +326,15 @@ export default class CatalogView extends View {
     }
   }
 
-  private showNoResults(search: string) {
+  private showNoResults(search: string, filter = false) {
     const container = new ElementCreator(catalogParams.noResults.container);
     const title = new ElementCreator(catalogParams.noResults.title);
     const message = new ElementCreator(catalogParams.noResults.message);
-    message.getElement().innerHTML = `No Results for <span>"${search}"</span>. Please, try another search.`;
+    if (filter) {
+      message.getElement().innerHTML = 'No Results Found. You will be redirected back in 5 seconds';
+    } else {
+      message.getElement().innerHTML = `No Results for <span>"${search}"</span>. Please, try another search.`;
+    }
     container.addInnerElement([title, message]);
     if (this.wrapper) {
       const replacedNode = this.wrapper.getElement().childNodes[2];

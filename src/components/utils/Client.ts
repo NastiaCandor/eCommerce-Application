@@ -343,7 +343,7 @@ export default class ClientAPI {
 
   public async getAllCardsData() {
     try {
-      const data = await this.apiRoot.products().get().execute();
+      const data = await this.apiRoot.productProjections().get().execute();
       if (data.statusCode === 200) {
         return data.body.results;
       }
@@ -426,11 +426,12 @@ export default class ClientAPI {
   public async getSpecificGenreById(id: string) {
     const query = {
       queryArgs: {
-        where: `categories(id="${id}")`,
+        filter: `categories.id:"${id}"`,
+        limit: 100,
       },
     };
     try {
-      const data = await this.apiRoot.productProjections().get(query).execute();
+      const data = await this.apiRoot.productProjections().search().get(query).execute();
       if (data.statusCode === 200) {
         const response = data.body;
         return response;
@@ -541,7 +542,6 @@ export default class ClientAPI {
   }
 
   public async fetchFilterQuary(endPoints: EndPointsObject) {
-    console.log(endPoints);
     const query = {
       queryArgs: {
         filter: endPoints.filter,
