@@ -17,7 +17,6 @@ export default class Router {
   public navigate(url: string, productId = '') {
     this.state.pushState(url);
     this.processUrl(this.currentPath, productId);
-    console.log(this.currentPath);
   }
 
   private processUrl(url: string, productId = ''): void {

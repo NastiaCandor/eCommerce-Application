@@ -5,60 +5,56 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: 1em 1em;
-
   grid-row: 2;
 
   .card__content {
     display: flex;
     flex-direction: column;
-    width: 15%;
-    padding: 1rem;
+    width: 31%;
     font-size: calc(1vw + 5px);
-    background-color: $color-registration-background-address;
-    box-shadow: 1px 1px 1px 1px rgba($color: #000000, $alpha: 0.3);
-    border-radius: 5px;
+    background-color: white;
+    border: 1px solid rgb(233, 231, 231);
+    border-radius: $border-radius3;
     cursor: pointer;
-    filter: contrast(0.8);
+    transition: all 0.5s ease;
 
-    transition: all 0.5s ease ;
-    & > * {
-      padding: 5px;
-    }
     &:hover {
       filter: contrast(1);
-      transform: scale(1.01) rotateZ(1deg);
-      box-shadow: 1px 1px 2px 2px rgba($color: #000000, $alpha: 0.5);
+        transform: scale(1.01);
+      box-shadow: 1px 1px 13px 2px rgba(0, 0, 0, 0.3);
     }
 
-    @media screen and (max-width: $laptop) {
-      width: 25%;
+    @media screen and (max-width: 900px) {
+      width: 48%;
     }
     @media screen and (max-width: $tablet) {
-      width: 33%;
+      width: 48%;
     }
-    @media screen and (max-width: $mobile) {
+    @media screen and (max-width: 500px) {
       width: 80%;
     }
     .card__content_prices {
       display: flex;
-      justify-content: end;
+      justify-content: center;
       column-gap: 1em;
-      font-size: calc(0.8vw + 2px);
+      font-size: calc(0.8vw + 13px);
       .card__content_price {
-        background-color: $color-login-background;
         border-radius: 5px;
-        padding: 0.5rem;
+        padding: 0.8rem;
+        &:not(.striked) {
+          font-weight: bold;
+        }
         &.striked {
           position: relative;
           color: rgba($color: #000000, $alpha: 0.5);
           background-color: transparent;
 
           &::after {
-            content: "";
+            content: '';
             position: absolute;
             width: 100%;
             height: 2px;
-            background-color: #000000;
+            background-color: rgba($color: #000000, $alpha: 0.5);
             top: 50%;
             left: 0;
             transform: rotateZ(-15deg);
@@ -70,37 +66,59 @@
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
-      font-size: calc(1vw + 2px);
+      font-size: calc(1vw + 6px);
       transition: all 0.3s ease;
+      margin-left: 1rem;
+      margin-top: 0.5rem;
+
+      font-weight: bold;
+      text-transform: uppercase;
+      @media screen and (max-width: $tablet) {
+        font-size: calc(1vw + 9px);
+      }
     }
+
     .card__content_singer {
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
-      font-size: calc(1vw);
+      font-size: calc(1vw + 5px);
+      margin-left: 1rem;
+      font-weight: bold;
+      color: #494848;
+      text-transform: uppercase;
+      @media screen and (max-width: $tablet) {
+        font-size: calc(1vw + 11px);
+      }
     }
     img {
       display: block;
-      width: 90%;
+      width: 100%;
       align-self: center;
       pointer-events: none;
+      margin-bottom: 1rem;
     }
 
     .product__add-to-cart-btn {
-      background: no-repeat url('../assets/img/shopping-cart-16-svgrepo-com.svg');
-      background-size: 40%;
-      width: auto;
+      margin: 1rem;
+      background: no-repeat url('../assets/img/shopping-cart.svg');
+      background-size: 15%;
+      width: 90%;
+      height: 4rem;
       background-position: center;
-      padding: 2.5rem;
-      background-color: $color-button-background;
+      padding: 0rem;
+      border-radius: $border-radius3;
       align-self: center;
       &:hover {
-        background-color: $color-button-background-hover;
+        background-color: #eeeeee;
       }
+
       @media screen and (max-width: $tablet) {
         padding: 1.5rem;
       }
+      @media screen and (max-width: 500px) {
+        height: 5.5rem;
+      }
     }
   }
-
 }

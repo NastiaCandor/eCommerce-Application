@@ -138,8 +138,8 @@
   width: 5rem;
   height: 5rem;
   background-color: rgb(209, 208, 208);
-  position: fixed;
-  top: 14rem;
+  position: absolute;
+    top: 8rem;
   left: 0.1rem;
   z-index: 100;
   padding: 0;
@@ -165,7 +165,6 @@
   .catalog__aside .filter-box__span {
     padding: 0.1rem 0.2rem;
   }
-
 
   .no-show__aside {
     display: flex;

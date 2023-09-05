@@ -98,7 +98,7 @@ export default class CatalogView extends View {
           const image = this.assambleImage(data.masterVariant.images, data.name);
           const priceElement = this.assamblePrice(data.masterVariant.prices);
           const cartBtn = this.assambleCartBtn();
-          productCard.addInnerElement([singer, songTitle, image, priceElement, cartBtn]);
+          productCard.addInnerElement([image, singer, songTitle, priceElement, cartBtn]);
           cardsWrapper.addInnerElement(productCard);
         }
         productCard.setMouseEvent((evt) => this.cardsClickHandler(evt));
