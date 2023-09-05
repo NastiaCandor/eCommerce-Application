@@ -1,4 +1,5 @@
 import './styles/style.scss';
+import './components/import-files';
 import App from './components/app/app';
 import ClientAPI from './components/utils/Client';
 
