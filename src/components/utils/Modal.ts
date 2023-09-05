@@ -1,3 +1,5 @@
+import '../../assets/img/x-icon.svg';
+
 export default class Modal {
   classes: string[];
 

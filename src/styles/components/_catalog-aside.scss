@@ -4,17 +4,19 @@
   justify-content: flex-start;
   align-items: flex-start;
   grid-area: catalog-aside;
-  background-color: $color-burger-background;
+  background-color: #f4f0df;
   font-size: calc(1vw + 2px);
   padding: 1rem;
-
   grid-row: 2;
+  border-top-right-radius: $border-radius3;
+  border-bottom-right-radius: $border-radius3;
 
   & > * {
     padding-bottom: 1rem;
   }
   .product__categories {
     width: 100%;
+    min-width: 23rem;
     & > li {
       display: block;
     }
@@ -24,7 +26,6 @@
     width: 100%;
   }
   .filter-box {
-    margin-bottom: 2rem;
     display: flex;
     flex-direction: column;
     & input[type='checkbox'] {
@@ -36,14 +37,16 @@
   }
   & .filter-box__content_label {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     width: 100%;
   }
+
   .filter-box__content__items {
     max-height: 20vh;
     overflow-y: scroll;
-    background-color: $color-active-link;
+    background-color: #faf8f1;
+    padding: 1rem;
   }
   .filter-box__content_item {
     display: flex;
@@ -51,7 +54,8 @@
     user-select: none;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid gray;
+    border-bottom: none;
+    margin-bottom: 0.5rem;
     cursor: pointer;
   }
   .filter-box__span {
@@ -64,6 +68,29 @@
   }
   .filter-box_heading {
     padding: 1rem 0;
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+
+  h3,
+  h4 {
+    font-size: 1.6rem;
+  }
+  h4 {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  a,
+  li {
+    font-size: 1.2rem;
+  }
+
+.filter-box input[type='checkbox'] {
+    margin: 0.1rem 0.5rem;
+    width: 1.8rem !important;
+    height: 1.8rem !important;
   }
 }
 .noUi-tooltip {
@@ -86,14 +113,34 @@
   left: 10vw !important;
 }
 
+.filter-box__buttons {
+  width: fit-content;
+  gap: 1rem;
+  padding-top: 1rem;
+}
+
+.filter-box__button-submit,
+.filter-box__buttons-reset {
+  border-radius: 3px;
+  width: 10rem;
+  height: 4rem;
+  padding: 0;
+  background-color: #b49275;
+}
+
+.filter-box__button-submit:hover,
+.filter-box__buttons-reset:hover {
+  background-color: #a7866a;
+}
+
 .mobile-menu__btn {
   border-radius: 3px;
   width: 5rem;
   height: 5rem;
   background-color: rgb(209, 208, 208);
   position: fixed;
-  top: 5.3rem;
-  left: 0.6rem;
+  top: 14rem;
+  left: 0.1rem;
   z-index: 100;
   padding: 0;
   display: none;
@@ -106,61 +153,8 @@
 
 @media screen and (max-width: $tablet) {
   .catalog__aside {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
+    display: none;
     margin-bottom: 0rem !important;
-    background-color: #f4f0df;
-  }
-
-  .catalog__aside .product__categories {
-    width: fit-content;
-    min-width: 8rem;
-  }
-
-  .catalog__aside .filter-box__content__items {
-    background-color:#faf8f1;
-  }
-
-  .catalog__aside .filter-box__content_item {
-    border-bottom: none;
-    margin-bottom: 0.5rem;
-  }
-
-  .catalog__aside .filter-box__content_label {
-    justify-content: flex-start;
-  }
-
-  .product__categories .heading {
-    margin-bottom: 1rem;
-  }
-
-  .filter__wrapper {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .filter-boxes__wrapper {
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
-    // padding: 1rem;
-  }
-
-  .catalog__aside h3,
-  .catalog__aside h4 {
-    font-size: 1.6rem;
-  }
-  .catalog__aside h4 {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-  }
-  .catalog__aside .filter-box_heading {
-    font-size: 1.4rem;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
   }
 
   .catalog__aside a,
@@ -168,39 +162,20 @@
     font-size: 1.4rem;
   }
 
-  .catalog__aside .filter-box input[type='checkbox'] {
-    margin: 0.1rem 0.5rem;
-    width: 1.8rem !important;
-    height: 1.8rem !important;
-  }
   .catalog__aside .filter-box__span {
     padding: 0.1rem 0.2rem;
   }
 
-  .filter-box__buttons {
-    width: fit-content;
-    gap: 1rem;
-    padding-top: 1rem;
-  }
 
-  .filter-box__button-submit,
-  .filter-box__buttons-reset {
-    border-radius: 3px;
-    width: 10rem;
-    height: 4rem;
-    padding: 0;
-    background-color: #b49275;
-  }
-  .no-show {
-    display: none;
-  }
-  .mobile-menu__btn {
-    display: block;
-  }
-
-  .mobile-menu {
+  .no-show__aside {
+    display: flex;
     position: absolute;
     z-index: 20;
-    top: 10.4rem;
+    top: 4rem;
+    height: 100%;   
+  }
+
+  .mobile-menu__btn {
+    display: block;
   }
 }

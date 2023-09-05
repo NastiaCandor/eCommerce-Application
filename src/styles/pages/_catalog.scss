@@ -2,7 +2,7 @@
   display: grid;
   grid-template-areas: 'catalog-aside cards';
   grid-template-columns: 1fr 7fr;
-
-  padding: 2rem;
+  padding: 2rem 0;
+  position: relative;
 }
 

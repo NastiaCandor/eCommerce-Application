@@ -113,8 +113,8 @@ export default class FilterView extends View {
       checkbox.setAttribute('id', `${filterHeading.toLowerCase()}-${i}`);
       checkbox.setAttribute(`data-${filterHeading}`, item);
       labelText.setTextContent(item);
-      label.addInnerElement(labelText);
       label.addInnerElement(checkbox);
+      label.addInnerElement(labelText);
       listItem.addInnerElement(label);
       const listItemElement = <HTMLInputElement>listItem.getElement();
       this.checkboxHandler(listItemElement);

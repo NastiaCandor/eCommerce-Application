@@ -53,10 +53,15 @@ export default class CatalogView extends View {
     wrapper.addInnerElement(mobileMenuBtn);
     const sideBar = this.assamleSideBar();
     mobileMenuBtn.getElement().addEventListener('click', () => {
-      sideBar.getElement().classList.toggle('no-show');
-      sideBar.getElement().classList.toggle('mobile-menu');
+      sideBar.getElement().classList.toggle('no-show__aside');
+      // sideBar.getElement().classList.toggle('mobile-menu');
     });
 
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) {
+        sideBar.getElement().classList.remove('no-show__aside');
+      }
+    });
     const assambledCards = await this.assamleCards(productInfo);
     wrapper.addInnerElement([sideBar, assambledCards]);
     this.wrapper = wrapper;
