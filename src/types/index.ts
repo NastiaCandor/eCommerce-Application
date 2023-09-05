@@ -68,7 +68,7 @@ export type PagesInterface = {
 
 export type Route = {
   path: string;
-  callback: (key?: string) => void;
+  callback: (id?: string) => void;
 };
 
 export type UserRequest = {
@@ -112,6 +112,10 @@ export type EndPointsObject = {
   filter: string[];
 };
 
+export type ImageArr = {
+  url?: string;
+};
+
 export interface QueryObject extends PrefetchedAttributes<string> {
   price: string[];
 }
@@ -127,6 +131,6 @@ export type RouteCallbacks = {
   loadNotFoundPage: () => void;
   loadCatalogPage: () => void;
   logoutUser: () => void;
-  loadProductPage: () => void;
-  mountCategory: (key: string) => void;
+  loadProductPage: (id: string) => void;
+  mountCategory: (id: string) => void;
 };

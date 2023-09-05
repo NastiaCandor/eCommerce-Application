@@ -7,6 +7,7 @@ import View from '../View';
 import productParams from './product-params';
 import sliderParams from './slider-params';
 import Modal from '../../utils/Modal';
+import PAGES from '../../router/utils/pages';
 
 export default class ProductView extends View {
   private clientAPI: ClientAPI;
@@ -31,7 +32,7 @@ export default class ProductView extends View {
   private renderInnerWrapper(): void {
     const wrapper = new ElementCreator(wrapperParams);
     const innerWrapper = new ElementCreator(productParams.innerWrapper);
-
+    wrapper.setAttribute('href', PAGES.PRODUCT);
     this.injectProductSection(innerWrapper);
 
     wrapper.getElement().classList.add('product__wrapper');

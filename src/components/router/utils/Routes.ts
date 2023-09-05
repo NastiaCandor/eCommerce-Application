@@ -88,8 +88,8 @@ export default class Routes {
       },
       {
         path: `${PAGES.PRODUCT}`,
-        callback: () => {
-          this.callbacks.loadProductPage();
+        callback: (id?: string) => {
+          this.callbacks.loadProductPage(id as string);
         },
       },
     ];

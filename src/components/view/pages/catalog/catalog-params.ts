@@ -124,7 +124,7 @@ const catalogParams = {
     title: {
       tag: 'h4',
       cssClasses: ['no-res__title'],
-      textContent: 'Sorry, no result found',
+      textContent: 'Sorry, no results found!',
     },
     message: {
       tag: 'p',

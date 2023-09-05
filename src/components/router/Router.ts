@@ -14,25 +14,26 @@ export default class Router {
     this.startInit();
   }
 
-  public navigate(url: string) {
+  public navigate(url: string, productId = '') {
     this.state.pushState(url);
-    this.processUrl(this.currentPath);
+    this.processUrl(this.currentPath, productId);
+    console.log(this.currentPath);
   }
 
-  private processUrl(url: string): void {
+  private processUrl(url: string, productId = ''): void {
     if (this.signedInUserAccess(`/${url}`) || this.signedOutUserAccess(`/${url}`)) {
       this.state.replaceState(PAGES.MAIN);
       this.routeTo(PAGES.MAIN);
       return;
     }
-    this.routeTo(url);
+    this.routeTo(url, productId);
   }
 
   public stateDeleteToken(): void {
     this.state.deleteAccessToken();
   }
 
-  private routeTo(path: string) {
+  private routeTo(path: string, productId = '') {
     const request = this.parseUrl(path);
     let pathToFind = request.resource === '' ? `/${request.path}` : `${request.path}/${request.resource}`;
     let route = this.routes.find((item) => item.path === pathToFind);
@@ -53,7 +54,10 @@ export default class Router {
     } else {
       this.state.setPageTitle(route.path);
     }
-
+    if (route.path === PAGES.PRODUCT) {
+      route.callback(productId);
+      return;
+    }
     route.callback();
   }
 

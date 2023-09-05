@@ -107,11 +107,12 @@ export default class App {
     this.setContent(PAGES.CATALOG, this.catalogView.getElement());
   }
 
-  private loadProductPage() {
+  private loadProductPage(id?: string) {
     // TODO: connect productID from Catalog Page to Product Page 177a75d9-7bcc-4800-8031-91ac81f2bd29
     // 30b29e00-020c-41aa-8da5-250ae76d2f39
     // 5673e423-c01e-4b35-9ef0-86b1043d08b4
-    const product = new ProductView(this.clientApi, '177a75d9-7bcc-4800-8031-91ac81f2bd29').getElement();
+    const productId = id || '81b1bf51-40bd-4598-a12c-e7f5096b9e79';
+    const product = new ProductView(this.clientApi, productId).getElement();
     this.setContent(PAGES.PRODUCT, product);
   }
 
