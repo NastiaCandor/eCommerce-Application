@@ -114,8 +114,12 @@
         background-color: #eeeeee;
       }
 
+      @media screen and (min-width: $big-laptop) {
+        height: 7rem;
+      }
       @media screen and (max-width: $tablet) {
         padding: 1.5rem;
+        height: 5rem;
       }
       @media screen and (max-width: 500px) {
         height: 5.5rem;
