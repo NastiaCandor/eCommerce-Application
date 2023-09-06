@@ -10,13 +10,10 @@ export default class Router {
 
   private titlesMap: Map<string, string>;
 
-  private request = <UserRequest>{};
-  
   constructor(routes: Route[], state: State, titlesMap: Map<string, string>) {
     this.state = state;
     this.routes = routes;
     this.titlesMap = titlesMap;
-    this.request = <UserRequest>{};
     this.startInit();
   }
 
@@ -39,22 +36,19 @@ export default class Router {
   }
 
   private routeTo(path: string, productId = '') {
-    this.request = this.parseUrl(path);
-    let pathToFind =
-      this.request.resource === '' ? `/${this.request.path}` : `${this.request.path}/${this.request.resource}`;
+    const request = this.parseUrl(path);
+    let pathToFind = request.resource === '' ? `/${request.path}` : `${request.path}/${request.resource}`;
     let route = this.routes.find((item) => item.path === pathToFind);
-    if (this.request.category) {
-      pathToFind = this.request.id
-        ? `/${pathToFind}/${this.request.category}/${this.request.id}`
-        : `/${pathToFind}/${this.request.category}`;
+    if (request.category) {
+      pathToFind = request.id
+        ? `/${pathToFind}/${request.category}/${request.id}`
+        : `/${pathToFind}/${request.category}`;
       route = this.routes.find((item) => pathToFind === item.path);
     }
     if (!route) {
       this.redirectToNotFound();
       return;
     }
-    if (path && productId) {
-      const title = this.titlesMap.get(this.request.category);
 
     if (path && productId) {
       const title = this.titlesMap.get(request.category);
@@ -64,14 +58,13 @@ export default class Router {
       route.callback(productId);
       return;
     }
-    if (this.request.category) {
-      this.state.setPageTitle(`${this.request.category}${this.request.id ?? ''}`, false);
-    } else if (this.request.resource) {
-      this.state.setPageTitle(`${this.request.path}`, false);
+    if (request.category) {
+      this.state.setPageTitle(`${request.category}${request.id ?? ''}`, false);
+    } else if (request.resource) {
+      this.state.setPageTitle(`${request.path}`, false);
     } else {
       this.state.setPageTitle(route.path);
     }
-
     route.callback();
   }
 
@@ -120,7 +113,7 @@ export default class Router {
     });
   }
 
-  public get currentPath(): string {
+  private get currentPath(): string {
     if (window.location.hash) {
       return window.location.hash.slice(1);
     }

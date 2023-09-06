@@ -24,6 +24,8 @@ export default class SearchView extends View {
     const wrapper = new ElementCreator(searchParams.searchBlock);
     this.injectSearchComponents(wrapper);
     this.addInnerElement(wrapper);
+
+    this.addInnerElement(new ElementCreator(searchParams.wrapper));
   }
 
   private injectSearchComponents(wrapper: ElementCreator): void {
