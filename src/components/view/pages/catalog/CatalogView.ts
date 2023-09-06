@@ -1,5 +1,5 @@
 import { Attribute, LocalizedString, Price, ProductProjection } from '@commercetools/platform-sdk';
-import { ImageArr, PrefetchedGenres } from '../../../../types';
+import { ImageArr, PrefetchedData } from '../../../../types';
 import Router from '../../../router/Router';
 import ClientAPI from '../../../utils/Client';
 import ElementCreator from '../../../utils/ElementCreator';
@@ -22,18 +22,21 @@ export default class CatalogView extends View {
 
   private categoriesBtn: Array<HTMLElement>;
 
-  private prefetchedGenres: PrefetchedGenres[];
+  private prefetchedData: PrefetchedData;
 
   private searchView: SearchView;
+
+  // private productLinks: Map<string, string>;
 
   constructor(clientApi: ClientAPI, router: Router) {
     super(catalogParams.section);
     this.clientApi = clientApi;
-    this.prefetchedGenres = this.clientApi.getPrefetchedData.genres;
+    this.prefetchedData = this.clientApi.getPrefetchedData;
     this.filterView = new FilterView(this.clientApi);
     this.searchView = new SearchView(this.clientApi);
     this.searchFunctionality();
     this.router = router;
+    // this.productLinks = this.router.productLinks;
     this.wrapper = null;
     this.categoriesBtn = [];
   }
@@ -109,8 +112,19 @@ export default class CatalogView extends View {
 
   private cardsClickHandler(evt: Event) {
     if (evt.target instanceof HTMLElement) {
-      const card = evt.target;
-      const { id } = card.dataset;
+      let { target } = evt;
+
+      while (!target.dataset.id) {
+        target = target.parentElement as HTMLElement;
+      }
+      const { id } = target.dataset;
+      if (id) {
+        const productLink = this.prefetchedData.productsUrl.ids.get(id);
+        const path = `${PAGES.PRODUCT}/${productLink || ''}`;
+        this.router.navigate(path, id);
+        return;
+      }
+      console.error("Don't know how you're able to do it, but there is no such Id! ");
       this.router.navigate(PAGES.PRODUCT, id);
     }
   }
@@ -170,7 +184,7 @@ export default class CatalogView extends View {
   }
 
   public async mountCategory(key: string) {
-    const categoryKey = this.prefetchedGenres.find((item) => item.key === key);
+    const categoryKey = this.prefetchedData.genres.find((item) => item.key === key);
     const id = categoryKey?.id;
     if (id) {
       const data = await this.clientApi.getSpecificGenreById(id);

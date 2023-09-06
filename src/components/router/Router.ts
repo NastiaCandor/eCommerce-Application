@@ -8,9 +8,12 @@ export default class Router {
 
   private state: State;
 
-  constructor(routes: Route[], state: State) {
+  private titlesMap: Map<string, string>;
+
+  constructor(routes: Route[], state: State, titlesMap: Map<string, string>) {
     this.state = state;
     this.routes = routes;
+    this.titlesMap = titlesMap;
     this.startInit();
   }
 
@@ -46,16 +49,21 @@ export default class Router {
       this.redirectToNotFound();
       return;
     }
+
+    if (path && productId) {
+      const title = this.titlesMap.get(request.category);
+      if (title) {
+        this.state.setPageTitle(title, true);
+      }
+      route.callback(productId);
+      return;
+    }
     if (request.category) {
       this.state.setPageTitle(`${request.category}${request.id ?? ''}`, false);
     } else if (request.resource) {
       this.state.setPageTitle(`${request.path}`, false);
     } else {
       this.state.setPageTitle(route.path);
-    }
-    if (route.path === PAGES.PRODUCT) {
-      route.callback(productId);
-      return;
     }
     route.callback();
   }
