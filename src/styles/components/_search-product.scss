@@ -4,9 +4,9 @@ $search-btn-width: 8rem;
   grid-row: 1;
   grid-column: 1/2;
   margin: 1rem 0;
-
   display: flex;
   justify-content: space-around;
+  padding: 0 2rem;
 }
 
 .search__box {

@@ -2,7 +2,13 @@
   display: grid;
   grid-template-areas: 'catalog-aside cards';
   grid-template-columns: 1fr 7fr;
+  padding: 2rem 0;
+  position: relative;
+}
 
-  padding: 2rem;
+@media screen and (max-width: $tablet) {
+ .catalog__wrapper {
+  grid-template-columns: 1fr;
+ }
 }
 

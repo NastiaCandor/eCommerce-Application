@@ -41,7 +41,6 @@ export default class App {
   private state: State;
 
   private isCategoriesLoaded: boolean;
-
   private prefetchedData: PrefetchedData;
 
   constructor(clientApi: ClientAPI) {
