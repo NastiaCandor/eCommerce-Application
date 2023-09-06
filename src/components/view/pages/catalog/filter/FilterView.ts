@@ -8,6 +8,7 @@ import ClientAPI from '../../../../utils/Client';
 import ElementCreator from '../../../../utils/ElementCreator';
 import View from '../../../View';
 import { filterParams } from './filter-params';
+import '../../../../../assets/img/arrow-svgrepo-com.svg';
 
 export default class FilterView extends View {
   private prefetchedData: PrefetchedData;
@@ -33,10 +34,10 @@ export default class FilterView extends View {
   }
 
   protected async configure() {
-    await this.renderWrapper();
+    this.renderWrapper();
   }
 
-  private async renderWrapper(): Promise<void> {
+  private renderWrapper() {
     this.addInnerElement(new ElementCreator(filterParams.wrapperHeading));
     const rangeInput = this.createPriceRangeBox();
     const [condition, label, lp] = Object.keys(this.prefetchedData.attributes).map((item) => this.capitalizeStr(item));
@@ -44,6 +45,48 @@ export default class FilterView extends View {
     this.addInnerElement(this.createFilterBox(label, this.prefetchedData.attributes.label));
     this.addInnerElement(this.createFilterBox(lp, this.prefetchedData.attributes.lp));
     this.addInnerElement(rangeInput);
+    this.addInnerElement(this.createOrderBox());
+  }
+
+  private createOrderBox() {
+    const filterBox = new ElementCreator(filterParams.filterBox);
+    filterBox.setCssClasses(['price-box']);
+    const orderHeading = new ElementCreator(filterParams.orderHeading);
+    filterBox.addInnerElement(orderHeading);
+
+    const priceLabel = new ElementCreator(filterParams.filterLabel);
+    const nameLabel = new ElementCreator(filterParams.filterLabel);
+
+    priceLabel.setAttribute('for', 'order-price');
+    nameLabel.setAttribute('for', 'order-name');
+    const priceCheckbox = new ElementCreator(filterParams.orderCheckbox);
+    const nameCheckbox = new ElementCreator(filterParams.orderCheckbox);
+
+    const priceImg = new ElementCreator(filterParams.boxImage);
+    priceImg.setImageLink('../assets/img/arrow-svgrepo-com.svg', 'price-sort');
+    const nameImg = new ElementCreator(filterParams.boxImage);
+    nameImg.setImageLink('../assets/img/arrow-svgrepo-com.svg', 'name-sort');
+
+    priceCheckbox.setAttribute('type', 'checkbox');
+    priceCheckbox.setAttribute('id', 'order-price');
+    priceCheckbox.setAttribute('data-sortprice', 'desc');
+
+    nameCheckbox.setAttribute('type', 'checkbox');
+    nameCheckbox.setAttribute('id', 'order-name');
+    nameCheckbox.setAttribute('data-sortname', 'desc');
+
+    const priceText = new ElementCreator(filterParams.filterBoxText);
+    const nameText = new ElementCreator(filterParams.filterBoxText);
+    priceText.setTextContent('Price');
+    nameText.setTextContent('Name');
+    this.checkboxHandler(<HTMLInputElement>priceCheckbox.getElement());
+    this.checkboxHandler(<HTMLInputElement>nameCheckbox.getElement());
+    priceLabel.addInnerElement([priceText, priceCheckbox, priceImg]);
+    this.labelBoxes.push(<HTMLInputElement>priceLabel.getElement());
+    nameLabel.addInnerElement([nameText, nameCheckbox, nameImg]);
+    this.labelBoxes.push(<HTMLInputElement>nameLabel.getElement());
+    filterBox.addInnerElement([priceLabel, nameLabel]);
+    return filterBox;
   }
 
   private capitalizeStr(str: string): string {
@@ -140,14 +183,17 @@ export default class FilterView extends View {
   public resetEndpoints() {
     this.endPoints = <EndPointsObject>{
       filter: [],
+      sort: [],
     };
   }
 
   public createQuaryString() {
     const valuePairs = Object.entries(this.queryObject);
-
     if (!this.endPoints.filter) {
       this.endPoints.filter = [];
+    }
+    if (!this.endPoints.sort) {
+      this.endPoints.sort = [];
     }
     valuePairs.forEach(([key, values]) => {
       if (key === 'LP') {
@@ -156,6 +202,12 @@ export default class FilterView extends View {
       } else if (key === 'price') {
         const [minPrice, maxPrice] = values;
         this.endPoints.filter.push(`variants.scopedPrice.currentValue.centAmount:range(${minPrice} to ${maxPrice})`);
+      } else if (key === 'sortprice') {
+        const string = `variants.scopedPrice.currentValue.centAmount ${values[0]}`;
+        this.endPoints.sort.push(string);
+      } else if (key === 'sortname') {
+        const string = `name.en-US ${values[0]}`;
+        this.endPoints.sort.push(string);
       } else {
         const valueStrings = values.map((value) => `"${value}"`).join(',');
         this.endPoints.filter.push(`variants.attributes.${key}:${valueStrings}`);
@@ -192,7 +244,7 @@ export default class FilterView extends View {
   }
 
   private checkboxHandler(element: HTMLInputElement): void {
-    const datasetTitles = ['condition', 'lp', 'label'];
+    const datasetTitles = ['condition', 'lp', 'label', 'sortprice', 'sortname'];
     element.addEventListener('change', (evt) => {
       const { target } = evt;
       if (target instanceof HTMLInputElement) {
@@ -213,6 +265,7 @@ export default class FilterView extends View {
   }
 
   public async getFilterData() {
+    this.createQuaryString();
     try {
       const data = await this.clientApi.fetchFilterQuary(this.endPoints);
       if (data) {

@@ -39,7 +39,9 @@ export default class App {
   private routes: Route[];
 
   private state: State;
+  private isCategoriesLoaded: boolean;
 
+  private isStarted: boolean;
   private prefetchedData: PrefetchedData;
 
   constructor(clientApi: ClientAPI) {
@@ -54,6 +56,8 @@ export default class App {
     this.header = new HeaderView(this.router);
     this.signupForm = new RegView(this.router);
     this.loginForm = new LoginView(this.router);
+    this.isCategoriesLoaded = false;
+    this.isStarted = false;
   }
 
   public async start() {
@@ -61,6 +65,7 @@ export default class App {
     this.contentContainer.render();
     await this.catalogView.render();
     this.router.navigate(window.location.pathname);
+    this.isStarted = true;
   }
 
   private setContent(page: string, view: HTMLElement) {
@@ -135,6 +140,13 @@ export default class App {
     this.resetForms();
   }
 
+  private loadFilterPage() {
+    this.catalogView.updateCrumbNavigation();
+    if (!this.isStarted) {
+      this.router.navigate(PAGES.CATALOG);
+    }
+  }
+
   private resetForms(): void {
     this.signupForm = new RegView(this.router);
     this.loginForm = new LoginView(this.router);
@@ -159,6 +171,7 @@ export default class App {
       logoutUser: this.logoutUser.bind(this),
       loadProductPage: this.loadProductPage.bind(this),
       mountCategory: this.mountCategory.bind(this),
+      loadFilterPage: this.loadFilterPage.bind(this),
     };
   }
 }
