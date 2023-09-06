@@ -137,7 +137,6 @@ export type RouteCallbacks = {
   loadShippingPage: () => void;
   loadNotFoundPage: () => void;
   loadCatalogPage: () => void;
-  loadCategoriesPage: () => void;
   logoutUser: () => void;
   loadProductPage: (id: string) => void;
   mountCategory: (id: string) => void;
