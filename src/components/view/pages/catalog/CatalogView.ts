@@ -290,7 +290,7 @@ export default class CatalogView extends View {
 
   public submitBtnHandler(element: HTMLElement) {
     element.addEventListener('click', async () => {
-      this.filterView.createQuaryString();
+      this.router.navigate(PAGES.FILTER);
       const cardsData = await this.filterView.getFilterData();
       if (cardsData && cardsData.length > 0) {
         this.filterView.resetEndpoints();
@@ -302,12 +302,7 @@ export default class CatalogView extends View {
       }
       if (cardsData && cardsData.length === 0) {
         this.showNoResults('', true);
-        const view = await this.assamleCards();
-        setTimeout(() => {
-          if (this.wrapper && view) {
-            this.replaceCards(this.wrapper, view);
-          }
-        }, 4000);
+        this.filterView.resetEndpoints();
       }
     });
   }
@@ -365,7 +360,7 @@ export default class CatalogView extends View {
     const title = new ElementCreator(catalogParams.noResults.title);
     const message = new ElementCreator(catalogParams.noResults.message);
     if (filter) {
-      message.getElement().innerHTML = 'No Results Found. You will be redirected back in 5 seconds';
+      message.getElement().innerHTML = 'No Results Found. Please, choose another filters';
     } else {
       message.getElement().innerHTML = `No Results for <span>"${search}"</span>. Please, try another search.`;
     }

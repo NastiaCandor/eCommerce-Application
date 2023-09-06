@@ -360,8 +360,13 @@ export default class ClientAPI {
   }
 
   public async getAllCardsData() {
+    const quary = {
+      queryArgs: {
+        sort: 'name.en-US asc',
+      },
+    };
     try {
-      const data = await this.apiRoot.productProjections().get().execute();
+      const data = await this.apiRoot.productProjections().search().get(quary).execute();
       if (data.statusCode === 200) {
         return data.body.results;
       }
@@ -588,11 +593,13 @@ export default class ClientAPI {
   }
 
   public async fetchFilterQuary(endPoints: EndPointsObject) {
+    const sortArray = ['variants.scopedPrice.currentValue.centAmount asc', 'name.en-US asc'];
     const query = {
       queryArgs: {
         filter: endPoints.filter,
         priceCurrency: 'USD',
-        sort: ['variants.scopedPrice.currentValue.centAmount asc'],
+        sort: endPoints.sort.length ? endPoints.sort : sortArray,
+
         limit: 100,
       },
     };
