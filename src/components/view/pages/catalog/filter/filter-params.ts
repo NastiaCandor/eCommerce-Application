@@ -8,6 +8,23 @@ const filterParams = {
     cssClasses: ['heading'],
     textContent: 'Filter by',
   },
+  orderWrapper: {
+    tag: 'div',
+    cssClassess: ['order__wrapper'],
+  },
+  orderHeading: {
+    tag: 'h5',
+    cssClasses: ['filter-box_heading', 'order-box'],
+    textContent: 'Sort by:',
+  },
+  orderInnerWrapper: {
+    tag: 'div',
+    cssClasses: ['order_contents'],
+  },
+  orderCheckbox: {
+    tag: 'input',
+    cssClassess: ['order__checkbox'],
+  },
   rangeHeading: {
     tag: 'h4',
     cssClasses: ['heading'],
@@ -19,7 +36,7 @@ const filterParams = {
   },
   filterBoxPrice: {
     tag: 'div',
-    cssClasses: ['filter-box', 'price-box'],
+    cssClasses: ['filter-box'],
   },
   filterBoxContent: {
     tag: 'div',
@@ -74,6 +91,10 @@ const filterParams = {
   priceBox: {
     tag: 'span',
     cssClasses: ['price-box'],
+  },
+  boxImage: {
+    tag: 'img',
+    cssClasses: ['price-box_img'],
   },
 };
 

@@ -65,7 +65,12 @@
   .filter-box_heading {
     padding: 1rem 0;
   }
+
+  .filter-box_heading.order-box {
+    display: inline;
+  }
 }
+
 .noUi-tooltip {
   display: none !important;
   font-size: 1.5rem;
@@ -202,5 +207,28 @@
     position: absolute;
     z-index: 20;
     top: 10.4rem;
+  }
+}
+
+.filter-box.price-box {
+  display: inline;
+  .filter-box__content_label {
+    user-select: none;
+    display: inline-flex;
+    .filter-box__span {
+      font-size: 2rem;
+    }
+    input[type=checkbox] {
+      margin: 0;
+      display: none;
+    }
+    input[type=checkbox]:checked + img {
+      margin: 0;
+      transform: rotate(180deg);
+    }
+  }
+  .price-box_img {
+    display: inline;
+    max-width: 10%;
   }
 }

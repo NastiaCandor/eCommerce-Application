@@ -51,6 +51,12 @@ export default class Routes {
         },
       },
       {
+        path: `${PAGES.FILTER}`,
+        callback: () => {
+          this.callbacks.loadFilterPage();
+        },
+      },
+      {
         path: `${PAGES.LOG_OUT}`,
         callback: () => {
           this.callbacks.logoutUser();

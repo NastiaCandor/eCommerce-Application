@@ -58,6 +58,8 @@ export type PagesInterface = {
   PRODUCT: string;
   PRODUCTS: string;
 
+  FILTER: string;
+
   MAIN: string;
   CATALOG: string;
   SHIPPING: string;
@@ -117,6 +119,7 @@ export interface PrefetchedAttributes<T> {
 
 export type EndPointsObject = {
   filter: string[];
+  sort: string[];
 };
 
 export type ImageArr = {
@@ -125,6 +128,8 @@ export type ImageArr = {
 
 export interface QueryObject extends PrefetchedAttributes<string> {
   price: string[];
+  priceOrder: string[];
+  nameOrder: string[];
 }
 
 export type RouteCallbacks = {
@@ -137,6 +142,7 @@ export type RouteCallbacks = {
   loadShippingPage: () => void;
   loadNotFoundPage: () => void;
   loadCatalogPage: () => void;
+  loadFilterPage: () => void;
   loadCategoriesPage: () => void;
   logoutUser: () => void;
   loadProductPage: (id: string) => void;
