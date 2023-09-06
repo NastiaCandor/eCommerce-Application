@@ -28,7 +28,25 @@ export default class ClientAPI {
   constructor() {
     this.apiBuilder = createApiBuilderFromCtpClient(ctpClient);
     this.apiRoot = this.apiBuilder.withProjectKey({ projectKey: 'ecommerce-quantum' });
-    this.prefetchedData = <PrefetchedData>{};
+    this.prefetchedData = {
+      genres: [],
+      attributes: {
+        condition: [],
+        label: [],
+        lp: [],
+      },
+      prices: {
+        max: 0,
+        min: 0,
+        avg: 0,
+        maxFractured: 0,
+        minFractured: 0,
+      },
+      productsUrl: {
+        ids: new Map<string, string>(),
+        keys: [],
+      },
+    };
   }
 
   public async loginClient(clientEmail: string, clientPassword: string) {
@@ -415,6 +433,7 @@ export default class ClientAPI {
     try {
       const data = await this.apiRoot.categories().get(query).execute();
       if (data.statusCode === 200) {
+        console.log(data.body);
         const response = data.body;
         return response.results;
       }
@@ -443,11 +462,38 @@ export default class ClientAPI {
 
   public async prefetchData() {
     try {
-      if (!this.prefetchedData.genres) await this.prefetchGenres();
-      if (!this.prefetchedData.attributes) await this.prefetchProductAttributes();
-      if (!this.prefetchedData.prices) await this.prefetchMinMaxPrices();
+      await this.prefetchGenres();
+      await this.prefetchProductUrl();
+      await this.prefetchProductAttributes();
+      await this.prefetchMinMaxPrices();
     } catch (e) {
       console.error(`Error while gathering the prefetch data: ${e}`);
+    }
+  }
+
+  private async prefetchProductUrl() {
+    const query = {
+      queryArgs: {
+        filter: ['key:exists', 'id:exists', 'variants.attributes.singer:exists'],
+        limit: 100,
+      },
+    };
+    try {
+      const data = await this.apiRoot.productProjections().search().get(query).execute();
+      if (data.statusCode === 200) {
+        const { results } = data.body;
+        results.forEach((item) => {
+          this.prefetchedData.productsUrl.ids.set(item.id, item.key?.split('-').join('_') ?? 'broken-key');
+          const key = [item.key ?? 'broken-key'];
+          const { attributes } = item.masterVariant;
+          if (attributes) {
+            attributes.forEach((attr) => (attr.name === 'singer' ? key.push(attr.value) : ''));
+            this.prefetchedData.productsUrl.keys.push(key);
+          }
+        });
+      }
+    } catch (e) {
+      console.error(`Error while pre-fetching ProductUrl: ${e}`);
     }
   }
 
@@ -554,7 +600,6 @@ export default class ClientAPI {
     try {
       const data = await this.apiRoot.productProjections().search().get(query).execute();
       if (data.statusCode === 200) {
-        console.log(data.body.results);
         return data.body.results;
       }
     } catch (e) {

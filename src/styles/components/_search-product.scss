@@ -2,18 +2,23 @@ $search-btn-width: 8rem;
 
 .search__wrapper {
   grid-row: 1;
-  grid-column: 1 / 3;
+  grid-column: 1/2;
   margin: 1rem 0;
+
+  display: flex;
+  justify-content: space-around;
 }
 
 .search__box {
-  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
 }
 
 .search__input {
   padding: 1rem;
   font-size: 1.8rem;
-  width: calc(100% - $search-btn-width);
+  width: 100%;
   &:focus {
     outline: none;
   }
@@ -24,9 +29,7 @@ $search-btn-width: 8rem;
   background-size: 80% 80%;
   background-repeat: no-repeat;
   background-position: 50% 50%;
-  width: $search-btn-width;
-  height: 100%;
-  position: absolute;
+  width: 15%;
 }
 
 // NO RESULT

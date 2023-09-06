@@ -14,9 +14,12 @@ export default class ProductView extends View {
 
   private productKey: string;
 
-  constructor(clientAPI: ClientAPI, productKey: string) {
+  private breadCrumb: HTMLElement;
+
+  constructor(clientAPI: ClientAPI, productKey: string, breadCrumb: HTMLElement) {
     super(productParams.section);
     this.productKey = productKey;
+    this.breadCrumb = breadCrumb;
     this.clientAPI = clientAPI;
     this.render();
   }
@@ -36,7 +39,7 @@ export default class ProductView extends View {
     this.injectProductSection(innerWrapper);
 
     wrapper.getElement().classList.add('product__wrapper');
-    wrapper.addInnerElement(innerWrapper);
+    wrapper.addInnerElement([this.breadCrumb, innerWrapper]);
     super.addInnerElement(wrapper);
   }
 

@@ -25,6 +25,7 @@
     "@typescript-eslint/no-explicit-any": 2,
     "consistent-return": "off",
     "comma-dangle": [2, "always-multiline"],
+    "operator-linebreak": "off",
     "prettier/prettier" : 2,
     "max-len": [2, { "code": 120, "ignoreUrls": true, "ignoreStrings": true, "ignoreTemplateLiterals": true }],
     "linebreak-style": [2, "windows"],

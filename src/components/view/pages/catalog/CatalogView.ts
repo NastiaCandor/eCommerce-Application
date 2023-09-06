@@ -1,5 +1,5 @@
 import { Attribute, LocalizedString, Price, ProductProjection } from '@commercetools/platform-sdk';
-import { ImageArr, PrefetchedGenres } from '../../../../types';
+import { ImageArr, PrefetchedData } from '../../../../types';
 import Router from '../../../router/Router';
 import ClientAPI from '../../../utils/Client';
 import ElementCreator from '../../../utils/ElementCreator';
@@ -22,18 +22,21 @@ export default class CatalogView extends View {
 
   private categoriesBtn: Array<HTMLElement>;
 
-  private prefetchedGenres: PrefetchedGenres[];
+  private prefetchedData: PrefetchedData;
 
   private searchView: SearchView;
+
+  private bcWrapper: HTMLElement;
 
   constructor(clientApi: ClientAPI, router: Router) {
     super(catalogParams.section);
     this.clientApi = clientApi;
-    this.prefetchedGenres = this.clientApi.getPrefetchedData.genres;
+    this.prefetchedData = this.clientApi.getPrefetchedData;
     this.filterView = new FilterView(this.clientApi);
     this.searchView = new SearchView(this.clientApi);
     this.searchFunctionality();
     this.router = router;
+    this.bcWrapper = this.breadCrumbWrapper;
     this.wrapper = null;
     this.categoriesBtn = [];
   }
@@ -42,12 +45,12 @@ export default class CatalogView extends View {
     await this.configure();
   }
 
-  protected async configure(productInfo?: ProductProjection[]) {
-    await this.init(productInfo);
+  protected async configure(productInfo?: ProductProjection[], cardsView?: ElementCreator) {
+    await this.init(productInfo, cardsView);
     await this.categoriesCbHandler();
   }
 
-  private async init(productInfo?: ProductProjection[]): Promise<void> {
+  private async init(productInfo?: ProductProjection[], cardsView?: ElementCreator): Promise<void> {
     const wrapper = new ElementCreator(catalogParams.wrapper);
     const mobileMenuBtn = this.createMobileMenuBtn();
     wrapper.addInnerElement(mobileMenuBtn);
@@ -56,12 +59,14 @@ export default class CatalogView extends View {
       sideBar.getElement().classList.toggle('no-show');
       sideBar.getElement().classList.toggle('mobile-menu');
     });
-
-    const assambledCards = await this.assamleCards(productInfo);
-    wrapper.addInnerElement([sideBar, assambledCards]);
+    const assambledCards = cardsView || (await this.assamleCards(productInfo));
+    wrapper.addInnerElement([sideBar, assambledCards, this.bcWrapper]);
     this.wrapper = wrapper;
     wrapper.addInnerElement(this.searchView);
-    this.addInnerElement(wrapper);
+    if (cardsView) {
+      return this.addInnerElement(this.wrapper);
+    }
+    this.addInnerElement(this.wrapper);
   }
 
   public assamleSideBar() {
@@ -72,14 +77,14 @@ export default class CatalogView extends View {
     return asideWrapper;
   }
 
-  private async fetchAllCardsData() {
+  public async fetchAllCardsData() {
     const data = await this.clientApi.getAllCardsData();
     if (data) {
       return data.map((item) => item);
     }
   }
 
-  private async assamleCards(fetchedData?: ProductProjection[]) {
+  public async assamleCards(fetchedData?: ProductProjection[]) {
     const cardsData = fetchedData || (await this.fetchAllCardsData());
     const cardsWrapper = new ElementCreator(catalogParams.productCards);
     if (cardsData && <ProductProjection[]>cardsData) {
@@ -104,8 +109,21 @@ export default class CatalogView extends View {
 
   private cardsClickHandler(evt: Event) {
     if (evt.target instanceof HTMLElement) {
-      const card = evt.target;
-      const { id } = card.dataset;
+      let { target } = evt;
+
+      while (!target.dataset.id) {
+        target = target.parentElement as HTMLElement;
+      }
+      const { id } = target.dataset;
+      if (id) {
+        this.updateCrumbNavigation();
+        const productLink = this.prefetchedData.productsUrl.ids.get(id);
+        const path = `${PAGES.PRODUCT}/${productLink || ''}`;
+        this.router.navigate(path, id);
+        this.createBreadCrumbs();
+        return;
+      }
+      console.error("Don't know how you're able to do it, but there is no such Id! ");
       this.router.navigate(PAGES.PRODUCT, id);
     }
   }
@@ -165,8 +183,9 @@ export default class CatalogView extends View {
   }
 
   public async mountCategory(key: string) {
-    const categoryKey = this.prefetchedGenres.find((item) => item.key === key);
+    const categoryKey = this.prefetchedData.genres.find((item) => item.key === key);
     const id = categoryKey?.id;
+    this.updateCrumbNavigation();
     if (id) {
       const data = await this.clientApi.getSpecificGenreById(id);
       if (data && data.results.length > 0) {
@@ -180,6 +199,13 @@ export default class CatalogView extends View {
         });
       }
     }
+  }
+
+  public replaceCardsAndReturnElement(wrapper: ElementCreator, cardsView: ElementCreator) {
+    const replacedNode = wrapper.getElement().childNodes[2];
+    this.updateCrumbNavigation();
+    wrapper.getElement().replaceChild(cardsView.getElement(), replacedNode);
+    return this;
   }
 
   public replaceCards(wrapper: ElementCreator, cardsView: ElementCreator) {
@@ -340,5 +366,94 @@ export default class CatalogView extends View {
       const replacedNode = this.wrapper.getElement().childNodes[2];
       this.wrapper.getElement().replaceChild(container.getElement(), replacedNode);
     }
+  }
+
+  private async getCategoriesView() {
+    const productCards = new ElementCreator(catalogParams.productCards);
+    const heading = new ElementCreator(catalogParams.categoriesPage.pageHeading);
+    productCards.addInnerElement(heading);
+    this.prefetchedData.genres.forEach(async (item) => {
+      const data = await this.clientApi.getSpecificGenreById(item.id);
+      if (data) {
+        const dataResults = data.results;
+        const catWrapper = new ElementCreator(catalogParams.categoriesPage.categoryWrapper);
+        const catHeading = new ElementCreator(catalogParams.categoriesPage.categoryHeading);
+        catHeading.setTextContent(item.name);
+        const cards = await this.assamleCards(dataResults);
+        catWrapper.addInnerElement([catHeading, cards]);
+        productCards.addInnerElement(catWrapper);
+      }
+    });
+    return productCards;
+  }
+
+  public async proceedToCategories() {
+    const productCards = await this.getCategoriesView();
+    this.updateCrumbNavigation();
+    if (productCards) {
+      if (!this.wrapper) {
+        this.configure(undefined, productCards);
+      } else {
+        this.replaceCards(this.wrapper, productCards);
+      }
+    }
+  }
+
+  public async proceedToCatalog() {
+    const productCards = await this.getCategoriesView();
+    this.updateCrumbNavigation();
+    if (productCards) {
+      if (!this.wrapper) {
+        this.configure(undefined, productCards);
+      } else {
+        this.replaceCards(this.wrapper, productCards);
+      }
+    }
+  }
+
+  public updateCrumbNavigation() {
+    this.bcWrapper.replaceChildren(...this.createBreadCrumbs());
+  }
+
+  private createBreadCrumbs() {
+    const url = this.router.currentPath.split('/');
+    const crumbs = url
+      .filter((item) => item !== '')
+      .map((item, i, arr) => {
+        const itemWrapper = new ElementCreator(catalogParams.breadCrumbs.linkContainer);
+        let link = new ElementCreator(catalogParams.breadCrumbs.bcLink);
+        if (arr.length === i + 1) {
+          link = new ElementCreator(catalogParams.breadCrumbs.bcLinkActive);
+        }
+        link.setTextContent(item.split('_').join(' '));
+        const path = `${arr[0]}/${arr.slice(1, i + 1).join('/')}`;
+        link.setAttribute('href', path);
+        link.setMouseEvent((evt) => {
+          evt.preventDefault();
+          if (evt.target instanceof HTMLAnchorElement) {
+            const pathname = evt.target.pathname.slice(1);
+            if (window.location.pathname.slice(1) === pathname) {
+              return false;
+            }
+            this.router.navigate(path);
+          }
+        });
+        itemWrapper.addInnerElement(link);
+        return itemWrapper.getElement();
+      });
+    return crumbs;
+  }
+
+  public get breadCrumbWrapper() {
+    const wrapper = new ElementCreator(catalogParams.breadCrumbs.wrapper);
+    wrapper.addInnerElement(this.createBreadCrumbs());
+    return wrapper.getElement();
+  }
+
+  public get getWrapper() {
+    if (this.wrapper) {
+      return this.wrapper;
+    }
+    return console.error('catalog wrapper not found!');
   }
 }

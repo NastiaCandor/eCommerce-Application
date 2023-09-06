@@ -14,7 +14,7 @@ import ProfileView from '../view/profile/ProfileView';
 import RegView from '../view/registration/reg-view';
 import AboutView from '../view/pages/about/AboutView';
 import Routes from '../router/utils/Routes';
-import { Route, RouteCallbacks } from '../../types';
+import { PrefetchedData, Route, RouteCallbacks } from '../../types';
 import ClientAPI from '../utils/Client';
 import State from '../state/State';
 import ProductView from '../view/product-page/ProductView';
@@ -40,17 +40,23 @@ export default class App {
 
   private state: State;
 
+  private isCategoriesLoaded: boolean;
+
+  private prefetchedData: PrefetchedData;
+
   constructor(clientApi: ClientAPI) {
     this.state = new State();
     this.clientApi = clientApi;
     this.routesClass = new Routes(this.getRoutesCallbacks(), this.clientApi);
+    this.prefetchedData = this.clientApi.prefetchedData;
     this.routes = this.routesClass.getRoutes();
-    this.router = new Router(this.routes, this.state);
+    this.router = new Router(this.routes, this.state, this.routesClass.getTitlesMap);
     this.contentContainer = new MainView();
     this.catalogView = new CatalogView(this.clientApi, this.router);
     this.header = new HeaderView(this.router);
     this.signupForm = new RegView(this.router);
     this.loginForm = new LoginView(this.router);
+    this.isCategoriesLoaded = false;
   }
 
   public async start() {
@@ -104,16 +110,43 @@ export default class App {
   }
 
   private async loadCatalogPage() {
+    if (this.isCategoriesLoaded) {
+      await this.catalogView.assamleCards().then((element) => {
+        const wrapper = this.catalogView.getWrapper;
+        if (wrapper) {
+          this.catalogView.replaceCardsAndReturnElement(wrapper, element);
+          this.setContent(PAGES.CATALOG, this.catalogView.getElement());
+        }
+      });
+      return;
+    }
+    this.isCategoriesLoaded = true;
     this.setContent(PAGES.CATALOG, this.catalogView.getElement());
   }
 
-  private loadProductPage(id?: string) {
-    // TODO: connect productID from Catalog Page to Product Page 177a75d9-7bcc-4800-8031-91ac81f2bd29
-    // 30b29e00-020c-41aa-8da5-250ae76d2f39
-    // 5673e423-c01e-4b35-9ef0-86b1043d08b4
-    const productId = id || '81b1bf51-40bd-4598-a12c-e7f5096b9e79';
-    const product = new ProductView(this.clientApi, productId).getElement();
-    this.setContent(PAGES.PRODUCT, product);
+  private async loadCategoriesPage() {
+    await this.catalogView.proceedToCategories();
+    this.isCategoriesLoaded = true;
+    this.setContent(PAGES.CATALOG, this.catalogView.getElement());
+  }
+
+  private loadProductPage(id: string) {
+    if (!id) {
+      this.router.navigate(PAGES.CATALOG);
+      return;
+    }
+
+    let cardData;
+
+    this.prefetchedData.productsUrl.ids.forEach((key, value) => {
+      if (key === id) cardData = value;
+    });
+    if (cardData) {
+      const product = new ProductView(this.clientApi, cardData, this.catalogView.breadCrumbWrapper).getElement();
+      this.setContent(PAGES.PRODUCT, product);
+    } else {
+      this.loadCatalogPage();
+    }
   }
 
   private logoutUser() {
@@ -143,6 +176,7 @@ export default class App {
       loadLoginPage: this.loadLoginPage.bind(this),
       loadMainPage: this.loadMainPage.bind(this),
       loadCartPage: this.loadCartPage.bind(this),
+      loadCategoriesPage: this.loadCategoriesPage.bind(this),
       logoutUser: this.logoutUser.bind(this),
       loadProductPage: this.loadProductPage.bind(this),
       mountCategory: this.mountCategory.bind(this),

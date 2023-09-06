@@ -56,6 +56,7 @@ export type PagesInterface = {
   CART: string;
 
   PRODUCT: string;
+  PRODUCTS: string;
 
   MAIN: string;
   CATALOG: string;
@@ -66,10 +67,10 @@ export type PagesInterface = {
   CATEGORIES: string;
 };
 
-export type Route = {
+export interface Route {
   path: string;
-  callback: (id?: string) => void;
-};
+  callback: (id?: string, title?: string) => void;
+}
 
 export type UserRequest = {
   path: string;
@@ -84,6 +85,12 @@ export type PrefetchedData = {
   genres: PrefetchedGenres[];
   attributes: PrefetchedAttributes<string>;
   prices: PrefetchedPrices;
+  productsUrl: PrefetchedProductUrl;
+};
+
+export type PrefetchedProductUrl = {
+  ids: Map<string, string>;
+  keys: string[][];
 };
 
 export type PrefetchedPrices = {
@@ -130,6 +137,7 @@ export type RouteCallbacks = {
   loadShippingPage: () => void;
   loadNotFoundPage: () => void;
   loadCatalogPage: () => void;
+  loadCategoriesPage: () => void;
   logoutUser: () => void;
   loadProductPage: (id: string) => void;
   mountCategory: (id: string) => void;
