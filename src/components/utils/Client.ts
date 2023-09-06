@@ -438,7 +438,6 @@ export default class ClientAPI {
     try {
       const data = await this.apiRoot.categories().get(query).execute();
       if (data.statusCode === 200) {
-        console.log(data.body);
         const response = data.body;
         return response.results;
       }
@@ -607,6 +606,7 @@ export default class ClientAPI {
     try {
       const data = await this.apiRoot.productProjections().search().get(query).execute();
       if (data.statusCode === 200) {
+        console.log(data.body.results);
         return data.body.results;
       }
     } catch (e) {
