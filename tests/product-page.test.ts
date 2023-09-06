@@ -16,6 +16,7 @@ describe('Product Page', () => {
   let wrapper: ElementCreator;
   let prices: Price[];
   let clientAPI: any;
+  const bcWrapper = new ElementCreator({ tag: 'div' }).getElement();
 
   beforeEach(() => {
     clientAPI = {
@@ -37,7 +38,7 @@ describe('Product Page', () => {
       obtainUserAccessToken: (value: string) => Promise.resolve(value),
       setAccessTokenCookie: (value: string) => Promise.resolve(value),
     };
-    productView = new ProductView(<ClientAPI>(<unknown>clientAPI), '5673e423-c01e-4b35-9ef0-86b1043d08b4');
+    productView = new ProductView(<ClientAPI>(<unknown>clientAPI), '5673e423-c01e-4b35-9ef0-86b1043d08b4', bcWrapper);
     Object.defineProperties(productView, {
       clientAPI: {
         value: clientAPI,

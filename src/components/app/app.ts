@@ -40,6 +40,7 @@ export default class App {
 
   private state: State;
 
+  private isCategoriesLoaded: boolean;
   private prefetchedData: PrefetchedData;
 
   constructor(clientApi: ClientAPI) {
@@ -54,6 +55,7 @@ export default class App {
     this.header = new HeaderView(this.router);
     this.signupForm = new RegView(this.router);
     this.loginForm = new LoginView(this.router);
+    this.isCategoriesLoaded = false;
   }
 
   public async start() {
@@ -107,6 +109,23 @@ export default class App {
   }
 
   private async loadCatalogPage() {
+    if (this.isCategoriesLoaded) {
+      await this.catalogView.assamleCards().then((element) => {
+        const wrapper = this.catalogView.getWrapper;
+        if (wrapper) {
+          this.catalogView.replaceCardsAndReturnElement(wrapper, element);
+          this.setContent(PAGES.CATALOG, this.catalogView.getElement());
+        }
+      });
+      return;
+    }
+    this.isCategoriesLoaded = true;
+    this.setContent(PAGES.CATALOG, this.catalogView.getElement());
+  }
+
+  private async loadCategoriesPage() {
+    await this.catalogView.proceedToCategories();
+    this.isCategoriesLoaded = true;
     this.setContent(PAGES.CATALOG, this.catalogView.getElement());
   }
 
@@ -122,7 +141,7 @@ export default class App {
       if (key === id) cardData = value;
     });
     if (cardData) {
-      const product = new ProductView(this.clientApi, cardData).getElement();
+      const product = new ProductView(this.clientApi, cardData, this.catalogView.breadCrumbWrapper).getElement();
       this.setContent(PAGES.PRODUCT, product);
     } else {
       this.loadCatalogPage();
@@ -156,6 +175,7 @@ export default class App {
       loadLoginPage: this.loadLoginPage.bind(this),
       loadMainPage: this.loadMainPage.bind(this),
       loadCartPage: this.loadCartPage.bind(this),
+      loadCategoriesPage: this.loadCategoriesPage.bind(this),
       logoutUser: this.logoutUser.bind(this),
       loadProductPage: this.loadProductPage.bind(this),
       mountCategory: this.mountCategory.bind(this),

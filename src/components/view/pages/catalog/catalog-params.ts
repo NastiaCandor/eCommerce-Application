@@ -131,6 +131,39 @@ const catalogParams = {
       cssClasses: ['no-res__text'],
     },
   },
+  breadCrumbs: {
+    wrapper: {
+      tag: 'nav',
+      cssClasses: ['catalog__bc-nav'],
+    },
+    linkContainer: {
+      tag: 'div',
+      cssClasses: ['bc-nav__wrapper'],
+    },
+    bcLink: {
+      tag: 'a',
+      cssClasses: ['bc-nav_item'],
+    },
+    bcLinkActive: {
+      tag: 'a',
+      cssClasses: ['bc-nav_item', 'active'],
+    },
+  },
+  categoriesPage: {
+    pageHeading: {
+      tag: 'h3',
+      cssClasses: ['heading'],
+      textContent: 'Categories:',
+    },
+    categoryWrapper: {
+      tag: 'div',
+      cssClasses: ['card__content_category'],
+    },
+    categoryHeading: {
+      tag: 'h4',
+      cssClasses: ['category_heading', 'heading'],
+    },
+  },
 };
 
 export default catalogParams;

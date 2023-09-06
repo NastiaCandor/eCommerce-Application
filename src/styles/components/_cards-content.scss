@@ -1,7 +1,7 @@
 .product__cards {
   grid-area: cards;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   flex-wrap: wrap;
   gap: 1em 1em;
@@ -126,4 +126,15 @@
       }
     }
   }
+
+
 }
+
+.category_heading {
+  text-align: center;
+  font-size: 2rem;
+  padding: 1rem;
+}
+
+}
+
