@@ -43,7 +43,6 @@ export default class App {
   private isCategoriesLoaded: boolean;
 
   private isStarted: boolean;
-
   private prefetchedData: PrefetchedData;
 
   constructor(clientApi: ClientAPI) {

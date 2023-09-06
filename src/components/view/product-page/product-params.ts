@@ -44,6 +44,8 @@ type ProductParamsType = {
   errorText: ElementParamsType;
   // NoImage
   noImage: ElementParamsType;
+  // Back to Cataloge Page
+  toCatalogBtn: ElementParamsType;
 };
 
 const productParams: ProductParamsType = {
@@ -208,6 +210,11 @@ const productParams: ProductParamsType = {
     tag: 'img',
     cssClasses: ['product__no-image'],
     alt: 'No Image Available',
+  },
+  toCatalogBtn: {
+    tag: 'button',
+    cssClasses: ['product__back-to-catalog-btn', 'button'],
+    textContent: 'Back to catalog',
   },
 };
 

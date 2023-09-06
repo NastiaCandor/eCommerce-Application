@@ -4,7 +4,7 @@ const mainParams = {
   },
   wrapper: {
     tag: 'div',
-    cssClasses: ['main__wrapper', 'wrapper'],
+    cssClasses: ['main__wrapper'],
   },
 };
 

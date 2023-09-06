@@ -11,7 +11,7 @@ export default class Router {
   private titlesMap: Map<string, string>;
 
   private request = <UserRequest>{};
-
+  
   constructor(routes: Route[], state: State, titlesMap: Map<string, string>) {
     this.state = state;
     this.routes = routes;
@@ -55,6 +55,9 @@ export default class Router {
     }
     if (path && productId) {
       const title = this.titlesMap.get(this.request.category);
+
+    if (path && productId) {
+      const title = this.titlesMap.get(request.category);
       if (title) {
         this.state.setPageTitle(title, true);
       }

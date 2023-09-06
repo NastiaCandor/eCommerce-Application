@@ -243,6 +243,22 @@
 
 .modal__product-slider {
   width: calc(100vh - 12rem);
-  // padding: 4rem;
   height: 100vh;
+}
+
+// BACK TO CATALOG
+
+.product__back-to-catalog-btn {
+  @include font(1.4rem, 100%, 500);
+  margin: 1rem 0;
+  background-image: url('../assets/img/undo-small-svgrepo-com.svg');
+  background-repeat: no-repeat;
+  background-size: 4.5rem 4.5rem;
+  background-position: 0 0;
+  padding-left: 4rem;
+  background-color: #f4c79fc6;
+  color: #604747;
+  &:hover {
+    background-color: #dc995ff1;
+  }
 }

@@ -36,6 +36,7 @@ export default class ProductView extends View {
     const wrapper = new ElementCreator(wrapperParams);
     const innerWrapper = new ElementCreator(productParams.innerWrapper);
     wrapper.setAttribute('href', PAGES.PRODUCT);
+    this.injectBackToCatalog(innerWrapper);
     this.injectProductSection(innerWrapper);
 
     wrapper.getElement().classList.add('product__wrapper');
@@ -43,7 +44,12 @@ export default class ProductView extends View {
     super.addInnerElement(wrapper);
   }
 
-  private injectProductSection(wrapper: ElementCreator) {
+  private injectBackToCatalog(wrapper: ElementCreator): void {
+    const btn = new ElementCreator(productParams.toCatalogBtn);
+    wrapper.addInnerElement(btn);
+  }
+
+  private injectProductSection(wrapper: ElementCreator): void {
     const productDisplay = new ElementCreator(productParams.productDisplay);
     const getProduct = this.clientAPI.getProductById(this.productKey);
     getProduct
@@ -63,7 +69,7 @@ export default class ProductView extends View {
     wrapper.addInnerElement(productDisplay);
   }
 
-  private fillProductInfoSide(wrapper: ElementCreator, body: ProductProjection) {
+  private fillProductInfoSide(wrapper: ElementCreator, body: ProductProjection): void {
     const productSide = new ElementCreator(productParams.infoSide);
     const { name, masterVariant } = body;
     this.injectProductTitle(productSide, name['en-US']);
