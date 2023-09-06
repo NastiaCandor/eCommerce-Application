@@ -53,10 +53,15 @@ export default class CatalogView extends View {
     wrapper.addInnerElement(mobileMenuBtn);
     const sideBar = this.assamleSideBar();
     mobileMenuBtn.getElement().addEventListener('click', () => {
-      sideBar.getElement().classList.toggle('no-show');
-      sideBar.getElement().classList.toggle('mobile-menu');
+      sideBar.getElement().classList.toggle('no-show__aside');
+      mobileMenuBtn.getElement().classList.toggle('mobile-btn__active');
     });
 
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) {
+        sideBar.getElement().classList.remove('no-show__aside');
+      }
+    });
     const assambledCards = await this.assamleCards(productInfo);
     wrapper.addInnerElement([sideBar, assambledCards]);
     this.wrapper = wrapper;
@@ -93,7 +98,7 @@ export default class CatalogView extends View {
           const image = this.assambleImage(data.masterVariant.images, data.name);
           const priceElement = this.assamblePrice(data.masterVariant.prices);
           const cartBtn = this.assambleCartBtn();
-          productCard.addInnerElement([singer, songTitle, image, priceElement, cartBtn]);
+          productCard.addInnerElement([image, singer, songTitle, priceElement, cartBtn]);
           cardsWrapper.addInnerElement(productCard);
         }
         productCard.setMouseEvent((evt) => this.cardsClickHandler(evt));
