@@ -46,6 +46,9 @@ export default class ProductView extends View {
 
   private injectBackToCatalog(wrapper: ElementCreator): void {
     const btn = new ElementCreator(productParams.toCatalogBtn);
+    btn.getElement().addEventListener('click', () => {
+      window.history.back();
+    });
     wrapper.addInnerElement(btn);
   }
 

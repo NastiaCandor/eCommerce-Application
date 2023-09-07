@@ -27,14 +27,20 @@
 
 .modal__close-btn {
   position: absolute;
+  z-index: 10;
   right: -6rem;
   cursor: pointer;
   svg {
     pointer-events: none;
   }
+  @include media-tablet {
+    top: 5rem;
+    right: 2rem;
+    padding: 0.5rem 1rem;
+  }
   @include media-mobile-L {
-    top: 1rem;
-    right: -3rem;
+    top: 7rem;
+    right: 2rem;
     padding: 0.5rem 1rem;
   }
 }

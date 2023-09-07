@@ -17,6 +17,8 @@ export default class FilterView extends View {
 
   private endPoints: EndPointsObject;
 
+  private allElements: ElementCreator[];
+
   private queryObject: QueryObject;
 
   constructor(private clientApi: ClientAPI) {
@@ -24,6 +26,7 @@ export default class FilterView extends View {
     this.clientApi = clientApi;
     this.prefetchedData = this.clientApi.getPrefetchedData;
     this.labelBoxes = [];
+    this.allElements = [];
     this.queryObject = <QueryObject>{};
     this.endPoints = <EndPointsObject>{};
   }
@@ -35,6 +38,8 @@ export default class FilterView extends View {
 
   protected async configure() {
     this.renderWrapper();
+    this.endPoints.sort = [];
+    this.endPoints.filter = [];
   }
 
   private renderWrapper() {
@@ -45,10 +50,10 @@ export default class FilterView extends View {
     this.addInnerElement(this.createFilterBox(label, this.prefetchedData.attributes.label));
     this.addInnerElement(this.createFilterBox(lp, this.prefetchedData.attributes.lp));
     this.addInnerElement(rangeInput);
-    this.addInnerElement(this.createOrderBox());
+    this.addInnerElement(this.createSortBox());
   }
 
-  private createOrderBox() {
+  private createSortBox() {
     const filterBox = new ElementCreator(filterParams.filterBox);
     filterBox.setCssClasses(['price-box']);
     const orderHeading = new ElementCreator(filterParams.orderHeading);
@@ -57,7 +62,6 @@ export default class FilterView extends View {
     const elWrapper = new ElementCreator(filterParams.userSelect.elementsWrapper);
     const userSelectNames = ['Default', 'Price Asc', 'Price Desc', 'Name Asc', 'Name Desc'];
     const innerElements: ElementCreator[] = [];
-    const allElements: ElementCreator[] = [];
     const userSelectWrapper = new ElementCreator(filterParams.userSelect.wrapper);
     userSelectNames.forEach((item) => {
       const el = new ElementCreator(filterParams.userSelect.elements);
@@ -68,20 +72,20 @@ export default class FilterView extends View {
         el.setCssClasses(['hidden']);
         if (el instanceof ElementCreator) {
           innerElements.push(el);
-          allElements.push(el);
+          this.allElements.push(el);
         }
         return;
       }
       el.setAttribute(`data-${dataName.toLowerCase()}`, 'default');
-      allElements.push(el);
+      this.allElements.push(el);
     });
     orderHeading.getElement().addEventListener('click', () => {
-      allElements.forEach((item) => {
+      this.allElements.forEach((item) => {
         const el = item.getElement();
         el.classList.toggle('hidden');
       });
     });
-    allElements.forEach((item, i, arr) => {
+    this.allElements.forEach((item, i, arr) => {
       item.getElement().addEventListener('click', (evt) => {
         arr.forEach((el) => el.getElement().classList.add('hidden'));
         if (evt.target instanceof HTMLElement) {
@@ -89,12 +93,14 @@ export default class FilterView extends View {
           if (evt.target.dataset.price) {
             this.queryObject.sort.push(`variants.scopedPrice.currentValue.centAmount ${evt.target.dataset.price}`);
           }
-          if (evt.target.dataset.name) this.queryObject.sort.push(`name.en-US ${evt.target.dataset.name}`);
+          if (evt.target.dataset.name) {
+            this.queryObject.sort.push(`name.en-US ${evt.target.dataset.name}`);
+          }
           evt.target.classList.remove('hidden');
         }
       });
     });
-    allElements.forEach((item) => elWrapper.addInnerElement(item));
+    this.allElements.forEach((item) => elWrapper.addInnerElement(item));
     userSelectWrapper.addInnerElement(elWrapper);
     filterBox.addInnerElement(userSelectWrapper);
     return filterBox;
@@ -144,9 +150,9 @@ export default class FilterView extends View {
 
   private priceRangeHandler(evt: (string | number)[]) {
     const [min, max] = evt;
+    this.queryObject.priceRange = [];
     const leftValue = (Number(min) * 100).toFixed(2).toString();
     const rightValue = (Number(max) * 100).toFixed(2).toString();
-    this.queryObject.price = [];
     this.addWriteToQueryObject('priceRange', leftValue);
     this.addWriteToQueryObject('priceRange', rightValue);
   }
@@ -180,37 +186,33 @@ export default class FilterView extends View {
   }
 
   public resetInputs() {
-    console.log(this.endPoints);
     this.labelBoxes.forEach((item) => {
       const checkbox = item.querySelector('input');
       if (item.classList.contains('active')) item.classList.remove('active');
       if (checkbox && checkbox instanceof HTMLInputElement) checkbox.checked = false;
     });
+    this.allElements.forEach((item, i) => {
+      if (i === 0) {
+        item.getElement().classList.remove('hidden');
+      } else {
+        item.getElement().classList.add('hidden');
+      }
+    });
+    this.queryObject = <QueryObject>{};
     this.resetEndpoints();
-    this.queryObject = <QueryObject>{
-      // eslint-disable-next-line max-len
-      priceRange: [
-        this.prefetchedData.prices.minFractured.toString(),
-        this.prefetchedData.prices.maxFractured.toString(),
-      ],
-    };
   }
 
   public resetEndpoints() {
     this.endPoints = <EndPointsObject>{
-      filter: [],
       sort: [],
+      filter: [],
     };
   }
 
   public createQuaryString() {
     const valuePairs = Object.entries(this.queryObject);
-    console.log(valuePairs);
     if (!this.endPoints.filter) {
       this.endPoints.filter = [];
-    }
-    if (!this.endPoints.sort) {
-      this.endPoints.sort = [];
     }
     valuePairs.forEach(([key, values]) => {
       if (key === 'LP') {
@@ -219,7 +221,7 @@ export default class FilterView extends View {
       } else if (key === 'priceRange') {
         const [minPrice, maxPrice] = values;
         this.endPoints.filter.push(`variants.scopedPrice.currentValue.centAmount:range(${minPrice} to ${maxPrice})`);
-      } else if (key === 'sort') {
+      } else if (key === 'sort' && values) {
         this.endPoints.sort.push(...values);
       } else {
         const valueStrings = values.map((value) => `"${value}"`).join(',');
