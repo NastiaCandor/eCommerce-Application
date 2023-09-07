@@ -96,6 +96,21 @@ const filterParams = {
     tag: 'img',
     cssClasses: ['price-box_img'],
   },
+
+  userSelect: {
+    wrapper: {
+      tag: 'div',
+      cssClasses: ['sort__user-select'],
+    },
+    elements: {
+      tag: 'div',
+      cssClasses: ['sort_user-select_element'],
+    },
+    elementsWrapper: {
+      tag: 'div',
+      cssClasses: ['sort_user-select_elements'],
+    },
+  },
 };
 
 const filterByText = ['Genres', 'Rarity', 'Price', 'Year'];

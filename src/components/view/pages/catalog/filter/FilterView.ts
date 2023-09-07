@@ -17,6 +17,8 @@ export default class FilterView extends View {
 
   private endPoints: EndPointsObject;
 
+  private allElements: ElementCreator[];
+
   private queryObject: QueryObject;
 
   constructor(private clientApi: ClientAPI) {
@@ -24,6 +26,7 @@ export default class FilterView extends View {
     this.clientApi = clientApi;
     this.prefetchedData = this.clientApi.getPrefetchedData;
     this.labelBoxes = [];
+    this.allElements = [];
     this.queryObject = <QueryObject>{};
     this.endPoints = <EndPointsObject>{};
   }
@@ -35,6 +38,8 @@ export default class FilterView extends View {
 
   protected async configure() {
     this.renderWrapper();
+    this.endPoints.sort = [];
+    this.endPoints.filter = [];
   }
 
   private renderWrapper() {
@@ -45,47 +50,59 @@ export default class FilterView extends View {
     this.addInnerElement(this.createFilterBox(label, this.prefetchedData.attributes.label));
     this.addInnerElement(this.createFilterBox(lp, this.prefetchedData.attributes.lp));
     this.addInnerElement(rangeInput);
-    this.addInnerElement(this.createOrderBox());
+    this.addInnerElement(this.createSortBox());
   }
 
-  private createOrderBox() {
+  private createSortBox() {
     const filterBox = new ElementCreator(filterParams.filterBox);
     filterBox.setCssClasses(['price-box']);
     const orderHeading = new ElementCreator(filterParams.orderHeading);
+
     filterBox.addInnerElement(orderHeading);
-
-    const priceLabel = new ElementCreator(filterParams.filterLabel);
-    const nameLabel = new ElementCreator(filterParams.filterLabel);
-
-    priceLabel.setAttribute('for', 'order-price');
-    nameLabel.setAttribute('for', 'order-name');
-    const priceCheckbox = new ElementCreator(filterParams.orderCheckbox);
-    const nameCheckbox = new ElementCreator(filterParams.orderCheckbox);
-
-    const priceImg = new ElementCreator(filterParams.boxImage);
-    priceImg.setImageLink('../assets/img/arrow-svgrepo-com.svg', 'price-sort');
-    const nameImg = new ElementCreator(filterParams.boxImage);
-    nameImg.setImageLink('../assets/img/arrow-svgrepo-com.svg', 'name-sort');
-
-    priceCheckbox.setAttribute('type', 'checkbox');
-    priceCheckbox.setAttribute('id', 'order-price');
-    priceCheckbox.setAttribute('data-sortprice', 'desc');
-
-    nameCheckbox.setAttribute('type', 'checkbox');
-    nameCheckbox.setAttribute('id', 'order-name');
-    nameCheckbox.setAttribute('data-sortname', 'desc');
-
-    const priceText = new ElementCreator(filterParams.filterBoxText);
-    const nameText = new ElementCreator(filterParams.filterBoxText);
-    priceText.setTextContent('Price');
-    nameText.setTextContent('Name');
-    this.checkboxHandler(<HTMLInputElement>priceCheckbox.getElement());
-    this.checkboxHandler(<HTMLInputElement>nameCheckbox.getElement());
-    priceLabel.addInnerElement([priceText, priceCheckbox, priceImg]);
-    this.labelBoxes.push(<HTMLInputElement>priceLabel.getElement());
-    nameLabel.addInnerElement([nameText, nameCheckbox, nameImg]);
-    this.labelBoxes.push(<HTMLInputElement>nameLabel.getElement());
-    filterBox.addInnerElement([priceLabel, nameLabel]);
+    const elWrapper = new ElementCreator(filterParams.userSelect.elementsWrapper);
+    const userSelectNames = ['Default', 'Price Asc', 'Price Desc', 'Name Asc', 'Name Desc'];
+    const innerElements: ElementCreator[] = [];
+    const userSelectWrapper = new ElementCreator(filterParams.userSelect.wrapper);
+    userSelectNames.forEach((item) => {
+      const el = new ElementCreator(filterParams.userSelect.elements);
+      el.setTextContent(item);
+      const [dataName, value] = item.split(' ');
+      if (value) {
+        el.setAttribute(`data-${dataName.toLowerCase()}`, value.toLowerCase());
+        el.setCssClasses(['hidden']);
+        if (el instanceof ElementCreator) {
+          innerElements.push(el);
+          this.allElements.push(el);
+        }
+        return;
+      }
+      el.setAttribute(`data-${dataName.toLowerCase()}`, 'default');
+      this.allElements.push(el);
+    });
+    orderHeading.getElement().addEventListener('click', () => {
+      this.allElements.forEach((item) => {
+        const el = item.getElement();
+        el.classList.toggle('hidden');
+      });
+    });
+    this.allElements.forEach((item, i, arr) => {
+      item.getElement().addEventListener('click', (evt) => {
+        arr.forEach((el) => el.getElement().classList.add('hidden'));
+        if (evt.target instanceof HTMLElement) {
+          this.queryObject.sort = [];
+          if (evt.target.dataset.price) {
+            this.queryObject.sort.push(`variants.scopedPrice.currentValue.centAmount ${evt.target.dataset.price}`);
+          }
+          if (evt.target.dataset.name) {
+            this.queryObject.sort.push(`name.en-US ${evt.target.dataset.name}`);
+          }
+          evt.target.classList.remove('hidden');
+        }
+      });
+    });
+    this.allElements.forEach((item) => elWrapper.addInnerElement(item));
+    userSelectWrapper.addInnerElement(elWrapper);
+    filterBox.addInnerElement(userSelectWrapper);
     return filterBox;
   }
 
@@ -133,11 +150,11 @@ export default class FilterView extends View {
 
   private priceRangeHandler(evt: (string | number)[]) {
     const [min, max] = evt;
+    this.queryObject.priceRange = [];
     const leftValue = (Number(min) * 100).toFixed(2).toString();
     const rightValue = (Number(max) * 100).toFixed(2).toString();
-    this.queryObject.price = [];
-    this.addWriteToQueryObject('price', leftValue);
-    this.addWriteToQueryObject('price', rightValue);
+    this.addWriteToQueryObject('priceRange', leftValue);
+    this.addWriteToQueryObject('priceRange', rightValue);
   }
 
   private createFilterBox(filterHeading: string, filterItems: string[]) {
@@ -174,16 +191,21 @@ export default class FilterView extends View {
       if (item.classList.contains('active')) item.classList.remove('active');
       if (checkbox && checkbox instanceof HTMLInputElement) checkbox.checked = false;
     });
+    this.allElements.forEach((item, i) => {
+      if (i === 0) {
+        item.getElement().classList.remove('hidden');
+      } else {
+        item.getElement().classList.add('hidden');
+      }
+    });
+    this.queryObject = <QueryObject>{};
     this.resetEndpoints();
-    this.queryObject = <QueryObject>{
-      price: [this.prefetchedData.prices.minFractured.toString(), this.prefetchedData.prices.maxFractured.toString()],
-    };
   }
 
   public resetEndpoints() {
     this.endPoints = <EndPointsObject>{
-      filter: [],
       sort: [],
+      filter: [],
     };
   }
 
@@ -192,22 +214,15 @@ export default class FilterView extends View {
     if (!this.endPoints.filter) {
       this.endPoints.filter = [];
     }
-    if (!this.endPoints.sort) {
-      this.endPoints.sort = [];
-    }
     valuePairs.forEach(([key, values]) => {
       if (key === 'LP') {
         const lpValues = values.map((value) => `"${value}"`).join(',');
         this.endPoints.filter.push(`variants.attributes.${key}.key:${lpValues}`);
-      } else if (key === 'price') {
+      } else if (key === 'priceRange') {
         const [minPrice, maxPrice] = values;
         this.endPoints.filter.push(`variants.scopedPrice.currentValue.centAmount:range(${minPrice} to ${maxPrice})`);
-      } else if (key === 'sortprice') {
-        const string = `variants.scopedPrice.currentValue.centAmount ${values[0]}`;
-        this.endPoints.sort.push(string);
-      } else if (key === 'sortname') {
-        const string = `name.en-US ${values[0]}`;
-        this.endPoints.sort.push(string);
+      } else if (key === 'sort' && values) {
+        this.endPoints.sort.push(...values);
       } else {
         const valueStrings = values.map((value) => `"${value}"`).join(',');
         this.endPoints.filter.push(`variants.attributes.${key}:${valueStrings}`);
@@ -244,7 +259,7 @@ export default class FilterView extends View {
   }
 
   private checkboxHandler(element: HTMLInputElement): void {
-    const datasetTitles = ['condition', 'lp', 'label', 'sortprice', 'sortname'];
+    const datasetTitles = ['condition', 'lp', 'label'];
     element.addEventListener('change', (evt) => {
       const { target } = evt;
       if (target instanceof HTMLInputElement) {

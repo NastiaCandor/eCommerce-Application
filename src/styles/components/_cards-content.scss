@@ -67,7 +67,7 @@
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
-      font-size: calc(1vw + 6px);
+      // font-size: calc(1vw + 6px);
       transition: all 0.3s ease;
       margin-left: 1rem;
       margin-top: 0.5rem;
@@ -124,6 +124,36 @@
       @media screen and (max-width: 500px) {
         height: 5.5rem;
       }
+    }
+  }
+}
+
+.category_heading.heading {
+  text-align: center;
+  font-size: 2.5rem;
+  margin: 3rem 0;
+}
+
+.catalog__bc-nav {
+  grid-area: bc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .bc-nav_item {
+    color: $color-login-background;
+    font-size: 2.2rem;
+    padding: 0.5rem;
+
+    &::after {
+      content: ' > '
+    }
+    &.active {
+      color: $color-hover-link
+    }
+
+    @media screen and (max-width: $tablet) {
+      font-size: 1.2rem;;
     }
   }
 }
