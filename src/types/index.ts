@@ -127,9 +127,8 @@ export type ImageArr = {
 };
 
 export interface QueryObject extends PrefetchedAttributes<string> {
-  price: string[];
-  priceOrder: string[];
-  nameOrder: string[];
+  priceRange: string[];
+  sort: string[];
 }
 
 export type RouteCallbacks = {

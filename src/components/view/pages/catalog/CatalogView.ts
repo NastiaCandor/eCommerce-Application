@@ -7,7 +7,7 @@ import View from '../../View';
 import catalogParams from './catalog-params';
 import { filterParams } from './filter/filter-params';
 import FilterView from './filter/FilterView';
-import '../../../../assets/img/settings.svg';
+import '../../../../assets/img/filter-svgrepo-com.svg';
 import SearchView from './search/SearchView';
 import PAGES from '../../../router/utils/pages';
 
@@ -287,7 +287,6 @@ export default class CatalogView extends View {
 
   public submitBtnHandler(element: HTMLElement) {
     element.addEventListener('click', async () => {
-      this.router.navigate(PAGES.FILTER);
       const cardsData = await this.filterView.getFilterData();
       if (cardsData && cardsData.length > 0) {
         this.filterView.resetEndpoints();
@@ -357,7 +356,7 @@ export default class CatalogView extends View {
     const title = new ElementCreator(catalogParams.noResults.title);
     const message = new ElementCreator(catalogParams.noResults.message);
     if (filter) {
-      message.getElement().innerHTML = 'No Results Found. Please, choose another filters';
+      message.getElement().innerHTML = 'No Results Found. Please, choose another filter';
     } else {
       message.getElement().innerHTML = `No Results for <span>"${search}"</span>. Please, try another search.`;
     }
@@ -369,6 +368,7 @@ export default class CatalogView extends View {
   }
 
   private async getCategoriesView() {
+    console.log('ff');
     const productCards = new ElementCreator(catalogParams.productCards);
     const heading = new ElementCreator(catalogParams.categoriesPage.pageHeading);
     productCards.addInnerElement(heading);

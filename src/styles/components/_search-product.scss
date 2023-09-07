@@ -1,33 +1,38 @@
-$search-btn-width: 8rem;
-
 .search__wrapper {
+  grid-area: search;
   grid-row: 1;
-  grid-column: 1;
-  margin: 1rem 0;
-  padding: 0 2rem;
+  grid-column: 1/2;
+  background-color: #fff;
+
+  border-bottom-right-radius: 5px;
+
+  @media screen and (max-width: $tablet) {
+    order: -1;
+  }
 }
 
 .search__box {
-  position: relative;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
 }
 
 .search__input {
+  width: 100%;
   padding: 1rem;
   font-size: 1.8rem;
-  width: calc(100% - $search-btn-width);
   &:focus {
     outline: none;
   }
 }
 
 .search__btn {
+  width: 20%;
   background-image: url('../assets/img/search-svgrepo-com.svg');
   background-size: 80% 80%;
   background-repeat: no-repeat;
   background-position: 50% 50%;
-  width: $search-btn-width;
-  height: 100%;
-  position: absolute;
+  border-bottom-right-radius: 0;
 }
 
 // NO RESULT

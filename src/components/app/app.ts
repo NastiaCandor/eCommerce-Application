@@ -131,6 +131,7 @@ export default class App {
   private async loadCategoriesPage() {
     await this.catalogView.proceedToCategories();
     this.isCategoriesLoaded = true;
+
     this.setContent(PAGES.CATALOG, this.catalogView.getElement());
   }
 

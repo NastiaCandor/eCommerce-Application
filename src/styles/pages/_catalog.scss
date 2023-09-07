@@ -1,14 +1,19 @@
 .catalog__wrapper {
   display: grid;
-  grid-template-areas: 'catalog-aside cards';
-  grid-template-columns: 1fr 7fr;
+  grid-template-areas: 'search bc bc'
+                        'catalog-aside cards cards';
+  grid-template-columns: 1fr 4fr auto;
   padding: 2rem 0;
   position: relative;
 }
 
 @media screen and (max-width: $tablet) {
  .catalog__wrapper {
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
+  .catalog__bc-nav {
+    order: -1;
+  }
  }
 }
 

@@ -114,7 +114,7 @@ const catalogParams = {
     tag: 'img',
     cssClasses: ['mobile-menu__btn__img'],
     alt: 'filter-settings',
-    src: '../../../../assets/img/settings.svg',
+    src: '../../../../assets/img/filter-svgrepo-com.svg',
   },
   noResults: {
     container: {

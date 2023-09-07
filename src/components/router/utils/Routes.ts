@@ -71,7 +71,7 @@ export default class Routes {
       {
         path: `${PAGES.CATEGORIES}`,
         callback: () => {
-          this.callbacks.loadCatalogPage();
+          this.callbacks.loadCategoriesPage();
         },
       },
       {
