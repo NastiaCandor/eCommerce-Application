@@ -10,6 +10,9 @@ body {
   background-color: $color-body-background;
   @extend %font-add-Inter;
   color: $color-primary-text;
+  &._lock{
+    overflow: hidden;
+  }
 }
 
 * {
@@ -22,9 +25,6 @@ body {
   margin-inline-end: 0px;
   padding-inline-start: 0px;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  &::-webkit-scrollbar {
-    width: 0;
-  }
 }
 
 button {
@@ -37,5 +37,9 @@ a {
   text-decoration: none;
   color: inherit;
   cursor: pointer;
-  // font-family: inherit;
+ }
+
+
+li {
+  list-style: none;
 }

@@ -55,23 +55,81 @@ export type PagesInterface = {
   PROFILE: string;
   CART: string;
 
+  PRODUCT: string;
+  PRODUCTS: string;
+
+  FILTER: string;
+
   MAIN: string;
   CATALOG: string;
   SHIPPING: string;
   CONTACTS: string;
+
+  CATEGORY: string;
+  CATEGORIES: string;
 };
 
-export type Route = {
+export interface Route {
   path: string;
-  callback: () => void;
-};
+  callback: (id?: string, title?: string) => void;
+}
 
 export type UserRequest = {
   path: string;
   resource: string;
+  category: string;
+  id: string;
 };
 
-// ROUTES TYPES
+// PREFETCHED API CLIENT DATA
+
+export type PrefetchedData = {
+  genres: PrefetchedGenres[];
+  attributes: PrefetchedAttributes<string>;
+  prices: PrefetchedPrices;
+  productsUrl: PrefetchedProductUrl;
+};
+
+export type PrefetchedProductUrl = {
+  ids: Map<string, string>;
+  keys: string[][];
+};
+
+export type PrefetchedPrices = {
+  max: number;
+  min: number;
+  avg: number;
+  maxFractured: number;
+  minFractured: number;
+};
+
+export type PrefetchedGenres = {
+  [key: string]: string;
+  name: string;
+  id: string;
+  key: string;
+};
+
+export interface PrefetchedAttributes<T> {
+  [key: string]: T[];
+  condition: T[];
+  label: T[];
+  lp: T[];
+}
+
+export type EndPointsObject = {
+  filter: string[];
+  sort: string[];
+};
+
+export type ImageArr = {
+  url?: string;
+};
+
+export interface QueryObject extends PrefetchedAttributes<string> {
+  priceRange: string[];
+  sort: string[];
+}
 
 export type RouteCallbacks = {
   loadLoginPage: () => void;
@@ -83,5 +141,9 @@ export type RouteCallbacks = {
   loadShippingPage: () => void;
   loadNotFoundPage: () => void;
   loadCatalogPage: () => void;
+  loadFilterPage: () => void;
+  loadCategoriesPage: () => void;
   logoutUser: () => void;
+  loadProductPage: (id: string) => void;
+  mountCategory: (id: string) => void;
 };

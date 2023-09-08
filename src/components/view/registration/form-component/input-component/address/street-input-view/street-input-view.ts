@@ -28,7 +28,7 @@ export default class StreetInputView extends View {
     this.showError(input, errorSpan);
   }
 
-  private createInput(type: string): HTMLInputElement {
+  public createInput(type: string): HTMLInputElement {
     const input = new ElementCreator(fieldsetParams.input).getElement() as HTMLInputElement;
     input.setAttribute('type', type);
     input.setAttribute('minLength', StreetInputParams.input.minLength);
@@ -36,13 +36,13 @@ export default class StreetInputView extends View {
     return input;
   }
 
-  private createLabel(text: string): ElementCreator {
+  public createLabel(text: string): ElementCreator {
     const label = new ElementCreator(fieldsetParams.label);
     label.setTextContent(text);
     return label;
   }
 
-  private createErrorText(): HTMLElement {
+  public createErrorText(): HTMLElement {
     const errorSpan = new ElementCreator(fieldsetParams.errorSpan).getElement();
     return errorSpan;
   }

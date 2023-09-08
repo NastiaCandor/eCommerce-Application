@@ -1,8 +1,9 @@
-import { ACCESS_TOKEN, COOKIE_RESET_DATE } from '../constants';
+import { ACCESS_TOKEN, CUSTOMER_ID, COOKIE_RESET_DATE } from '../constants';
 
 export default class State {
   public deleteAccessToken(): void {
     document.cookie = `${ACCESS_TOKEN}${COOKIE_RESET_DATE}`;
+    document.cookie = `${CUSTOMER_ID}${COOKIE_RESET_DATE}`;
   }
 
   public isAccessTokenValid(): boolean {
@@ -19,12 +20,19 @@ export default class State {
     window.history.replaceState(null, '', url);
   }
 
-  public setPageTitle(url: string): void {
-    document.title = this.formatPageTitle(url);
+  public setPageTitle(str: string, formated = false, toSlice = true): void {
+    if (formated) {
+      document.title = str;
+      return;
+    }
+    document.title = this.formatPageTitle(str, toSlice);
   }
 
-  public formatPageTitle(url: string): string {
-    if (!url) return 'Vinyl Vibe Store';
-    return `Vinyl Vibe Store - ${url.slice(0, 1).toUpperCase()}${url.replace('_', ' ').slice(1)}`;
+  public formatPageTitle(url: string, slice = true): string {
+    if (!url || url === '/') return 'Vinyl Vibe Store';
+    if (slice) {
+      return `Vinyl Vibe Store - ${url.slice(1).slice(0, 1).toUpperCase()}${url.replace('_', ' ').slice(2)}`;
+    }
+    return `Vinyl Vibe Store - ${url.toUpperCase().split('-').join(' ')}`;
   }
 }

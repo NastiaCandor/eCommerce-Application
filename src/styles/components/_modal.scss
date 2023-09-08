@@ -1,0 +1,64 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: $color-backgroung-modal;
+  display: flex;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal {
+  position: relative;
+  padding-top: 2rem;
+  border-radius: 9px;
+  width: 35%;
+  z-index: 50;
+  @include media-tablet {
+    width: 50%;
+  }
+  @include media-mobile-L {
+    width: 70%;
+    padding-top: 6rem;
+  }
+}
+
+.modal__close-btn {
+  position: absolute;
+  z-index: 10;
+  right: -6rem;
+  cursor: pointer;
+  svg {
+    pointer-events: none;
+  }
+  @include media-tablet {
+    top: 5rem;
+    right: 2rem;
+    padding: 0.5rem 1rem;
+  }
+  @include media-mobile-L {
+    top: 7rem;
+    right: 2rem;
+    padding: 0.5rem 1rem;
+  }
+}
+
+@keyframes modal-open {
+  from {scale: 0;}
+  to {scale: 1;}
+}
+.modal-open {
+  animation-name: modal-open;
+  animation-duration: 0.5s;
+}
+
+@keyframes modal-close {
+  from {scale: 1;}
+  to {scale: 0;}
+}
+.modal-close {
+  animation-name: modal-close;
+  animation-duration: 0.5s;
+}

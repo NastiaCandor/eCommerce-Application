@@ -8,47 +8,75 @@ export default class Router {
 
   private state: State;
 
-  constructor(routes: Route[]) {
-    this.state = new State();
+  private titlesMap: Map<string, string>;
+
+  private request = <UserRequest>{};
+
+  constructor(routes: Route[], state: State, titlesMap: Map<string, string>) {
+    this.state = state;
     this.routes = routes;
+    this.titlesMap = titlesMap;
+    this.request = <UserRequest>{};
     this.startInit();
   }
 
-  public navigate(url: string) {
+  public navigate(url: string, productId = '') {
     this.state.pushState(url);
-    this.processUrl(this.currentPath);
+    this.processUrl(this.currentPath, productId);
   }
 
-  private processUrl(url: string): void {
-    if (this.signedInUserAccess(url) || this.signedOutUserAccess(url)) {
+  private processUrl(url: string, productId = ''): void {
+    if (this.signedInUserAccess(`/${url}`) || this.signedOutUserAccess(`/${url}`)) {
       this.state.replaceState(PAGES.MAIN);
       this.routeTo(PAGES.MAIN);
       return;
     }
-    this.routeTo(url);
-  }
-
-  private parseUrl(url: string): UserRequest {
-    const result = <UserRequest>{};
-    const path = url.split('/');
-    [result.path = '', result.resource = ''] = path;
-    return result;
+    this.routeTo(url, productId);
   }
 
   public stateDeleteToken(): void {
     this.state.deleteAccessToken();
   }
 
-  private routeTo(path: string) {
-    const request = this.parseUrl(path);
-    const pathToFind = request.resource === '' ? request.path : `${request.path}/${request.resource}`;
-    const route = this.routes.find((item) => item.path === pathToFind);
+  private routeTo(path: string, productId = '') {
+    this.request = this.parseUrl(path);
+    let pathToFind =
+      this.request.resource === '' ? `/${this.request.path}` : `${this.request.path}/${this.request.resource}`;
+    let route = this.routes.find((item) => item.path === pathToFind);
+    if (this.request.category) {
+      pathToFind = this.request.id
+        ? `/${pathToFind}/${this.request.category}/${this.request.id}`
+        : `/${pathToFind}/${this.request.category}`;
+      route = this.routes.find((item) => pathToFind === item.path);
+    }
     if (!route) {
       this.redirectToNotFound();
       return;
     }
-    this.state.setPageTitle(route.path);
+    if (path && productId) {
+      const title = this.titlesMap.get(this.request.category);
+      if (title) {
+        this.state.setPageTitle(title, true);
+      }
+      route.callback(productId);
+      return;
+    }
+    if (this.request.category) {
+      this.state.setPageTitle(`${this.request.category}${this.request.id ?? ''}`, false);
+    } else if (this.request.resource) {
+      this.state.setPageTitle(`${this.request.path}`, false);
+    } else {
+      this.state.setPageTitle(route.path);
+    }
+
     route.callback();
+  }
+
+  private parseUrl(url: string): UserRequest {
+    const result = <UserRequest>{};
+    const path = url.split('/');
+    [result.path = '', result.resource = '', result.category = '', result.id = ''] = path;
+    return result;
   }
 
   private redirectToNotFound(): void {
@@ -89,7 +117,7 @@ export default class Router {
     });
   }
 
-  private get currentPath(): string {
+  public get currentPath(): string {
     if (window.location.hash) {
       return window.location.hash.slice(1);
     }

@@ -12,4 +12,8 @@
   &:hover {
     background-color: $color-button-background-hover;
   }
+  &:disabled {
+    background-color: $color-button-background-disabled;
+    cursor: default;
+  }
 }
