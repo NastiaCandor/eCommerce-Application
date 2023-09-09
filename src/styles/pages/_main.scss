@@ -1,5 +1,122 @@
+@font-face {
+  font-family: 'DeathStar';
+  src: url('../../src/assets/DeathStar.ttf');
+}
+
+@font-face {
+  font-family: 'Jazz';
+  src: url('../../src/assets/mex.otf');
+}
+
 .main__wrapper {
   padding: 0;
   padding-top: 1rem;
-  
 }
+
+.main-slogan-img__wrapper {
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  padding: 5rem;
+  background-color: #fff8e6;
+}
+
+.main-slogan__wrapper {
+  width: 46%;
+  max-width: 42rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.main-inner__wrapper {
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  padding: 5rem;
+}
+
+.main-img__wrapper {
+  width: 50%;
+  max-width: 50rem;
+  background-size: auto;
+}
+
+.jazz-img__wrapper {
+  position: relative;
+  min-height: 50rem;
+}
+
+.main-img,
+.jazz-img,
+.vinyl-img {
+  width: 100%;
+}
+
+.jazz-img,
+.vinyl-img {
+  position: absolute;
+  transition: all 0.4s;
+}
+
+.jazz-img__wrapper:hover .vinyl-img {
+  transition: all 0.5s ease-out;
+  transform: translateX(9rem);
+}
+
+.jazz-img__wrapper:hover .jazz-img {
+  transition: all 0.5s ease-out;
+  box-shadow: 1px 1px 13px 2px rgba(0, 0, 0, 0.379);
+}
+
+.main-slogan__heading,
+.main-slogan__heading2 {
+  letter-spacing: 2px;
+  font-family: 'DeathStar';
+}
+
+.main-slogan__heading {
+  font-size: 5.5rem;
+}
+
+.main-slogan__heading2 {
+  font-size: 4rem;
+  text-align: right;
+}
+
+.main-slogan__info-text {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin-top: 6rem;
+  text-align: left;
+}
+
+.info-text2 {
+  text-align: right;
+}
+
+.info-text-jazz {
+  font-weight: normal;
+  text-align: center;
+  font-size: 3rem;
+  text-transform: uppercase;
+  max-width: 33rem;
+}
+
+.info-text-jazz-top {
+  margin-top: 10rem;
+  color: #8574dd;
+  font-weight: bold;
+}
+
+.info-text-jazz-bottom {
+  font-weight: bold;
+  margin-top: 3rem;
+  cursor: pointer;
+}
+
+.info-text-jazz-bottom:hover {
+  text-decoration: underline;
+}
+
