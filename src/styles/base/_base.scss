@@ -6,6 +6,7 @@ html {
 body {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   font-size: 1.6rem;
   background-color: $color-body-background;
   @extend %font-add-Inter;
@@ -37,9 +38,24 @@ a {
   text-decoration: none;
   color: inherit;
   cursor: pointer;
- }
+}
 
 
 li {
   list-style: none;
+}
+
+::-webkit-scrollbar {
+  width: 1.2rem;
+}
+::-webkit-scrollbar-track {
+  background: #1414142e;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(136, 136, 136, 0.57);
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
 }

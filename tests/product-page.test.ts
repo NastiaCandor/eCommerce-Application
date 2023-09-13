@@ -7,6 +7,7 @@ import { TypedMoney, Price, ProductDiscount } from '@commercetools/platform-sdk'
 import ClientAPI from '../src/components/utils/Client';
 import ProductView from '../src/components/view/product-page/ProductView';
 import ElementCreator from '../src/components/utils/ElementCreator';
+import SpinnerView from '../src/components/utils/SpinnerView';
 
 describe('Product Page', () => {
   let productView: ProductView;

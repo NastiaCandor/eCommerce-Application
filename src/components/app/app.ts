@@ -18,6 +18,7 @@ import { PrefetchedData, Route, RouteCallbacks } from '../../types';
 import ClientAPI from '../utils/Client';
 import State from '../state/State';
 import ProductView from '../view/product-page/ProductView';
+import SpinnerView from '../utils/SpinnerView';
 
 export default class App {
   private header: HeaderView;
@@ -46,15 +47,18 @@ export default class App {
 
   private prefetchedData: PrefetchedData;
 
-  constructor(clientApi: ClientAPI) {
+  private spinner: SpinnerView;
+
+  constructor(clientApi: ClientAPI, spinner: SpinnerView) {
     this.state = new State();
     this.clientApi = clientApi;
+    this.spinner = spinner;
     this.routesClass = new Routes(this.getRoutesCallbacks(), this.clientApi);
     this.prefetchedData = this.clientApi.prefetchedData;
     this.routes = this.routesClass.getRoutes();
     this.router = new Router(this.routes, this.state, this.routesClass.getTitlesMap);
     this.contentContainer = new MainView();
-    this.catalogView = new CatalogView(this.clientApi, this.router);
+    this.catalogView = new CatalogView(this.clientApi, this.router, this.spinner);
     this.header = new HeaderView(this.router);
     this.signupForm = new RegView(this.router);
     this.loginForm = new LoginView(this.router);
@@ -68,6 +72,7 @@ export default class App {
     await this.catalogView.render();
     this.router.navigate(window.location.pathname);
     this.isStarted = true;
+    this.spinner.removeSelfFromNode();
   }
 
   private setContent(page: string, view: HTMLElement) {
@@ -114,8 +119,9 @@ export default class App {
   }
 
   private async loadCatalogPage() {
+    this.catalogView.resetPageCounters();
     if (this.isCategoriesLoaded) {
-      await this.catalogView.assamleCards().then((element) => {
+      await this.catalogView.assambleCards().then((element) => {
         const wrapper = this.catalogView.getWrapper;
         if (wrapper) {
           this.catalogView.replaceCardsAndReturnElement(wrapper, element);
@@ -135,12 +141,15 @@ export default class App {
     this.setContent(PAGES.CATALOG, this.catalogView.getElement());
   }
 
-  private loadProductPage(id: string) {
+  private async loadProductPage(id: string) {
     if (!id) {
       this.router.navigate(PAGES.CATALOG);
       return;
     }
 
+    // failed to implement spinner while loading, can't figure out when i gone wrong. TODO:
+    // work something out or leave that idea
+    // this.setContent(PAGES.PRODUCT, this.spinner.getElement());
     let cardData;
 
     this.prefetchedData.productsUrl.ids.forEach((key, value) => {
@@ -162,6 +171,7 @@ export default class App {
 
   private loadFilterPage() {
     this.catalogView.updateCrumbNavigation();
+    this.setContent(PAGES.FILTER, this.catalogView.getElement());
     if (!this.isStarted) {
       this.router.navigate(PAGES.CATALOG);
     }

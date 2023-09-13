@@ -130,7 +130,6 @@ export interface QueryObject extends PrefetchedAttributes<string> {
   priceRange: string[];
   sort: string[];
 }
-
 export type RouteCallbacks = {
   loadLoginPage: () => void;
   loadCartPage: () => void;

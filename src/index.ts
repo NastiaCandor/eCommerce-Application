@@ -2,13 +2,16 @@ import './styles/style.scss';
 import './components/import-files';
 import App from './components/app/app';
 import ClientAPI from './components/utils/Client';
+import SpinnerView from './components/utils/SpinnerView';
 
 const clientApi = new ClientAPI();
+const spinner = new SpinnerView();
 
 async function bootstrap() {
+  spinner.render(document.body);
   try {
     await clientApi.prefetchData();
-    const app = new App(clientApi);
+    const app = new App(clientApi, spinner);
     app.start();
   } catch (e) {
     console.error(`Error while init the app: ${e}`);

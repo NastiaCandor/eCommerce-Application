@@ -62,11 +62,11 @@ export default class Router {
       return;
     }
     if (this.request.category) {
-      this.state.setPageTitle(`${this.request.category}${this.request.id ?? ''}`, false);
+      this.state.setPageTitle(`${this.request.category}${this.request.id ?? ''}`);
     } else if (this.request.resource) {
-      this.state.setPageTitle(`${this.request.path}`, false);
+      this.state.setPageTitle(`${this.request.resource}`, true);
     } else {
-      this.state.setPageTitle(route.path);
+      this.state.setPageTitle(route.path, false, true);
     }
 
     route.callback();

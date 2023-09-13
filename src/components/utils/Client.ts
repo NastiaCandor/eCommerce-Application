@@ -359,11 +359,17 @@ export default class ClientAPI {
     return `Unable to fetch ${category}`;
   }
 
-  public async getAllCardsData() {
+  public async getAllCardsData(offsetCount?: number) {
+    const body = {
+      queryArgs: {
+        limit: 8,
+        offset: offsetCount,
+      },
+    };
     try {
-      const data = await this.apiRoot.productProjections().search().get().execute();
+      const data = await this.apiRoot.productProjections().get(body).execute();
       if (data.statusCode === 200) {
-        return data.body.results;
+        return data.body;
       }
     } catch (e) {
       console.log(`Error occured while fetching cards data: ${e}`);
@@ -441,15 +447,16 @@ export default class ClientAPI {
     }
   }
 
-  public async getSpecificGenreById(id: string) {
+  public async getSpecificGenreById(id: string, offsetCount?: number) {
     const query = {
       queryArgs: {
-        filter: `categories.id:"${id}"`,
-        limit: 100,
+        limit: 8,
+        where: `categories(id="${id}")`,
+        offset: offsetCount,
       },
     };
     try {
-      const data = await this.apiRoot.productProjections().search().get(query).execute();
+      const data = await this.apiRoot.productProjections().get(query).execute();
       if (data.statusCode === 200) {
         const response = data.body;
         return response;
@@ -586,22 +593,21 @@ export default class ClientAPI {
     }
   }
 
-  public async fetchFilterQuary(endPoints: EndPointsObject) {
+  public async fetchFilterQuary(endPoints: EndPointsObject, offsetCount?: number) {
     const query = {
       queryArgs: {
         filter: endPoints.filter,
         priceCurrency: 'USD',
         sort: endPoints.sort,
-
-        limit: 100,
+        offset: offsetCount,
+        limit: 8,
       },
     };
 
     try {
       const data = await this.apiRoot.productProjections().search().get(query).execute();
       if (data.statusCode === 200) {
-        console.log(data.body.results);
-        return data.body.results;
+        return data.body;
       }
     } catch (e) {
       console.error(`Unable to fetch filter quary: ${e}`);
@@ -639,8 +645,6 @@ export default class ClientAPI {
   }
 
   public setCustomerIDCookie(id: string): void {
-    console.log(document.cookie);
-
     const expirationTime = new Date(Date.now() + 172800 * 1000).toUTCString();
     document.cookie = `${CUSTOMER_ID}=${id}; expires=${expirationTime}; path=/;`;
   }
