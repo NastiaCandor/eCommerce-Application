@@ -226,6 +226,7 @@ export default class ProductView extends View {
       addCartBtn.setAttribute('disabled', 'true');
     }
     productSide.addInnerElement(addCartBtn);
+    this.addToCartFunctionality(addCartBtn);
 
     wrapper.addInnerElement(productSide);
   }
@@ -360,5 +361,10 @@ export default class ProductView extends View {
     const text = new ElementCreator(productParams.errorText);
     error.addInnerElement([title, text]);
     wrapper.addInnerElement(error);
+  }
+
+  private addToCartFunctionality(addToCartBtn: ElementCreator): void {
+    console.log(addToCartBtn);
+    this.clientAPI.addItemCart('f8e0950f-0501-4016-b534-90db416773ab');
   }
 }

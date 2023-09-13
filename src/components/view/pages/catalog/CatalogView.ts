@@ -368,7 +368,6 @@ export default class CatalogView extends View {
   }
 
   private async getCategoriesView() {
-    console.log('ff');
     const productCards = new ElementCreator(catalogParams.productCards);
     const heading = new ElementCreator(catalogParams.categoriesPage.pageHeading);
     productCards.addInnerElement(heading);

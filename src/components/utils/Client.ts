@@ -1,3 +1,4 @@
+/* eslint-disable newline-per-chained-call */
 /* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable comma-dangle */
 /* eslint-disable @typescript-eslint/comma-dangle */
@@ -12,11 +13,16 @@ import {
   // CategoryPagedQueryResponse,
 } from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
-import { ctpClient, ID, SECRET } from './BuildClient';
-import { ACCESS_TOKEN, CUSTOMER_ID } from '../constants';
-// import { ApiRequest } from '@commercetools/platform-sdk/dist/declarations/src/generated/shared/utils/requests-utils';
+import { ctpClient, getExistingTokenFlow, ID, SECRET } from './BuildClient';
+import { ACCESS_TOKEN, ANONYMOUS_TOKEN, COOKIE_RESET_DATE, CUSTOMER_ID } from '../constants';
 
 import { EndPointsObject, PrefetchedData, PrefetchedGenres } from '../../types';
+
+enum UserState {
+  Observer,
+  Logged,
+  Anonymous,
+}
 
 export default class ClientAPI {
   apiBuilder: ApiRoot;
@@ -24,6 +30,16 @@ export default class ClientAPI {
   apiRoot: ByProjectKeyRequestBuilder;
 
   prefetchedData: PrefetchedData;
+
+  anonymousId: string;
+
+  userLogged: UserState;
+
+  anonymousCartId: string;
+
+  cartId: string;
+
+  cartVersion: number;
 
   constructor() {
     this.apiBuilder = createApiBuilderFromCtpClient(ctpClient);
@@ -47,14 +63,158 @@ export default class ClientAPI {
         keys: [],
       },
     };
+    this.userLogged = this.checkUserLogged();
+    this.anonymousId = '';
+    this.anonymousCartId = '';
+    this.cartId = '';
+    this.cartVersion = 1;
+  }
+
+  public resetDefaultClientAPI() {
+    this.userLogged = UserState.Observer;
+    this.apiBuilder = createApiBuilderFromCtpClient(ctpClient);
+    this.apiRoot = this.apiBuilder.withProjectKey({ projectKey: 'ecommerce-quantum' });
+    this.anonymousId = '';
+    this.anonymousCartId = '';
+    this.cartId = '';
+    this.cartVersion = 1;
+  }
+
+  private checkUserLogged() {
+    const loggedToken = this.getAccessToken(ACCESS_TOKEN);
+    const anonymToken = this.getAccessToken(ANONYMOUS_TOKEN);
+    if (loggedToken === '' && anonymToken === '') return UserState.Observer;
+    if (loggedToken !== '') {
+      this.apiRoot = createApiBuilderFromCtpClient(getExistingTokenFlow(`Bearer ${loggedToken}`)).withProjectKey({
+        projectKey: 'ecommerce-quantum',
+      });
+      return UserState.Logged;
+    }
+    this.apiRoot = createApiBuilderFromCtpClient(getExistingTokenFlow(`Bearer ${anonymToken}`)).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
+    return UserState.Anonymous;
+  }
+
+  private getAccessToken(tokenType: string) {
+    if (document.cookie === '') return '';
+    const allCookies = document.cookie.split(';');
+    const isAccessTokenExist = allCookies.some((token) => token.startsWith(tokenType));
+    if (!isAccessTokenExist) return '';
+    const token = document.cookie
+      .split('; ')
+      .filter((el) => el.includes(tokenType))
+      .map((el) => el.split('='))[0]
+      .filter((el) => !el.includes(tokenType))[0];
+    return token;
+  }
+
+  private deleteAnonymousToken() {
+    document.cookie = `${ANONYMOUS_TOKEN}${COOKIE_RESET_DATE}`;
+  }
+
+  private updateApiRoot(tokenType: string) {
+    const token = this.getAccessToken(tokenType);
+    this.apiRoot = createApiBuilderFromCtpClient(getExistingTokenFlow(`Bearer ${token}`)).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
+  }
+
+  private async getActiveCartAPI() {
+    if (this.userLogged === UserState.Observer) {
+      await this.obtainAnonymusAccessToken();
+      await this.updateApiRoot(ANONYMOUS_TOKEN);
+      this.userLogged = UserState.Anonymous;
+      await this.createCart();
+    } else {
+      const cartInfo = this.apiRoot.me().carts().get().execute();
+      await cartInfo
+        .then(async (data) => {
+          if (data.body.count === 0) {
+            await this.createCart();
+          } else {
+            await this.getCartId();
+          }
+        })
+        .catch(console.error);
+    }
+  }
+
+  private async createCart() {
+    const cartInfo = this.apiRoot
+      .me()
+      .carts()
+      .post({
+        body: {
+          currency: 'USD',
+        },
+      })
+      .execute();
+    await cartInfo
+      .then(async (data) => {
+        const anonumousId = data.body.anonymousId;
+        if (anonumousId !== undefined) this.anonymousId = anonumousId;
+        const anonymousCartId = data.body.id;
+        if (anonymousCartId !== undefined) this.anonymousCartId = anonymousCartId;
+        await this.getCartId();
+      })
+      .catch(console.log);
+  }
+
+  private async obtainAnonymusAccessToken() {
+    const url = 'https://auth.europe-west1.gcp.commercetools.com/oauth/ecommerce-quantum/anonymous/token';
+    const credentials = {
+      clientId: ID,
+      clientSecret: SECRET,
+    };
+    const authString = btoa(`${credentials.clientId}:${credentials.clientSecret}`);
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Basic ${authString}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: 'grant_type=client_credentials',
+    });
+
+    try {
+      const data = await response.json();
+      this.setAnonymousTokenCookie(data.access_token, data.expires_in);
+    } catch (e) {
+      console.log(`${e} occured when fetching access token!`);
+    }
+  }
+
+  private setAnonymousTokenCookie(token: string, time: number): void {
+    const expirationTime = new Date(Date.now() + time * 1000).toUTCString();
+    document.cookie = `${ANONYMOUS_TOKEN}=${token}; expires=${expirationTime}; path=/;`;
   }
 
   public async loginClient(clientEmail: string, clientPassword: string) {
-    const body: CustomerSignin = {
-      email: clientEmail,
-      password: clientPassword,
-    };
-    const loginAPI = await this.apiRoot.login().post({ body }).execute();
+    let body: CustomerSignin;
+    if (this.anonymousId !== '' && this.anonymousCartId !== '') {
+      body = {
+        email: clientEmail,
+        password: clientPassword,
+        anonymousId: this.anonymousId,
+        anonymousCartId: this.anonymousCartId,
+        anonymousCartSignInMode: 'MergeWithExistingCustomerCart',
+        updateProductData: true,
+      };
+    } else {
+      body = {
+        email: clientEmail,
+        password: clientPassword,
+        anonymousCartSignInMode: 'MergeWithExistingCustomerCart',
+      };
+    }
+    const loginAPI = this.apiRoot.me().login().post({ body }).execute();
+    await this.obtainUserAccessToken(clientEmail, clientPassword);
+    this.userLogged = UserState.Logged;
+    await this.deleteAnonymousToken();
+    await this.updateApiRoot(ACCESS_TOKEN);
+    await this.getActiveCartAPI();
     return loginAPI;
   }
 
@@ -84,6 +244,38 @@ export default class ClientAPI {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
     const getProduct = apiRoot.productDiscounts().withId({ ID: discountID }).get().execute();
     return getProduct;
+  }
+
+  private async getCartId() {
+    const cartInfo = this.apiRoot.me().activeCart().get().execute();
+    await cartInfo
+      .then(async (data) => {
+        this.cartId = data.body.id;
+        this.cartVersion = data.body.version;
+      })
+      .catch(console.log);
+  }
+
+  public async addItemCart(productID: string) {
+    await this.getActiveCartAPI();
+    const addProduct = this.apiRoot
+      .me()
+      .carts()
+      .withId({ ID: this.cartId })
+      .post({
+        body: {
+          version: this.cartVersion,
+          actions: [
+            {
+              action: 'addLineItem',
+              quantity: 1,
+              productId: productID,
+            },
+          ],
+        },
+      })
+      .execute();
+    return addProduct;
   }
 
   public getCustomers() {
@@ -600,7 +792,6 @@ export default class ClientAPI {
     try {
       const data = await this.apiRoot.productProjections().search().get(query).execute();
       if (data.statusCode === 200) {
-        console.log(data.body.results);
         return data.body.results;
       }
     } catch (e) {
@@ -639,8 +830,6 @@ export default class ClientAPI {
   }
 
   public setCustomerIDCookie(id: string): void {
-    console.log(document.cookie);
-
     const expirationTime = new Date(Date.now() + 172800 * 1000).toUTCString();
     document.cookie = `${CUSTOMER_ID}=${id}; expires=${expirationTime}; path=/;`;
   }

@@ -2,11 +2,13 @@ import { ClientBuilder, type AuthMiddlewareOptions, type HttpMiddlewareOptions }
 
 const ID = 'R_YOG6dDBJARc-I5kIvyp6eN';
 const SECRET = 'ZCywDVZrjZa-YiOA1PP0wC4dB8MtScTK';
+const PROJECT_KEY = 'ecommerce-quantum';
+const AUTH_HOST = 'https://auth.europe-west1.gcp.commercetools.com';
 
 // Configure authMiddlewareOptions
 const authMiddlewareOptions: AuthMiddlewareOptions = {
-  host: 'https://auth.europe-west1.gcp.commercetools.com',
-  projectKey: 'ecommerce-quantum',
+  host: AUTH_HOST,
+  projectKey: PROJECT_KEY,
   credentials: {
     clientId: ID,
     clientSecret: SECRET,
@@ -27,7 +29,26 @@ const httpMiddlewareOptions: HttpMiddlewareOptions = {
 const ctpClient = new ClientBuilder()
   .withClientCredentialsFlow(authMiddlewareOptions)
   .withHttpMiddleware(httpMiddlewareOptions)
-  // .withLoggerMiddleware()
+  .withUserAgentMiddleware()
   .build();
+
+// EXISTING TOKEN FLOW
+type ExistingTokenMiddlewareOptions = {
+  force?: boolean;
+};
+
+// Function to get Existing Token Flow for ClientBuilder
+export function getExistingTokenFlow(existingToken: string) {
+  const authorization = existingToken;
+  const options: ExistingTokenMiddlewareOptions = {
+    force: true,
+  };
+  const loggedClient = new ClientBuilder()
+    .withClientCredentialsFlow(authMiddlewareOptions)
+    .withExistingTokenFlow(authorization, options)
+    .withHttpMiddleware(httpMiddlewareOptions)
+    .build();
+  return loggedClient;
+}
 
 export { ctpClient, SECRET, ID };

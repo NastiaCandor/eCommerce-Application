@@ -25,13 +25,13 @@ export default class ProfilePasswordFormView extends View {
 
   private currentVersion: number;
 
-  constructor() {
+  constructor(clientAPI: ClientAPI) {
     super(PasswordChangeParams.form);
     this.currPasswordInput = new CurrentProfilePasswordView();
     this.newPasswordInput = new NewProfilePasswordView();
     this.confirmPasswordInput = new ConfirmProfilePasswordView();
     this.render();
-    this.clientAPI = new ClientAPI();
+    this.clientAPI = clientAPI;
     this.currentVersion = 0;
   }
 

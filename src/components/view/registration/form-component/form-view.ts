@@ -67,9 +67,10 @@ export default class FormView extends View {
 
   public sameAdrs: boolean;
 
-  constructor(router: Router) {
+  constructor(router: Router, clienAPI: ClientAPI) {
     super(formParams.form);
-    this.emailInput = new EmailInputView();
+    this.clientAPI = clienAPI;
+    this.emailInput = new EmailInputView(this.clientAPI);
     this.firstNameInput = new FirstNameInputView();
     this.lastNameInput = new LastNameInputView();
     this.passwordInput = new PasswordInputView();
@@ -85,7 +86,6 @@ export default class FormView extends View {
     this.checkboxSameAdrs = new CheckboxView();
     this.checkboxDefaultShip = new CheckboxView();
     this.checkboxDefaultBill = new CheckboxView();
-    this.clientAPI = new ClientAPI();
     this.sameAdrs = false;
     this.router = router;
     this.render();
@@ -494,7 +494,7 @@ export default class FormView extends View {
     try {
       const loginAPI = await this.clientAPI.loginClient(email, password);
       if (loginAPI.statusCode === 200) {
-        await this.clientAPI.obtainUserAccessToken(email, password);
+        // await this.clientAPI.obtainUserAccessToken(email, password);
         this.clientAPI.setCustomerIDCookie(loginAPI.body.customer.id);
         this.router.navigate(PAGES.MAIN);
       } else if (loginAPI.statusCode === undefined) {
