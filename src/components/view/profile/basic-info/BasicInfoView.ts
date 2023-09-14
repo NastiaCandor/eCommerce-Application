@@ -27,14 +27,14 @@ export default class BasicInfoView extends View {
 
   private currentVersion: number;
 
-  constructor() {
+  constructor(clientAPI: ClientAPI) {
     super(BasicInfoParams.form);
-    this.emailInput = new ProfileEmailInputView();
+    this.clientAPI = clientAPI;
+    this.emailInput = new ProfileEmailInputView(this.clientAPI);
     this.firstNameInput = new ProfileFNameView();
     this.lastNameInput = new ProfileLNameView();
     this.dateInput = new ProfileDateView();
     this.render();
-    this.clientAPI = new ClientAPI();
     this.currentVersion = 0;
   }
 

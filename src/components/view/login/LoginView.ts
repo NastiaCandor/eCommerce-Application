@@ -13,10 +13,10 @@ export default class LoginView extends View {
 
   private router: Router;
 
-  constructor(router: Router) {
+  constructor(router: Router, clientAPI: ClientAPI) {
     super(loginParams.section);
     this.router = router;
-    this.clientAPI = new ClientAPI();
+    this.clientAPI = clientAPI;
     this.render();
   }
 
@@ -206,7 +206,7 @@ export default class LoginView extends View {
     loginAPI
       .then(async (data) => {
         if (data.statusCode === 200) {
-          await this.clientAPI.obtainUserAccessToken(email, password);
+          // await this.clientAPI.obtainUserAccessToken(email, password);
           this.clientAPI.setCustomerIDCookie(data.body.customer.id);
           this.router.navigate(PAGES.MAIN);
           const { firstName } = data.body.customer;
