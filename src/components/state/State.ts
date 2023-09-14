@@ -20,19 +20,19 @@ export default class State {
     window.history.replaceState(null, '', url);
   }
 
-  public setPageTitle(str: string, formated = false, toSlice = true): void {
-    if (formated) {
-      document.title = str;
+  public setPageTitle(str: string, isFormated = false, isSlashPrefexed = false): void {
+    if (isFormated) {
+      document.title = `Vinyl Vibe Store - ${str.slice(0, 1).toUpperCase()}${str.slice(1)}`;
       return;
     }
-    document.title = this.formatPageTitle(str, toSlice);
+    document.title = this.formatPageTitle(str, isSlashPrefexed);
   }
 
-  public formatPageTitle(url: string, slice = true): string {
+  public formatPageTitle(url: string, isSlashPrefexed = false): string {
     if (!url || url === '/') return 'Vinyl Vibe Store';
-    if (slice) {
-      return `Vinyl Vibe Store - ${url.slice(1).slice(0, 1).toUpperCase()}${url.replace('_', ' ').slice(2)}`;
+    if (isSlashPrefexed) {
+      return `Vinyl Vibe Store - ${url.slice(1, 2).toUpperCase()}${url.slice(2)}`;
     }
-    return `Vinyl Vibe Store - ${url.toUpperCase().split('-').join(' ')}`;
+    return `Vinyl Vibe Store - ${url.slice(0, 1).toUpperCase()}${url.replace('-', ' ').slice(1)}`;
   }
 }

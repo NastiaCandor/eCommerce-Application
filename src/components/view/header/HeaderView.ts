@@ -166,6 +166,6 @@ export default class HeaderView extends View {
   }
 
   private appendToDOM(): void {
-    document.body.appendChild(this.getElement());
+    document.body.replaceChildren(this.getElement());
   }
 }

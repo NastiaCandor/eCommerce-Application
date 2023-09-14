@@ -82,6 +82,13 @@ export default class ElementCreator {
     if (typeof callback === 'function') this.element.addEventListener('click', (evt: Event) => callback(evt));
   }
 
+  public setScrollEvent(callback: (evt: Event) => void): void {
+    /* set the provided callback from passed function, if any. works only with mouse events.
+    not really usefull, because of a little usage without enviroment context.
+    you can ask me for clarifry and providing more info about */
+    if (typeof callback === 'function') this.element.addEventListener('scroll', (evt: Event) => callback(evt));
+  }
+
   private setLink(link: string): void {
     /* set the provided href link from passed string, if any. */
     this.element.setAttribute('href', link);
