@@ -32,14 +32,14 @@ export default class BillAddressItemView extends View {
 
   private currentAdrsID: string;
 
-  constructor() {
+  constructor(clientAPI: ClientAPI) {
     super(AddressItemParams.wrapper);
     this.streetInput = new ProfileStreetView();
     this.cityInput = new ProfileCityView();
     this.countryInput = new ProfileCountryView();
     this.postcodeInput = new ProfilePostcodeView();
     this.render();
-    this.clientAPI = new ClientAPI();
+    this.clientAPI = clientAPI;
     this.currentVersion = 0;
     this.currentAdrsID = '';
   }

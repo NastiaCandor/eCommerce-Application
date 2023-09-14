@@ -60,8 +60,8 @@ export default class App {
     this.contentContainer = new MainView();
     this.catalogView = new CatalogView(this.clientApi, this.router, this.spinner);
     this.header = new HeaderView(this.router);
-    this.signupForm = new RegView(this.router);
-    this.loginForm = new LoginView(this.router);
+    this.signupForm = new RegView(this.router, this.clientApi);
+    this.loginForm = new LoginView(this.router, this.clientApi);
     this.isCategoriesLoaded = false;
     this.isStarted = false;
   }
@@ -105,7 +105,7 @@ export default class App {
   }
 
   private loadProfilePage() {
-    this.setContent(PAGES.PROFILE, new ProfileView(this.router).getElement());
+    this.setContent(PAGES.PROFILE, new ProfileView(this.router, this.clientApi).getElement());
   }
 
   private loadShippingPage() {
@@ -165,6 +165,7 @@ export default class App {
 
   private logoutUser() {
     this.router.stateDeleteToken();
+    this.clientApi.resetDefaultClientAPI();
     this.router.navigate(PAGES.MAIN);
     this.resetForms();
   }
@@ -178,8 +179,8 @@ export default class App {
   }
 
   private resetForms(): void {
-    this.signupForm = new RegView(this.router);
-    this.loginForm = new LoginView(this.router);
+    this.signupForm = new RegView(this.router, this.clientApi);
+    this.loginForm = new LoginView(this.router, this.clientApi);
   }
 
   private async mountCategory(key: string) {

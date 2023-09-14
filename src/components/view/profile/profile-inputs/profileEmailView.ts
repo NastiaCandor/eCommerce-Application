@@ -8,9 +8,9 @@ import ClientAPI from '../../../utils/Client';
 export default class ProfileEmailInputView extends View {
   clientAPI: ClientAPI;
 
-  constructor() {
+  constructor(clientAPI: ClientAPI) {
     super(fieldsetParams.fieldset);
-    this.clientAPI = new ClientAPI();
+    this.clientAPI = clientAPI;
     this.render();
   }
 

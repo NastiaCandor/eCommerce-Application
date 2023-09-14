@@ -6,13 +6,17 @@ import BillAdrsView from './bill-adrs-view/BillAdrsView';
 import ShipAdrsView from './ship-adrs-view/ShipAdrsView';
 import PasswordChangeView from './password-change-view/passwordChangeView';
 import Router from '../../router/Router';
+import ClientAPI from '../../utils/Client';
 
 export default class ProfileView extends View {
   private router: Router;
 
-  constructor(router: Router) {
+  private clientAPI: ClientAPI;
+
+  constructor(router: Router, clienAPI: ClientAPI) {
     super(profileParams.section);
     this.router = router;
+    this.clientAPI = clienAPI;
     this.render();
   }
 
@@ -31,13 +35,13 @@ export default class ProfileView extends View {
     sideMenuWrapper.addInnerElement(nav);
     const formsWrapper = new ElementCreator(profileParams.wrapper);
     this.addInnerElement(formsWrapper);
-    const basicInfoForm = new BasicInfoView();
+    const basicInfoForm = new BasicInfoView(this.clientAPI);
     formsWrapper.addInnerElement(basicInfoForm);
-    const billAdrsForm = new BillAdrsView();
+    const billAdrsForm = new BillAdrsView(this.clientAPI);
     formsWrapper.addInnerElement(billAdrsForm);
-    const shipAdrsForm = new ShipAdrsView();
+    const shipAdrsForm = new ShipAdrsView(this.clientAPI);
     formsWrapper.addInnerElement(shipAdrsForm);
-    const passwordForm = new PasswordChangeView();
+    const passwordForm = new PasswordChangeView(this.clientAPI);
     formsWrapper.addInnerElement(passwordForm);
     const basicInfoItem = nav.getChildren()[0];
     basicInfoItem.classList.add('active-item');

@@ -9,6 +9,7 @@ const wrapperParams = {
 const CATEGORY_KEY = '{category_key}';
 
 const ACCESS_TOKEN = 'access_token';
+const ANONYMOUS_TOKEN = 'anonymous_token';
 const CUSTOMER_ID = 'customer_id';
 // const CUSTOMER_VERSION = 'customer_version';
 
@@ -20,6 +21,7 @@ const COOKIE_RESET_DATE = '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;';
 
 export {
   ACCESS_TOKEN,
+  ANONYMOUS_TOKEN,
   EMAIL_VALIDATION_TEXT,
   PASSWORD_VALIDATION_TEXT,
   wrapperParams,
