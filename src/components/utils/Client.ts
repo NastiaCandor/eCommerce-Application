@@ -9,6 +9,7 @@ import {
   CustomerDraft,
   CustomerSignin,
   CustomerUpdate,
+  MyCartUpdate,
   createApiBuilderFromCtpClient,
   // CategoryPagedQueryResponse,
 } from '@commercetools/platform-sdk';
@@ -25,21 +26,21 @@ enum UserState {
 }
 
 export default class ClientAPI {
-  apiBuilder: ApiRoot;
+  public prefetchedData: PrefetchedData;
 
-  apiRoot: ByProjectKeyRequestBuilder;
+  private apiBuilder: ApiRoot;
 
-  prefetchedData: PrefetchedData;
+  private apiRoot: ByProjectKeyRequestBuilder;
 
-  anonymousId: string;
+  private anonymousId: string;
 
-  userLogged: UserState;
+  private userLogged: UserState;
 
-  anonymousCartId: string;
+  private anonymousCartId: string;
 
-  cartId: string;
+  private cartId: string;
 
-  cartVersion: number;
+  private cartVersion: number;
 
   constructor() {
     this.apiBuilder = createApiBuilderFromCtpClient(ctpClient);
@@ -224,6 +225,12 @@ export default class ClientAPI {
     return getProduct;
   }
 
+  public async getActiveCartData() {
+    await this.getActiveCartAPI();
+    const activeCartData = this.apiRoot.me().activeCart().get().execute();
+    return activeCartData;
+  }
+
   public async getSearchProduct(search: string, limitNum: number) {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
     const getProduct = apiRoot
@@ -253,7 +260,7 @@ export default class ClientAPI {
         this.cartId = data.body.id;
         this.cartVersion = data.body.version;
       })
-      .catch((error) => `Error while prefetching cart ID: ${error}`);
+      .catch((error) => `Error while fetching cart ID: ${error}`);
   }
 
   public async addItemCart(productID: string) {
@@ -273,6 +280,42 @@ export default class ClientAPI {
             },
           ],
         },
+      })
+      .execute();
+    return addProduct;
+  }
+
+  public async removeItemCart(productID: string, quantityItem?: number) {
+    await this.getActiveCartAPI();
+    let body: MyCartUpdate;
+    if (quantityItem) {
+      body = {
+        version: this.cartVersion,
+        actions: [
+          {
+            action: 'removeLineItem',
+            quantity: quantityItem,
+            lineItemId: productID,
+          },
+        ],
+      };
+    } else {
+      body = {
+        version: this.cartVersion,
+        actions: [
+          {
+            action: 'removeLineItem',
+            lineItemId: productID,
+          },
+        ],
+      };
+    }
+    const addProduct = this.apiRoot
+      .me()
+      .carts()
+      .withId({ ID: this.cartId })
+      .post({
+        body,
       })
       .execute();
     return addProduct;

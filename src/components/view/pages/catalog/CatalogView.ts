@@ -19,6 +19,7 @@ import '../../../../assets/img/filter-svgrepo-com.svg';
 import SearchView from './search/SearchView';
 import PAGES from '../../../router/utils/pages';
 import SpinnerView from '../../../utils/SpinnerView';
+import AddToCartView from './add-to-cart/AddToCartView';
 
 export default class CatalogView extends View {
   private clientApi: ClientAPI;
@@ -195,7 +196,7 @@ export default class CatalogView extends View {
     const singer = this.assambleSingerTitle(attributesArray);
     const image = this.assambleImage(imagesArr, songName);
     const priceElement = this.assamblePrice(prices);
-    const cartBtn = this.assambleCartBtn();
+    const cartBtn = this.assambleCartBtn(id);
     productCard.addInnerElement([image, singer, songTitle, priceElement, cartBtn]);
     productCard.setMouseEvent((evt) => this.cardsClickHandler(evt));
     wrapper.addInnerElement(productCard);
@@ -204,7 +205,10 @@ export default class CatalogView extends View {
   private cardsClickHandler(evt: Event) {
     if (evt.target instanceof HTMLElement) {
       let { target } = evt;
-
+      const parent = target.closest('.add-to-cart__wrapper') as HTMLElement;
+      if (parent !== null) return;
+      target = target.closest('.card__content') as HTMLElement;
+      if (target === null) return;
       while (!target.dataset.id) {
         target = target.parentElement as HTMLElement;
       }
@@ -317,9 +321,10 @@ export default class CatalogView extends View {
     return songTitle.getElement();
   }
 
-  private assambleCartBtn(): HTMLElement {
-    const addCartBtn = new ElementCreator(catalogParams.card.addToCartBtn);
-    return addCartBtn.getElement();
+  private assambleCartBtn(id: string): HTMLElement {
+    const cartBtn = new AddToCartView(this.clientApi, id);
+    cartBtn.render();
+    return cartBtn.getElement();
   }
 
   private assamblePrice(priceArray: Price[] | undefined): HTMLElement {

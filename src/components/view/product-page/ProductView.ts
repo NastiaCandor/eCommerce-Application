@@ -8,6 +8,7 @@ import productParams from './product-params';
 import sliderParams from './slider-params';
 import Modal from '../../utils/Modal';
 import PAGES from '../../router/utils/pages';
+import AddToCartView from '../pages/catalog/add-to-cart/AddToCartView';
 
 export default class ProductView extends View {
   private clientAPI: ClientAPI;
@@ -216,17 +217,13 @@ export default class ProductView extends View {
       const { prices } = masterVariant;
       if (prices) this.priceDisplay(productSide, prices);
     }
-    const addCartBtn = new ElementCreator(productParams.addToCartBtn);
     if ('availability' in masterVariant) {
       const { availability } = masterVariant;
       if (availability !== undefined && availability.availableQuantity) {
         this.injectAviabilityInfo(productSide, availability.availableQuantity);
       }
-    } else {
-      addCartBtn.setAttribute('disabled', 'true');
     }
-    productSide.addInnerElement(addCartBtn);
-    this.addToCartFunctionality(addCartBtn, body);
+    this.addToCartFunctionality(productSide, body);
 
     wrapper.addInnerElement(productSide);
   }
@@ -363,10 +360,9 @@ export default class ProductView extends View {
     wrapper.addInnerElement(error);
   }
 
-  private addToCartFunctionality(addToCartBtn: ElementCreator, body: ProductProjection): void {
-    const btn = addToCartBtn.getElement();
-    btn.addEventListener('click', () => {
-      this.clientAPI.addItemCart(body.id);
-    });
+  private addToCartFunctionality(wrapper: ElementCreator, body: ProductProjection): void {
+    const addToCartBtn = new AddToCartView(this.clientAPI, this.productID);
+    addToCartBtn.render(body);
+    wrapper.addInnerElement(addToCartBtn);
   }
 }
