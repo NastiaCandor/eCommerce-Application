@@ -253,7 +253,7 @@ export default class ClientAPI {
         this.cartId = data.body.id;
         this.cartVersion = data.body.version;
       })
-      .catch(console.log);
+      .catch((error) => `Error while prefetching cart ID: ${error}`);
   }
 
   public async addItemCart(productID: string) {
