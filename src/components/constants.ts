@@ -19,6 +19,9 @@ const PASSWORD_VALIDATION_TEXT = 'Please Enter Valid Password:';
 
 const COOKIE_RESET_DATE = '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;';
 
+const ADD_ITEM_TO_CART_TEXT = ' was added to your cart!';
+const REMOVE_ITEM_TO_CART_TEXT = ' was removed from your cart!';
+
 export {
   ACCESS_TOKEN,
   ANONYMOUS_TOKEN,
@@ -28,4 +31,6 @@ export {
   COOKIE_RESET_DATE,
   CUSTOMER_ID,
   CATEGORY_KEY,
+  ADD_ITEM_TO_CART_TEXT,
+  REMOVE_ITEM_TO_CART_TEXT,
 };

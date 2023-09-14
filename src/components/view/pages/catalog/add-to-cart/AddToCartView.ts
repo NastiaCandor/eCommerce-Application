@@ -1,8 +1,11 @@
+import Noty from 'noty';
 import { Cart, ClientResponse, ProductProjection } from '@commercetools/platform-sdk';
 import addToCartParams from './add-to-cart-component';
 import View from '../../../View';
 import ClientAPI from '../../../../utils/Client';
 import ElementCreator from '../../../../utils/ElementCreator';
+import SpinnerView from '../../../../utils/SpinnerView';
+import { ADD_ITEM_TO_CART_TEXT, REMOVE_ITEM_TO_CART_TEXT } from '../../../../constants';
 
 export default class AddToCartView extends View {
   private clientAPI: ClientAPI;
@@ -11,11 +14,17 @@ export default class AddToCartView extends View {
 
   private lineItemID: string;
 
+  private spinner: SpinnerView;
+
+  private productName: string;
+
   constructor(clientAPI: ClientAPI, productID: string) {
     super(addToCartParams.wrapper);
     this.clientAPI = clientAPI;
     this.productID = productID;
     this.lineItemID = '';
+    this.spinner = new SpinnerView();
+    this.productName = '';
   }
 
   public render(body?: ProductProjection): void {
@@ -26,20 +35,24 @@ export default class AddToCartView extends View {
     this.renderInnerWrapper(body);
   }
 
-  private renderInnerWrapper(bodyResevied?: ProductProjection): void {
+  private async renderInnerWrapper(bodyResevied?: ProductProjection): Promise<void> {
+    const addToCartBtn = new ElementCreator(addToCartParams.addToCartBtn);
+    super.addInnerElement(addToCartBtn);
     let body = bodyResevied;
     if (body === undefined) {
-      body = this.getProductData();
+      body = await this.getProductData();
     }
-    this.getActiveCartInfo();
+    if (body === undefined) return;
+    this.productName = body.name['en-US'];
+    this.getActiveCartInfo(addToCartBtn);
   }
 
-  private async getActiveCartInfo() {
+  private async getActiveCartInfo(addToCartBtn: ElementCreator) {
+    super.addInnerElement(this.spinner.getElement());
     const wrapper = super.getElement();
-    const addToCartBtn = new ElementCreator(addToCartParams.addToCartBtn);
     const removeFromCartBtn = new ElementCreator(addToCartParams.removeFromCartBtn);
-    this.addCartBtnFunctionality(wrapper, addToCartBtn, removeFromCartBtn);
-    this.removeFromCartBtnFunctionality(wrapper, removeFromCartBtn, addToCartBtn);
+    this.addItemFunctionality(wrapper, addToCartBtn, removeFromCartBtn);
+    this.removeItemBtnFunctionality(wrapper, removeFromCartBtn, addToCartBtn);
     const activeCart = this.clientAPI.getActiveCartData();
     activeCart
       .then((data) => {
@@ -49,9 +62,11 @@ export default class AddToCartView extends View {
           const { quantity } = productInfo[0];
           this.lineItemID = productInfo[0].id;
           console.log('quant', quantity);
+          super.getElement().removeChild(addToCartBtn.getElement());
           super.addInnerElement(removeFromCartBtn);
+          this.spinner.removeSelfFromNode();
         } else {
-          super.addInnerElement(addToCartBtn);
+          this.spinner.removeSelfFromNode();
         }
       })
       .catch((error) => console.log(`Error while fetching active cart information: ${error}`));
@@ -73,46 +88,61 @@ export default class AddToCartView extends View {
     wrapper.append(displayBtn.getElement());
   }
 
-  private addCartBtnFunctionality(wrapper: HTMLElement, addBtn: ElementCreator, removeBtn: ElementCreator) {
-    // const addToCartBtn = new ElementCreator(addToCartParams.addToCartBtn);
+  private addItemFunctionality(wrapper: HTMLElement, addBtn: ElementCreator, removeBtn: ElementCreator) {
     const btn = addBtn.getElement();
     btn.addEventListener('click', (event) => {
       event.preventDefault();
+      wrapper.append(this.spinner.getElement());
       this.clientAPI
         .addItemCart(this.productID)
         .then((data) => {
           this.getLineItemID(data);
+          this.spinner.removeSelfFromNode();
+          this.showSideBarMessage(`${this.productName}${ADD_ITEM_TO_CART_TEXT}`, 'add');
           this.displayButtons(wrapper, removeBtn, addBtn);
         })
         .catch((error) => console.log(`Error while fetching adding product to the cart: ${error}`));
     });
-    // console.log(removeBtn);
   }
 
-  private removeFromCartBtnFunctionality(wrapper: HTMLElement, removeBtn: ElementCreator, addBtn: ElementCreator) {
+  private removeItemBtnFunctionality(wrapper: HTMLElement, removeBtn: ElementCreator, addBtn: ElementCreator) {
     const btn = removeBtn.getElement();
-    btn.addEventListener('click', (event) => {
-      // this.clientAPI.addItemCart(this.productID);
+    btn.addEventListener('click', async (event) => {
       event.preventDefault();
-      this.clientAPI.removeItemCart(this.lineItemID);
-      this.displayButtons(wrapper, addBtn, removeBtn);
+      wrapper.append(this.spinner.getElement());
+      this.clientAPI
+        .removeItemCart(this.lineItemID)
+        .then(() => {
+          this.spinner.removeSelfFromNode();
+          this.displayButtons(wrapper, addBtn, removeBtn);
+          this.showSideBarMessage(`${this.productName}${REMOVE_ITEM_TO_CART_TEXT}`, 'remove');
+        })
+        .catch((error) => console.log(`Error while fetching removing product to the cart: ${error}`));
     });
-    // console.log(addBtn);
   }
 
-  private getProductData() {
-    const getProduct = this.clientAPI.getProductById(this.productID);
-    let body;
-    getProduct
-      .then((data) => {
-        body = data.body;
-      })
-      .catch((error) => console.log(`Error while fetching product information: ${error}`));
-    return body;
+  private async getProductData() {
+    try {
+      const getProduct = await this.clientAPI.getProductById(this.productID);
+      const body = await getProduct.body;
+      return body;
+    } catch (error) {
+      console.log(`Error while fetching product information: ${error}`);
+    }
+  }
+
+  private showSideBarMessage(messageText: string, typeTheme: string): void {
+    new Noty({
+      theme: typeTheme === 'add' ? 'light' : 'sunset',
+      text: messageText,
+      timeout: 3000,
+      progressBar: true,
+      type: 'information',
+    }).show();
   }
 
   // TODO: plus minus and items generation
-  public injectCartButtons() {
+  private injectCartButtons() {
     const plusBtn = new ElementCreator(addToCartParams.plusItemBtn);
     const minusBtn = new ElementCreator(addToCartParams.minusItemBtn);
     const quantitySpan = new ElementCreator(addToCartParams.itemsInCart);
