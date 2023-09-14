@@ -99,14 +99,6 @@ export default class ProfileShipAdrsView extends View {
 
   private createAdrsItemsWrapper() {
     const adrsItemsWrapper = new ElementCreator(ShipAdrsParams.addressItemsWrapper);
-    // const element = adrsItemsWrapper.getElement() as Element;
-    // element.addEventListener('click', (el: Event) => {
-    //   const { target } = el;
-    //   if ((target as HTMLElement).classList.contains('default-adrs__wrapper')) {
-    //     this.getElement().replaceChildren();
-    //     this.renderInnerWrapper();
-    //   }
-    // });
     return adrsItemsWrapper;
   }
 

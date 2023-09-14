@@ -8,11 +8,21 @@ import {
   CustomerDraft,
   CustomerSignin,
   CustomerUpdate,
+  // MyCartDraft,
+  CartUpdate,
   createApiBuilderFromCtpClient,
   // CategoryPagedQueryResponse,
 } from '@commercetools/platform-sdk';
+import { ClientBuilder } from '@commercetools/sdk-client-v2';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
-import { ctpClient, ID, SECRET } from './BuildClient';
+import {
+  ctpClient,
+  ID,
+  SECRET,
+  anonMiddlewareOptions,
+  httpMiddlewareOptions,
+  // authMiddlewareOptions,
+} from './BuildClient';
 import { ACCESS_TOKEN, CUSTOMER_ID } from '../constants';
 // import { ApiRequest } from '@commercetools/platform-sdk/dist/declarations/src/generated/shared/utils/requests-utils';
 
@@ -54,9 +64,72 @@ export default class ClientAPI {
       email: clientEmail,
       password: clientPassword,
     };
-    const loginAPI = await this.apiRoot.login().post({ body }).execute();
+    const loginAPI = await this.apiRoot.me().login().post({ body }).execute();
     return loginAPI;
   }
+
+  public async createCartAnon() {
+    const clientAnon = new ClientBuilder()
+      .withAnonymousSessionFlow(anonMiddlewareOptions)
+      .withHttpMiddleware(httpMiddlewareOptions)
+      .build();
+    const apiBuilderAnon = createApiBuilderFromCtpClient(clientAnon);
+    const apiRootAnon = apiBuilderAnon.withProjectKey({ projectKey: 'ecommerce-quantum' });
+
+    const customer = await apiRootAnon
+      .me()
+      .carts()
+      .post({ body: { currency: 'USD' } })
+      .execute();
+    return customer.body;
+  }
+
+  public async getCustomerCart(customerId: string) {
+    const args = {
+      customerId,
+    };
+    const customersAPI = this.apiRoot.carts().withCustomerId(args).get().execute();
+    return customersAPI;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  public async addItemToCart(ID: string) {
+    const args = {
+      ID,
+    };
+    const body: CartUpdate = {
+      version: 11,
+      actions: [
+        {
+          action: 'addLineItem',
+          productId: 'f9dcc164-5f22-4f8b-bd58-3d9dba7c1df7',
+          quantity: 1,
+        },
+      ],
+    };
+    const customersAPI = this.apiRoot.carts().withId(args).post({ body }).execute();
+    return customersAPI;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  public async updateItemInCart(lineItemID: string, ID: string, version: number, quantity: number) {
+    const args = {
+      ID,
+    };
+    const body: CartUpdate = {
+      version,
+      actions: [
+        {
+          action: 'changeLineItemQuantity',
+          lineItemId: lineItemID,
+          quantity,
+        },
+      ],
+    };
+    const customersAPI = this.apiRoot.carts().withId(args).post({ body }).execute();
+    return customersAPI;
+  }
+  // https://discord.com/channels/516715744646660106/1132726369332236318/1149641316532232192
 
   public async getProductById(productID: string) {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });

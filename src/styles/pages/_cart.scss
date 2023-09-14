@@ -64,7 +64,7 @@
 .cart__item {
   display: flex;
   flex-direction: row;
-  min-height: 12rem;
+  height: 12rem;
   justify-content: space-between;
   align-items: center;
   border-top: 1px solid $color-borders-lightgrey;
@@ -73,18 +73,49 @@
   // border-bottom: 1px solid $color-borders-lightgrey;
 }
 
-.cart-item_counter-wrapper {
+.cart-item__title {
+  max-width: 20rem;
+  text-align: center;
+}
+
+.cart-item__image {
+  height: 100%;
+}
+
+.cart-item__counter-wrapper {
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
   align-items: center;
+  position: relative;
 }
 
-.cart-item_counter-input {
+.cart-item__counter-input {
+  // width: 3rem;
+  // height: 3rem;
+  // outline: none;
+  // font-size: 2rem;
+  // padding-left: 0.5rem;
+  font-size: 18px;
+  height: 4rem;
+  padding: 0 4rem;
+  border-radius: 2rem;
+  border: 0;
+  color: #222;
+  box-shadow: 0 10px 65px -10px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  font-weight: lighter;
+}
+
+.cart-item__counter-input:focus {
   border: 1px solid $color-borders-grey;
-  width: 3rem;
-  height: 2rem;
-  outline: none;
+}
+
+.cart-item__counter-input:disabled {
+  cursor: not-allowed;
+  border: 2px solid $color-borders-grey;
 }
 
 input::-webkit-outer-spin-button,
@@ -93,25 +124,82 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-.cart-item_counter-btn {
-  border-radius: 50%;
-  font-size: 3rem;
-  width: 3rem;
-  height: 3rem;
+.cart-item__counter-btn {
+  // border-radius: 50%;
+  // font-size: 3rem;
+  // width: 3rem;
+  // height: 3rem;
+  // display: flex;
+  // justify-content: center;
+  // align-items: center;
+  // color: rgb(113, 113, 113);
+  position: absolute;
+  width: 2.8rem;
+  height: 2.8rem;
+  top: 0.6rem;
+  display: block;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: #f4f4f4
+    url(data:image/svg+xml;utf8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iNTAiPjxwYXRoIGQ9Ik0xNyAyNWgxNk02NyAyNWgxNk03NSAxN3YxNiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2IoNTksNjksNjYpIiBzdHJva2Utd2lkdGg9IjEuNXB4IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIC8+PC9zdmc+)
+    no-repeat 0 0;
+  background-size: 5.6rem 2.8rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-indent: 100%;
+  border-radius: 1.4rem;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  opacity: 0.5;
+}
+
+.minus-btn {
+  left: 0.6rem;
+}
+
+.plus-btn {
+  right: 0.6rem;
+  background-position-x: -2.8rem;
+}
+
+.cart-item__counter-btn:hover:not(:disabled) {
+  color: rgb(0, 0, 0);
+  opacity: 1;
+}
+
+.cart-item__counter-btn:focus {
+  outline: none;
+}
+
+.cart-item__counter-btn:active:not(:disabled) {
+  background-position-y: 1px;
+  box-shadow: inset 0 2px 12px -4px #c5d1d9;
+}
+
+.cart-item__counter-btn:hover:disabled {
+  color: rgb(113, 113, 113);
+  cursor: not-allowed;
+}
+
+// .cart-item__counter-btn:active {
+//   font-size: 3.4rem;
+// }
+
+// .cart-item__counter-btn:active:disabled {
+//   font-size: 3rem;
+// }
+
+.buttons-wrapper {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: row;
+  min-width: 15.1rem;
+  justify-content: space-between;
 }
 
-.cart-item_counter-btn:hover {
-  color: rgb(45, 45, 45);
-}
-
-.cart-item_counter-btn:active {
-  font-size: 3.4rem;
-}
-
-.delete-cart-item__btn {
+.delete-cart-item__btn,
+.edit-item__btn,
+.update-cart-item__btn {
   display: flex;
   column-gap: 0.5rem;
   background-color: transparent;
@@ -121,14 +209,34 @@ input::-webkit-inner-spin-button {
   font-size: 2rem;
 }
 
-.delete-cart-item__btn:hover {
+.delete-cart-item__btn:hover,
+.edit-item__btn:hover,
+.update-cart-item__btn:hover {
   background-color: $color-borders-lightgrey;
 }
 
-.delete-cart-item-btn__img {
-  width: 4rem;
-  height: 4rem;
+.update-cart-item__btn:disabled {
+  background-color: $color-borders-lightgrey;
+  cursor: not-allowed;
+  color: #616161;
 }
+
+.edit-item__img,
+.delete-cart-item-btn__img {
+  width: 3rem;
+  height: 3rem;
+}
+
+.edit-item__btn {
+  min-width: 11.1rem;
+  justify-content: center;
+}
+
+.delete-cart-item-btn__img {
+  width: 3rem;
+  height: 3rem;
+}
+
 // .delete-profile__btn:disabled {
 //   color: #8a8989;
 //   background-color: $color-borders-lightgrey;
@@ -202,4 +310,8 @@ input::-webkit-inner-spin-button {
 .total-cost__number {
   font-weight: bold;
   font-size: 2rem;
+}
+
+.no-show {
+  display: none;
 }

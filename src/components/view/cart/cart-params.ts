@@ -50,55 +50,65 @@ const cartParams = {
 
   img: {
     tag: 'img',
-    cssClasses: ['cart-item_image'],
+    cssClasses: ['cart-item__image'],
   },
 
   title: {
     tag: 'div',
-    cssClasses: ['cart-item_title'],
+    cssClasses: ['cart-item__title'],
   },
 
   info: {
     tag: 'p',
-    cssClasses: ['cart-item_info'],
+    cssClasses: ['cart-item__info'],
   },
 
   singer: {
     tag: 'a',
-    cssClasses: ['cart-item_singer'],
+    cssClasses: ['cart-item__singer'],
   },
 
   priceWrapper: {
     tag: 'div',
-    cssClasses: ['cart-item_prices'],
+    cssClasses: ['cart-item__prices'],
   },
 
   price: {
     tag: 'div',
-    cssClasses: ['cart-item_price'],
+    cssClasses: ['cart-item__price'],
+  },
+
+  itemTotalPrice: {
+    tag: 'div',
+    cssClasses: ['cart-item__price', 'cart-item__total-price'],
   },
 
   counterWrapper: {
     tag: 'div',
-    cssClasses: ['cart-item_counter-wrapper'],
+    cssClasses: ['cart-item__counter-wrapper'],
   },
 
   counterBtnMinus: {
     tag: 'button',
-    cssClasses: ['cart-item_counter-btn'],
+    cssClasses: ['cart-item__counter-btn', 'minus-btn'],
     textContent: '‐',
   },
 
   counterInput: {
     tag: 'input',
     type: 'number',
-    cssClasses: ['cart-item_counter-input'],
+    cssClasses: ['cart-item__counter-input'],
   },
 
   counterBtnPlus: {
     tag: 'button',
-    cssClasses: ['cart-item_counter-btn'],
+    cssClasses: ['cart-item__counter-btn', 'plus-btn'],
     textContent: '+',
+  },
+
+  buttonsWrapper: {
+    tag: 'div',
+    cssClasses: ['buttons-wrapper'],
   },
 
   buttonDelete: {
@@ -112,6 +122,32 @@ const cartParams = {
     cssClasses: ['delete-cart-item-btn__img'],
     alt: 'delete-button',
     src: '../assets/img/delete.svg',
+  },
+
+  buttonUpdate: {
+    tag: 'button',
+    cssClasses: ['update-cart-item__btn', 'no-show'],
+    type: 'submit',
+  },
+
+  // buttonUpdateImg: {
+  //   tag: 'img',
+  //   cssClasses: ['delete-cart-item-btn__img'],
+  //   alt: 'delete-button',
+  //   src: '../assets/img/delete.svg',
+  // },
+
+  buttonEdit: {
+    tag: 'button',
+    cssClasses: ['edit-item__btn'],
+    type: 'button',
+  },
+
+  buttonEditImg: {
+    tag: 'img',
+    cssClasses: ['edit-item__img'],
+    alt: 'edit-button',
+    src: '../assets/img/pencil.svg',
   },
 
   asideHeading: {
