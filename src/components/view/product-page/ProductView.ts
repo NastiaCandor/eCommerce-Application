@@ -12,13 +12,13 @@ import PAGES from '../../router/utils/pages';
 export default class ProductView extends View {
   private clientAPI: ClientAPI;
 
-  private productKey: string;
+  private productID: string;
 
   private breadCrumb: HTMLElement;
 
   constructor(clientAPI: ClientAPI, productKey: string, breadCrumb: HTMLElement) {
     super(productParams.section);
-    this.productKey = productKey;
+    this.productID = productKey;
     this.breadCrumb = breadCrumb;
     this.clientAPI = clientAPI;
     this.render();
@@ -54,7 +54,7 @@ export default class ProductView extends View {
 
   private injectProductSection(wrapper: ElementCreator): void {
     const productDisplay = new ElementCreator(productParams.productDisplay);
-    const getProduct = this.clientAPI.getProductById(this.productKey);
+    const getProduct = this.clientAPI.getProductById(this.productID);
     getProduct
       .then((data) => {
         const { body } = data;
@@ -226,7 +226,7 @@ export default class ProductView extends View {
       addCartBtn.setAttribute('disabled', 'true');
     }
     productSide.addInnerElement(addCartBtn);
-    this.addToCartFunctionality(addCartBtn);
+    this.addToCartFunctionality(addCartBtn, body);
 
     wrapper.addInnerElement(productSide);
   }
@@ -363,8 +363,10 @@ export default class ProductView extends View {
     wrapper.addInnerElement(error);
   }
 
-  private addToCartFunctionality(addToCartBtn: ElementCreator): void {
-    console.log(addToCartBtn);
-    this.clientAPI.addItemCart('f8e0950f-0501-4016-b534-90db416773ab');
+  private addToCartFunctionality(addToCartBtn: ElementCreator, body: ProductProjection): void {
+    const btn = addToCartBtn.getElement();
+    btn.addEventListener('click', () => {
+      this.clientAPI.addItemCart(body.id);
+    });
   }
 }
