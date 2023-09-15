@@ -2,19 +2,24 @@
 /* eslint-disable comma-dangle */
 /* eslint-disable prefer-template */
 /* eslint-disable no-useless-escape */
+import { Cart, ClientResponse } from '@commercetools/platform-sdk';
 import ElementCreator from '../../utils/ElementCreator';
 import View from '../View';
 import cartParams from './cart-params';
 import ClientAPI from '../../utils/Client';
+import CartAsideView from './cartAsideView';
 import '../../../assets/img/no-image-available.png';
 import '../../../assets/img/pencil.svg';
 
 export default class CartView extends View {
   private clientAPI: ClientAPI;
 
+  private CartAsideView: CartAsideView;
+
   constructor() {
     super(cartParams.section);
     this.clientAPI = new ClientAPI();
+    this.CartAsideView = new CartAsideView();
     this.render();
   }
 
@@ -39,14 +44,13 @@ export default class CartView extends View {
     topWrapper.addInnerElement([cartHeading, clearCartBtn]);
 
     cartWrapper.addInnerElement([topWrapper, await this.createCartItemsWrapper()]);
-    const cartAsideMenu = this.assembleAside();
-    this.addInnerElement(cartAsideMenu);
+    this.addInnerElement(this.CartAsideView);
   }
 
   private async createCartItemsWrapper() {
     const cartItemsWrapper = new ElementCreator(cartParams.itemsWrapper);
 
-    const customerID = (await this.getCustomerIDCookie()) as string;
+    const customerID = this.getCustomerIDCookie() as string;
     const getCustomerAPI = this.clientAPI.getCustomerCart(customerID);
 
     getCustomerAPI.then(async (data) => {
@@ -77,8 +81,18 @@ export default class CartView extends View {
           )
         );
       });
+      this.insertTotalCost(data);
     });
     return cartItemsWrapper;
+  }
+
+  private insertTotalCost(data: ClientResponse<Cart>) {
+    const totalCostEl = this.CartAsideView.createTotalCost(
+      (data.body.totalPrice.centAmount / 100).toString(),
+      '0',
+      (data.body.totalPrice.centAmount / 100).toString()
+    );
+    this.CartAsideView.addInnerElement(totalCostEl);
   }
 
   private assembleCartItem(
@@ -168,6 +182,8 @@ export default class CartView extends View {
         .then((data) => {
           console.log(data.body);
           // update total cart price
+          this.CartAsideView.getChildren()[2].remove();
+          this.insertTotalCost(data);
         })
         .catch((error) => {
           console.log(error);
@@ -202,23 +218,6 @@ export default class CartView extends View {
     return cartItem;
   }
 
-  private isValid(num: number, max: number) {
-    const isValid = !Number.isNaN(num) && num >= 1 && num <= max;
-    return isValid;
-  }
-
-  private enableEl(el: ElementCreator) {
-    if (el.getElement().getAttribute('disabled')) {
-      el.getElement().removeAttribute('disabled');
-    }
-  }
-
-  private disableEl(el: ElementCreator) {
-    if (!el.getElement().getAttribute('disabled')) {
-      el.getElement().setAttribute('disabled', 'true');
-    }
-  }
-
   private createEditBtn(): ElementCreator {
     const editBtn = new ElementCreator(cartParams.buttonEdit);
     editBtn.setAttribute('type', cartParams.buttonEdit.type);
@@ -250,54 +249,8 @@ export default class CartView extends View {
     return confirmBtn;
   }
 
-  private assembleAside(): ElementCreator {
-    const cartAsideMenu = new ElementCreator(cartParams.asideMenu);
-    const asideHeading = new ElementCreator(cartParams.asideHeading);
-    const totalCost = this.createtotalCost('50', '0', '50');
-    cartAsideMenu.addInnerElement([asideHeading, this.createPromoCode(), totalCost]);
-    return cartAsideMenu;
-  }
-
-  private createPromoCode(): ElementCreator {
-    const promoWrapper = new ElementCreator(cartParams.promoWrapper);
-    const promoText = new ElementCreator(cartParams.promoText);
-    promoText.setAttribute('for', cartParams.promoText.for);
-
-    const promoInput = new ElementCreator(cartParams.promoInput);
-    promoInput.setAttribute('type', cartParams.promoInput.type);
-    promoInput.setAttribute('id', cartParams.promoInput.id);
-    promoInput.setAttribute('placeholder', cartParams.promoInput.placeholder);
-
-    const promoBtn = new ElementCreator(cartParams.promoBtn);
-    promoBtn.setAttribute('type', cartParams.promoBtn.type);
-
-    promoWrapper.addInnerElement([promoText, promoInput, promoBtn]);
-    return promoWrapper;
-  }
-
-  private createtotalCost(subtotal: string, discount: string, cost: string): ElementCreator {
-    const costWrapper = new ElementCreator(cartParams.costWrapper);
-
-    const subtotalWrapper = new ElementCreator(cartParams.subtotalWrapper);
-    const subtotalText = new ElementCreator(cartParams.subtotalText);
-    const subtotalNumber = new ElementCreator(cartParams.subtotalNumber);
-    subtotalNumber.setTextContent(`${subtotal}$`);
-    subtotalWrapper.addInnerElement([subtotalText, subtotalNumber]);
-
-    const discountWrapper = new ElementCreator(cartParams.discountWrapper);
-    const discountText = new ElementCreator(cartParams.discountText);
-    const discountNumber = new ElementCreator(cartParams.discountNumber);
-    discountNumber.setTextContent(`${discount}$`);
-    discountWrapper.addInnerElement([discountText, discountNumber]);
-
-    const totalWrapper = new ElementCreator(cartParams.totalWrapper);
-    const totalCostText = new ElementCreator(cartParams.totalCostText);
-    const totalCostNumber = new ElementCreator(cartParams.totalCostNumber);
-    totalCostNumber.setTextContent(`${cost}$`);
-    totalWrapper.addInnerElement([totalCostText, totalCostNumber]);
-
-    costWrapper.addInnerElement([subtotalWrapper, discountWrapper, totalWrapper]);
-    return costWrapper;
+  private clearEl(el: ElementCreator, newEl: ElementCreator) {
+    el.getElement().replaceChildren(newEl.getElement());
   }
 
   private getCookie(name: string) {
@@ -331,7 +284,20 @@ export default class CartView extends View {
     });
   }
 
-  // private createCartItem() {
-  //   const itemImage = new ElementCreator(cartParams.itemsWrapper);
-  // }
+  private isValid(num: number, max: number) {
+    const isValid = !Number.isNaN(num) && num >= 1 && num <= max;
+    return isValid;
+  }
+
+  private enableEl(el: ElementCreator) {
+    if (el.getElement().getAttribute('disabled')) {
+      el.getElement().removeAttribute('disabled');
+    }
+  }
+
+  private disableEl(el: ElementCreator) {
+    if (!el.getElement().getAttribute('disabled')) {
+      el.getElement().setAttribute('disabled', 'true');
+    }
+  }
 }
