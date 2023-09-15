@@ -120,8 +120,12 @@ export default class CatalogView extends View {
   public async assambleCards(fetchedData?: ProductProjectionPagedQueryResponse, wrapper?: ElementCreator, id?: string) {
     const items = fetchedData || (await this.fetchAllCardsData());
     const cardsWrapper = wrapper || new ElementCreator(catalogParams.productCards);
-    this.totalCount = items?.total ?? 0;
-    this.itemsCount += items?.count ?? 0;
+    if (items) {
+      this.totalCount = items.total ?? 0;
+      this.itemsCount += items.count;
+    }
+    // this.totalCount = items?.total;
+    // this.itemsCount += items?.count;
     const cardsData = items?.results;
     if (cardsData && <ProductProjection[]>cardsData) {
       cardsData.forEach((data) => {
@@ -177,7 +181,7 @@ export default class CatalogView extends View {
   }
 
   private isStillPages() {
-    return this.totalCount > this.itemsCount || (this.totalCount === 0 && this.itemsCount === 0);
+    return this.totalCount >= this.itemsCount && this.totalCount > 0 && this.itemsCount > 0;
   }
 
   public resetPageCounters() {
