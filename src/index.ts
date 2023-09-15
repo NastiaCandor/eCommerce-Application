@@ -8,11 +8,10 @@ const clientApi = new ClientAPI();
 const spinner = new SpinnerView();
 
 async function bootstrap() {
-  spinner.render(document.body);
   try {
+    spinner.render(document.body);
     await clientApi.prefetchData();
-    const app = new App(clientApi, spinner);
-    app.start();
+    new App(clientApi, spinner).start();
   } catch (e) {
     console.error(`Error while init the app: ${e}`);
   }

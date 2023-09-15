@@ -10,6 +10,7 @@ export default class SpinnerView extends View {
   }
 
   protected configure(): void {
+    this.setAttribute('id', spinnerParams.wrapper.id);
     this.addInnerElement(new ElementCreator(spinnerParams.element));
   }
 

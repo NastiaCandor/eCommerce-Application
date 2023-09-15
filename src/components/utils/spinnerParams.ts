@@ -2,6 +2,7 @@ const spinnerParams = {
   wrapper: {
     tag: 'div',
     cssClasses: ['spinner-box'],
+    id: 'spinner',
   },
   element: {
     tag: 'div',

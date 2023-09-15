@@ -119,6 +119,7 @@ export default class App {
   }
 
   private async loadCatalogPage() {
+    this.catalogView.updateCrumbNavigation();
     this.catalogView.resetPageCounters();
     if (this.isCategoriesLoaded) {
       await this.catalogView.assambleCards().then((element) => {
@@ -128,6 +129,7 @@ export default class App {
           this.setContent(PAGES.CATALOG, this.catalogView.getElement());
         }
       });
+      this.isCategoriesLoaded = false;
       return;
     }
     this.isCategoriesLoaded = true;
@@ -137,7 +139,6 @@ export default class App {
   private async loadCategoriesPage() {
     await this.catalogView.proceedToCategories();
     this.isCategoriesLoaded = true;
-
     this.setContent(PAGES.CATALOG, this.catalogView.getElement());
   }
 
@@ -147,7 +148,7 @@ export default class App {
       return;
     }
 
-    // failed to implement spinner while loading, can't figure out when i gone wrong. TODO:
+    // failed to implement spinner while loading, can't figure out where i gone wrong. TODO:
     // work something out or leave that idea
     // this.setContent(PAGES.PRODUCT, this.spinner.getElement());
     let cardData;
