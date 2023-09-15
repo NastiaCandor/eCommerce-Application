@@ -50,7 +50,7 @@ export default class CatalogView extends View {
 
   private spinner: SpinnerView;
 
-  private previousView: HTMLElement | null;
+  private scrollFunction: (ev: Event) => void;
 
   constructor(clientApi: ClientAPI, router: Router, spinner: SpinnerView) {
     super(catalogParams.section);
@@ -65,7 +65,7 @@ export default class CatalogView extends View {
     this.totalCount = 0;
     this.cardsView = null;
     this.endpoints = null;
-    this.previousView = null;
+    this.scrollFunction = () => {};
     this.isLoadingData = false;
     this.wrapper = null;
     this.bcWrapper = this.breadCrumbWrapper;
@@ -122,11 +122,11 @@ export default class CatalogView extends View {
     const items = fetchedData || (await this.fetchAllCardsData());
     const cardsWrapper = wrapper || new ElementCreator(catalogParams.productCards);
     if (items) {
+      console.log('Before update: ', this.totalCount, this.itemsCount);
       this.totalCount = items.total ?? 0;
       this.itemsCount += items.count;
+      console.log('After update: ', this.totalCount, this.itemsCount);
     }
-    // this.totalCount = items?.total;
-    // this.itemsCount += items?.count;
     const cardsData = items?.results;
     if (cardsData && <ProductProjection[]>cardsData) {
       cardsData.forEach((data) => {
@@ -142,50 +142,55 @@ export default class CatalogView extends View {
           );
         }
       });
+      if (this.scrollFunction) {
+        document.removeEventListener('scroll', this.scrollFunction);
+      }
       if (!wrapper) {
         cardsWrapper.setAttribute('id', catalogParams.productCards.id);
-        this.scrollHandler(cardsWrapper, id);
       }
     }
     this.cardsView = cardsWrapper.getElement();
+    this.scrollHandler(cardsWrapper, id);
     return cardsWrapper;
   }
 
   private scrollHandler(element: ElementCreator, id?: string) {
-    element.getElement().addEventListener('scroll', async (evt) => {
-      if (evt.target instanceof Window) {
-        const pxHeight = evt.target.scrollY;
-        element.addInnerElement(this.spinner.getElement());
-        if (pxHeight < 50 && !this.isLoadingData && this.isStillPages()) {
-          this.isLoadingData = true;
-          if (this.endpoints) {
-            const data = await this.filterView.getFilterData(this.endpoints, this.itemsCount);
-            if (data) {
-              await this.assambleCards(data, element);
-            }
-          } else {
-            const data = id
-              ? await this.clientApi.getSpecificGenreById(id, this.itemsCount)
-              : await this.fetchAllCardsData(this.itemsCount);
-            if (data) {
-              await this.assambleCards(data, element);
-            }
+    this.scrollFunction = async () => {
+      console.log('Inside scrollFunction: ', this.totalCount, this.itemsCount);
+      const docEl = document.documentElement;
+      const pxlsBeforeEnd = docEl.scrollHeight - docEl.scrollTop - docEl.clientHeight;
+      element.addInnerElement(this.spinner.getElement());
+      if (pxlsBeforeEnd < 50 && !this.isLoadingData && this.isStillPages()) {
+        this.isLoadingData = true;
+        if (this.endpoints) {
+          const data = await this.filterView.getFilterData(this.endpoints, this.itemsCount);
+          if (data) {
+            await this.assambleCards(data, element, id);
           }
-          this.spinner.removeSelfFromNode();
-          this.isLoadingData = false;
+        } else {
+          const data = id
+            ? await this.clientApi.getSpecificGenreById(id, this.itemsCount)
+            : await this.fetchAllCardsData(this.itemsCount);
+          if (data) {
+            await this.assambleCards(data, element, id);
+          }
         }
-        if (this.itemsCount >= this.totalCount) {
-          this.spinner.removeSelfFromNode();
-        }
+        this.spinner.removeSelfFromNode();
+        this.isLoadingData = false;
       }
-    });
+      if (this.itemsCount >= this.totalCount) {
+        this.spinner.removeSelfFromNode();
+      }
+    };
+    document.addEventListener('scroll', this.scrollFunction);
   }
 
   private isStillPages() {
-    return this.totalCount >= this.itemsCount && this.totalCount > 0 && this.itemsCount > 0;
+    return this.totalCount > this.itemsCount && this.totalCount > 0 && this.itemsCount > 0;
   }
 
   public resetPageCounters() {
+    console.log('ff');
     this.totalCount = 0;
     this.itemsCount = 0;
     this.endpoints = null;
@@ -495,10 +500,10 @@ export default class CatalogView extends View {
     const productCards = new ElementCreator(catalogParams.productCards);
     productCards.setAttribute('id', catalogParams.productCards.id);
     const promises = this.prefetchedData.genres.map(async (item) => {
-      const data = await this.clientApi.getSpecificGenreById(item.id, undefined, 4);
+      const data = await this.clientApi.getSpecificGenreById(item.id, undefined, 11);
       if (data) {
         const cardsContent = new ElementCreator(catalogParams.categoriesPage.cardsContent);
-        const cards = await this.assambleCards(data, cardsContent);
+        const cards = this.assambleCategoriesPreview(data, cardsContent);
         const categoryWrapper = new ElementCreator(catalogParams.categoriesPage.categoryWrapper);
         const categoryHeading = new ElementCreator(catalogParams.categoriesPage.categoryHeading);
         const overlayLink = new ElementCreator(catalogParams.categoriesPage.overlay);
@@ -517,6 +522,23 @@ export default class CatalogView extends View {
     await Promise.all(promises);
 
     return productCards;
+  }
+
+  private assambleCategoriesPreview(fetchedData: ProductProjectionPagedQueryResponse, wrapper: ElementCreator) {
+    const data = fetchedData.results;
+    data.forEach((item) => {
+      if (item.masterVariant.attributes && item.masterVariant.images) {
+        this.assambleCategoryPreviewCard(wrapper, item.name, item.masterVariant.images);
+      }
+    });
+    return wrapper;
+  }
+
+  private assambleCategoryPreviewCard(wrapper: ElementCreator, songName: LocalizedString, imagesArr: ImageArr[]): void {
+    const productCard = new ElementCreator(catalogParams.card.wrapper);
+    const image = this.assambleImage(imagesArr, songName);
+    productCard.addInnerElement(image);
+    wrapper.addInnerElement(productCard);
   }
 
   private categoriesContentHandler(element: HTMLElement, collection: HTMLElement, textElement: HTMLElement) {

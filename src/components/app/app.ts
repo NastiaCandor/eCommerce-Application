@@ -50,6 +50,8 @@ export default class App {
 
   private spinner: SpinnerView;
 
+  private notFoundView: NotFoundView;
+
   private footerView: FooterView;
 
   constructor(clientApi: ClientAPI, spinner: SpinnerView) {
@@ -61,6 +63,7 @@ export default class App {
     this.prefetchedData = this.clientApi.prefetchedData;
     this.routes = this.routesClass.getRoutes();
     this.router = new Router(this.routes, this.state, this.routesClass.getTitlesMap);
+    this.notFoundView = new NotFoundView(this.router);
     this.contentContainer = new MainView();
     this.catalogView = new CatalogView(this.clientApi, this.router, this.spinner);
     this.header = new HeaderView(this.router);
@@ -119,13 +122,12 @@ export default class App {
   }
 
   private loadNotFoundPage() {
-    const notFound = new NotFoundView().getElement();
-    this.setContent(PAGES.SHIPPING, notFound);
+    this.setContent(PAGES.CATALOG, this.notFoundView.getElement());
   }
 
   private async loadCatalogPage() {
     this.catalogView.updateCrumbNavigation();
-    this.catalogView.resetPageCounters();
+    if (this.isStarted) this.catalogView.resetPageCounters();
     if (this.isCategoriesLoaded) {
       await this.catalogView.assambleCards().then((element) => {
         const wrapper = this.catalogView.getWrapper;
@@ -134,7 +136,6 @@ export default class App {
           this.setContent(PAGES.CATALOG, this.catalogView.getElement());
         }
       });
-      this.isCategoriesLoaded = false;
       return;
     }
     this.isCategoriesLoaded = true;
@@ -163,7 +164,7 @@ export default class App {
     });
     if (cardData) {
       const product = new ProductView(this.clientApi, cardData, this.catalogView.breadCrumbWrapper).getElement();
-      this.setContent(PAGES.PRODUCT, product);
+      this.setContent(PAGES.CATALOG, product);
     } else {
       this.loadCatalogPage();
     }
