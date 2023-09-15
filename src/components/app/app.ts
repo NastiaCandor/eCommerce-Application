@@ -19,6 +19,7 @@ import ClientAPI from '../utils/Client';
 import State from '../state/State';
 import ProductView from '../view/product-page/ProductView';
 import SpinnerView from '../utils/SpinnerView';
+import FooterView from '../view/footer/FooterView';
 
 export default class App {
   private header: HeaderView;
@@ -49,11 +50,14 @@ export default class App {
 
   private spinner: SpinnerView;
 
+  private footerView: FooterView;
+
   constructor(clientApi: ClientAPI, spinner: SpinnerView) {
     this.state = new State();
     this.clientApi = clientApi;
     this.spinner = spinner;
     this.routesClass = new Routes(this.getRoutesCallbacks(), this.clientApi);
+    this.footerView = new FooterView();
     this.prefetchedData = this.clientApi.prefetchedData;
     this.routes = this.routesClass.getRoutes();
     this.router = new Router(this.routes, this.state, this.routesClass.getTitlesMap);
@@ -70,6 +74,7 @@ export default class App {
     this.header.render();
     this.contentContainer.render();
     await this.catalogView.render();
+    this.footerView.render();
     this.router.navigate(window.location.pathname);
     this.isStarted = true;
     this.spinner.removeSelfFromNode();

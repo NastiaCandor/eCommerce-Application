@@ -153,8 +153,8 @@ export default class CatalogView extends View {
 
   private scrollHandler(element: ElementCreator, id?: string) {
     element.getElement().addEventListener('scroll', async (evt) => {
-      if (evt.target instanceof HTMLElement) {
-        const pxHeight = evt.target.scrollHeight - evt.target.scrollTop - evt.target.clientHeight;
+      if (evt.target instanceof Window) {
+        const pxHeight = evt.target.scrollY;
         element.addInnerElement(this.spinner.getElement());
         if (pxHeight < 50 && !this.isLoadingData && this.isStillPages()) {
           this.isLoadingData = true;
