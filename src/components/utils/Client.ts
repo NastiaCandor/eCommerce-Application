@@ -98,7 +98,7 @@ export default class ClientAPI {
       ID,
     };
     const body: CartUpdate = {
-      version: 11,
+      version: 45,
       actions: [
         {
           action: 'addLineItem',
@@ -129,7 +129,24 @@ export default class ClientAPI {
     const customersAPI = this.apiRoot.carts().withId(args).post({ body }).execute();
     return customersAPI;
   }
-  // https://discord.com/channels/516715744646660106/1132726369332236318/1149641316532232192
+
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  public async removeItemFromCart(lineItemID: string, ID: string, version: number) {
+    const args = {
+      ID,
+    };
+    const body: CartUpdate = {
+      version,
+      actions: [
+        {
+          action: 'removeLineItem',
+          lineItemId: lineItemID,
+        },
+      ],
+    };
+    const customersAPI = this.apiRoot.carts().withId(args).post({ body }).execute();
+    return customersAPI;
+  }
 
   public async getProductById(productID: string) {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });

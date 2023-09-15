@@ -30,7 +30,7 @@ export default class CartView extends View {
   protected async configure(): Promise<void> {
     this.renderInnerWrapper();
     this.getCustomerCart();
-    // this.addItem();
+    this.addItem();
   }
 
   private async renderInnerWrapper() {
@@ -181,6 +181,21 @@ export default class CartView extends View {
       updateQuantity
         .then((data) => {
           console.log(data.body);
+          // update total cart price
+          this.CartAsideView.getChildren()[2].remove();
+          this.insertTotalCost(data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    });
+
+    deleteBtn.getElement().addEventListener('click', () => {
+      const deleteItem = this.clientAPI.removeItemFromCart(lineItemId, cartID, cartVersion);
+      deleteItem
+        .then((data) => {
+          console.log(data.body);
+          cartItem.getElement().remove();
           // update total cart price
           this.CartAsideView.getChildren()[2].remove();
           this.insertTotalCost(data);

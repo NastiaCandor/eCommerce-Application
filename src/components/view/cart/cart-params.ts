@@ -91,7 +91,7 @@ const cartParams = {
   counterBtnMinus: {
     tag: 'button',
     cssClasses: ['cart-item__counter-btn', 'minus-btn'],
-    textContent: '‐',
+    // textContent: '‐',
   },
 
   counterInput: {
@@ -103,7 +103,7 @@ const cartParams = {
   counterBtnPlus: {
     tag: 'button',
     cssClasses: ['cart-item__counter-btn', 'plus-btn'],
-    textContent: '+',
+    // textContent: '+',
   },
 
   buttonsWrapper: {
