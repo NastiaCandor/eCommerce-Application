@@ -130,13 +130,6 @@ const cartParams = {
     type: 'submit',
   },
 
-  // buttonUpdateImg: {
-  //   tag: 'img',
-  //   cssClasses: ['delete-cart-item-btn__img'],
-  //   alt: 'delete-button',
-  //   src: '../assets/img/delete.svg',
-  // },
-
   buttonEdit: {
     tag: 'button',
     cssClasses: ['edit-item__btn'],
@@ -234,7 +227,37 @@ const cartParams = {
   totalCostNumber: {
     tag: 'span',
     cssClasses: ['total-cost__number'],
-    // textContent: 'TOTAL COST',
+  },
+
+  emptyCart: {
+    tag: 'div',
+    cssClasses: ['empty-cart__wrapper', 'no-show'],
+  },
+
+  emptyCartImg: {
+    tag: 'img',
+    cssClasses: ['empty-cart__img'],
+    src: '../assets/img/shopping-basket-empty.svg',
+    alt: 'shopping-basket-empty',
+  },
+
+  emptyCartHeading: {
+    tag: 'h4',
+    cssClasses: ['empty-cart__heading'],
+    textContent: 'Your cart is currently empty',
+  },
+
+  // emptyCartText: {
+  //   tag: 'div',
+  //   cssClasses: ['empty-cart__text'],
+  //   textContent: 'Fill Your Cart, Fill Your Soul: Start building your vinyl collection today!',
+  // },
+
+  emptyCartBtn: {
+    tag: 'a',
+    cssClasses: ['empty-cart__btn'],
+    href: '/catalog',
+    textContent: 'Start shopping',
   },
 };
 

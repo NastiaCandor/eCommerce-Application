@@ -98,7 +98,7 @@ export default class ClientAPI {
       ID,
     };
     const body: CartUpdate = {
-      version: 45,
+      version: 69,
       actions: [
         {
           action: 'addLineItem',

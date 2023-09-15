@@ -10,16 +10,21 @@ import ClientAPI from '../../utils/Client';
 import CartAsideView from './cartAsideView';
 import '../../../assets/img/no-image-available.png';
 import '../../../assets/img/pencil.svg';
+import '../../../assets/img/shopping-basket-empty.svg';
+import Router from '../../router/Router';
 
 export default class CartView extends View {
   private clientAPI: ClientAPI;
 
   private CartAsideView: CartAsideView;
 
-  constructor() {
+  private router: Router;
+
+  constructor(clientApi: ClientAPI, router: Router) {
     super(cartParams.section);
-    this.clientAPI = new ClientAPI();
+    this.clientAPI = clientApi;
     this.CartAsideView = new CartAsideView();
+    this.router = router;
     this.render();
   }
 
@@ -30,7 +35,7 @@ export default class CartView extends View {
   protected async configure(): Promise<void> {
     this.renderInnerWrapper();
     this.getCustomerCart();
-    this.addItem();
+    // this.addItem();
   }
 
   private async renderInnerWrapper() {
@@ -50,11 +55,18 @@ export default class CartView extends View {
   private async createCartItemsWrapper() {
     const cartItemsWrapper = new ElementCreator(cartParams.itemsWrapper);
 
+    const emptyCart = this.createEmptyCartScreen();
+    cartItemsWrapper.addInnerElement(emptyCart);
+
     const customerID = this.getCustomerIDCookie() as string;
     const getCustomerAPI = this.clientAPI.getCustomerCart(customerID);
 
     getCustomerAPI.then(async (data) => {
       const { lineItems } = data.body;
+      if (lineItems.length === 0) {
+        emptyCart.getElement().classList.remove('no-show');
+      }
+      console.log(lineItems.length);
       console.log(data.body);
       lineItems.forEach((element) => {
         const currPrice = element.price.discounted
@@ -194,7 +206,11 @@ export default class CartView extends View {
       const deleteItem = this.clientAPI.removeItemFromCart(lineItemId, cartID, cartVersion);
       deleteItem
         .then((data) => {
-          console.log(data.body);
+          const { lineItems } = data.body;
+          if (lineItems.length === 0) {
+            const cartWrapper = cartItem.getElement().parentNode as ParentNode;
+            cartWrapper.children[0].classList.remove('no-show');
+          }
           cartItem.getElement().remove();
           // update total cart price
           this.CartAsideView.getChildren()[2].remove();
@@ -264,6 +280,25 @@ export default class CartView extends View {
     return confirmBtn;
   }
 
+  private createEmptyCartScreen(): ElementCreator {
+    const emptyCartWrapper = new ElementCreator(cartParams.emptyCart);
+    const emptyCartImg = new ElementCreator(cartParams.emptyCartImg);
+    emptyCartImg.setImageLink(cartParams.emptyCartImg.src, cartParams.emptyCartImg.alt);
+    const emptyCartHeading = new ElementCreator(cartParams.emptyCartHeading);
+    // const emptyCartText = new ElementCreator(cartParams.emptyCartText);
+    const emptyCartBtn = new ElementCreator(cartParams.emptyCartBtn);
+    emptyCartBtn.setAttribute('href', cartParams.emptyCartBtn.href);
+    emptyCartBtn.getElement().addEventListener('click', (e) => {
+      e.preventDefault();
+      if (e.target instanceof HTMLAnchorElement) {
+        this.router.navigate(e.target.href);
+      }
+    });
+
+    emptyCartWrapper.addInnerElement([emptyCartImg, emptyCartHeading, emptyCartBtn]);
+    return emptyCartWrapper;
+  }
+
   private clearEl(el: ElementCreator, newEl: ElementCreator) {
     el.getElement().replaceChildren(newEl.getElement());
   }
@@ -285,10 +320,6 @@ export default class CartView extends View {
     getCustomerAPI.then(async (data) => {
       console.log(data.body.lineItems);
     });
-
-    // const customer = await (await getCustomerAPI()).body;
-    // console.log((await getCustomerAPI()).body);
-    // return (await getCustomerAPI()).body;
   }
 
   private async addItem() {

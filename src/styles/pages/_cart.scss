@@ -312,6 +312,48 @@ input::-webkit-inner-spin-button {
   font-size: 2rem;
 }
 
+.empty-cart__wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+  padding-top: 2rem;
+}
+
+.empty-cart__heading {
+  text-transform: uppercase;
+  font-size: calc(1vw + 13px);
+  text-align: center;
+}
+
+.empty-cart__text {
+  max-width: 26rem;
+  text-align: center;
+  font-size: 2rem;
+}
+
+.empty-cart__img {
+  width: 35%;
+  max-width: 30rem;
+}
+
+.empty-cart__btn {
+  font-weight: bold;
+  border-radius: 3px;
+  width: 25rem;
+  padding: 1.5rem;
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  background-color: #e5edf7;
+  text-transform: uppercase;
+  color:#2e2e2e;
+}
+
+.empty-cart__btn:hover {
+  background-color: #deeaf8;
+}
+
 .no-show {
   display: none;
 }
