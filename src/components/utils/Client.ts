@@ -639,10 +639,10 @@ export default class ClientAPI {
     }
   }
 
-  public async getSpecificGenreById(id: string, offsetCount?: number) {
+  public async getSpecificGenreById(id: string, offsetCount?: number, limitCount = 8) {
     const query = {
       queryArgs: {
-        limit: 8,
+        limit: limitCount,
         where: `categories(id="${id}")`,
         offset: offsetCount,
       },

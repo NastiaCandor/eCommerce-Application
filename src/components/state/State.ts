@@ -13,7 +13,7 @@ export default class State {
   }
 
   public pushState(url: string): void {
-    window.history.pushState(null, '', url);
+    window.history.pushState(`${url}`, '', url);
   }
 
   public replaceState(url: string): void {

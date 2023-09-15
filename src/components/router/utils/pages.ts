@@ -15,8 +15,8 @@ const PAGES: PagesInterface = {
   SHIPPING: '/shipping',
   CONTACTS: '/contacts',
 
-  CATEGORY: '/catalog/category',
-  CATEGORIES: 'catalog/category',
+  CATEGORY: '/catalog/categories',
+  CATEGORIES: 'catalog/categories',
   PRODUCTS: 'catalog/product',
   PRODUCT: '/catalog/product',
   FILTER: 'catalog/filtred',
