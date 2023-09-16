@@ -1,9 +1,8 @@
 .profile {
   display: flex;
-  flex-direction: row;
+  min-height: 90vh;
   background-color: white;
   box-shadow: -1px -1px 0px 0px #e6e2a0;
-  min-height: 95vh;
 }
 
 .profile__wrapper {

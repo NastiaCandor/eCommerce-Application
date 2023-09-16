@@ -19,6 +19,7 @@ import ClientAPI from '../utils/Client';
 import State from '../state/State';
 import ProductView from '../view/product-page/ProductView';
 import SpinnerView from '../utils/SpinnerView';
+import FooterView from '../view/footer/FooterView';
 
 export default class App {
   private header: HeaderView;
@@ -41,7 +42,7 @@ export default class App {
 
   private state: State;
 
-  private isCategoriesLoaded: boolean;
+  private isCatalogLeaved: boolean;
 
   private isStarted: boolean;
 
@@ -49,20 +50,26 @@ export default class App {
 
   private spinner: SpinnerView;
 
+  private notFoundView: NotFoundView;
+
+  private footerView: FooterView;
+
   constructor(clientApi: ClientAPI, spinner: SpinnerView) {
     this.state = new State();
     this.clientApi = clientApi;
     this.spinner = spinner;
     this.routesClass = new Routes(this.getRoutesCallbacks(), this.clientApi);
+    this.footerView = new FooterView();
     this.prefetchedData = this.clientApi.prefetchedData;
     this.routes = this.routesClass.getRoutes();
     this.router = new Router(this.routes, this.state, this.routesClass.getTitlesMap);
+    this.notFoundView = new NotFoundView(this.router);
     this.contentContainer = new MainView();
     this.catalogView = new CatalogView(this.clientApi, this.router, this.spinner);
     this.header = new HeaderView(this.router);
     this.signupForm = new RegView(this.router, this.clientApi);
     this.loginForm = new LoginView(this.router, this.clientApi);
-    this.isCategoriesLoaded = false;
+    this.isCatalogLeaved = false;
     this.isStarted = false;
   }
 
@@ -70,12 +77,19 @@ export default class App {
     this.header.render();
     this.contentContainer.render();
     await this.catalogView.render();
+    this.footerView.render();
     this.router.navigate(window.location.pathname);
     this.isStarted = true;
     this.spinner.removeSelfFromNode();
   }
 
   private setContent(page: string, view: HTMLElement) {
+    if (!page.replace('/', '').startsWith('catalog')) {
+      this.isCatalogLeaved = true;
+    } else {
+      this.catalogView.updateCrumbNavigation();
+      this.isCatalogLeaved = false;
+    }
     this.header.updateIcons();
     this.header.updateLinksStatus(page);
     this.contentContainer.setContent(view);
@@ -114,14 +128,11 @@ export default class App {
   }
 
   private loadNotFoundPage() {
-    const notFound = new NotFoundView().getElement();
-    this.setContent(PAGES.SHIPPING, notFound);
+    this.setContent(PAGES.CATALOG, this.notFoundView.getElement());
   }
 
   private async loadCatalogPage() {
-    this.catalogView.updateCrumbNavigation();
-    this.catalogView.resetPageCounters();
-    if (this.isCategoriesLoaded) {
+    if (!this.isCatalogLeaved) {
       await this.catalogView.assambleCards().then((element) => {
         const wrapper = this.catalogView.getWrapper;
         if (wrapper) {
@@ -129,16 +140,19 @@ export default class App {
           this.setContent(PAGES.CATALOG, this.catalogView.getElement());
         }
       });
-      this.isCategoriesLoaded = false;
-      return;
+    } else {
+      const url = this.state.getCatalogState.get('prevurl');
+      if (url && url?.split('/').length > 1) {
+        this.router.navigate(url);
+        return;
+      }
+      this.setContent(PAGES.CATALOG, this.catalogView.getElement());
     }
-    this.isCategoriesLoaded = true;
-    this.setContent(PAGES.CATALOG, this.catalogView.getElement());
   }
 
   private async loadCategoriesPage() {
+    this.catalogView.resetPageCounters();
     await this.catalogView.proceedToCategories();
-    this.isCategoriesLoaded = true;
     this.setContent(PAGES.CATALOG, this.catalogView.getElement());
   }
 
@@ -157,8 +171,14 @@ export default class App {
       if (key === id) cardData = value;
     });
     if (cardData) {
-      const product = new ProductView(this.clientApi, cardData, this.catalogView.breadCrumbWrapper).getElement();
-      this.setContent(PAGES.PRODUCT, product);
+      const product = new ProductView(
+        this.clientApi,
+        cardData,
+        this.catalogView.breadCrumbView,
+        // eslint-disable-next-line @typescript-eslint/comma-dangle, comma-dangle
+        this.router
+      ).getElement();
+      this.setContent(PAGES.CATALOG, product);
     } else {
       this.loadCatalogPage();
     }
@@ -172,8 +192,7 @@ export default class App {
   }
 
   private loadFilterPage() {
-    this.catalogView.updateCrumbNavigation();
-    this.setContent(PAGES.FILTER, this.catalogView.getElement());
+    this.setContent(PAGES.CATALOG, this.catalogView.getElement());
     if (!this.isStarted) {
       this.router.navigate(PAGES.CATALOG);
     }
@@ -185,6 +204,7 @@ export default class App {
   }
 
   private async mountCategory(key: string) {
+    this.catalogView.resetPageCounters();
     await this.catalogView.mountCategory(key);
     this.setContent(PAGES.CATALOG, this.catalogView.getElement());
   }

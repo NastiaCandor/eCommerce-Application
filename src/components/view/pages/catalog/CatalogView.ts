@@ -50,7 +50,7 @@ export default class CatalogView extends View {
 
   private spinner: SpinnerView;
 
-  private previousView: HTMLElement | null;
+  private scrollFunction: (ev: Event) => void;
 
   constructor(clientApi: ClientAPI, router: Router, spinner: SpinnerView) {
     super(catalogParams.section);
@@ -65,10 +65,10 @@ export default class CatalogView extends View {
     this.totalCount = 0;
     this.cardsView = null;
     this.endpoints = null;
-    this.previousView = null;
+    this.scrollFunction = () => {};
     this.isLoadingData = false;
     this.wrapper = null;
-    this.bcWrapper = this.breadCrumbWrapper;
+    this.bcWrapper = new ElementCreator(catalogParams.breadCrumbs.wrapper).getElement();
     this.categoriesBtn = [];
   }
 
@@ -125,8 +125,6 @@ export default class CatalogView extends View {
       this.totalCount = items.total ?? 0;
       this.itemsCount += items.count;
     }
-    // this.totalCount = items?.total;
-    // this.itemsCount += items?.count;
     const cardsData = items?.results;
     if (cardsData && <ProductProjection[]>cardsData) {
       cardsData.forEach((data) => {
@@ -142,47 +140,50 @@ export default class CatalogView extends View {
           );
         }
       });
+      if (this.scrollFunction) {
+        document.removeEventListener('scroll', this.scrollFunction);
+      }
       if (!wrapper) {
         cardsWrapper.setAttribute('id', catalogParams.productCards.id);
-        this.scrollHandler(cardsWrapper, id);
       }
     }
     this.cardsView = cardsWrapper.getElement();
+    this.scrollHandler(cardsWrapper, id);
     return cardsWrapper;
   }
 
   private scrollHandler(element: ElementCreator, id?: string) {
-    element.getElement().addEventListener('scroll', async (evt) => {
-      if (evt.target instanceof HTMLElement) {
-        const pxHeight = evt.target.scrollHeight - evt.target.scrollTop - evt.target.clientHeight;
-        element.addInnerElement(this.spinner.getElement());
-        if (pxHeight < 50 && !this.isLoadingData && this.isStillPages()) {
-          this.isLoadingData = true;
-          if (this.endpoints) {
-            const data = await this.filterView.getFilterData(this.endpoints, this.itemsCount);
-            if (data) {
-              await this.assambleCards(data, element);
-            }
-          } else {
-            const data = id
-              ? await this.clientApi.getSpecificGenreById(id, this.itemsCount)
-              : await this.fetchAllCardsData(this.itemsCount);
-            if (data) {
-              await this.assambleCards(data, element);
-            }
+    this.scrollFunction = async () => {
+      const docEl = document.documentElement;
+      const pxlsBeforeEnd = docEl.scrollHeight - docEl.scrollTop - docEl.clientHeight;
+      element.addInnerElement(this.spinner.getElement());
+      if (pxlsBeforeEnd < 50 && !this.isLoadingData && this.isStillPages()) {
+        this.isLoadingData = true;
+        if (this.endpoints) {
+          const data = await this.filterView.getFilterData(this.endpoints, this.itemsCount);
+          if (data) {
+            await this.assambleCards(data, element, id);
           }
-          this.spinner.removeSelfFromNode();
-          this.isLoadingData = false;
+        } else {
+          const data = id
+            ? await this.clientApi.getSpecificGenreById(id, this.itemsCount)
+            : await this.fetchAllCardsData(this.itemsCount);
+          if (data) {
+            await this.assambleCards(data, element, id);
+          }
         }
-        if (this.itemsCount >= this.totalCount) {
-          this.spinner.removeSelfFromNode();
-        }
+        this.spinner.removeSelfFromNode();
+        this.isLoadingData = false;
       }
-    });
+      if (this.itemsCount >= this.totalCount) {
+        this.spinner.removeSelfFromNode();
+      }
+    };
+    document.addEventListener('scroll', this.scrollFunction);
   }
 
   private isStillPages() {
-    return this.totalCount >= this.itemsCount && this.totalCount > 0 && this.itemsCount > 0;
+    return this.totalCount > this.itemsCount && this.totalCount > 0 && this.itemsCount > 0;
   }
 
   public resetPageCounters() {
@@ -224,7 +225,6 @@ export default class CatalogView extends View {
       }
       const { id } = target.dataset;
       if (id) {
-        this.updateCrumbNavigation();
         const productLink = this.prefetchedData.productsUrl.ids.get(id);
         const path = `${PAGES.PRODUCT}/${productLink || ''}`;
         this.router.navigate(path, id);
@@ -286,13 +286,13 @@ export default class CatalogView extends View {
 
   private async categoriesCbHandler() {
     if (this.categoriesBtn) {
-      this.categoriesBtn.forEach((btn) => {
-        btn.classList.remove('active');
-        btn.addEventListener('click', async (e) => {
-          e.preventDefault();
-          if (e.target instanceof HTMLAnchorElement) {
-            e.target.classList.add('active');
-            this.router.navigate(e.target.href);
+      this.categoriesBtn.forEach((btn, i, arr) => {
+        btn.addEventListener('click', (evt) => {
+          evt.preventDefault();
+          arr.forEach((item) => item.classList.remove('active'));
+          if (evt.target instanceof HTMLAnchorElement) {
+            evt.target.classList.add('active');
+            this.router.navigate(evt.target.href);
           }
         });
       });
@@ -302,7 +302,6 @@ export default class CatalogView extends View {
   public async mountCategory(key: string) {
     const categoryKey = this.prefetchedData.genres.find((item) => item.key === key);
     const id = categoryKey?.id;
-    this.updateCrumbNavigation();
     this.filterView.resetInputs();
     this.filterView.resetEndpoints();
     this.resetPageCounters();
@@ -328,14 +327,19 @@ export default class CatalogView extends View {
   }
 
   public replaceCardsContent(wrapper: ElementCreator, content: ElementCreator) {
-    const prevCards = wrapper.getElement().querySelector('#products-content');
-    if (content === this.spinner && prevCards) {
-      prevCards.replaceChildren(content.getElement());
-      return;
-    }
-    if (prevCards) {
-      wrapper.getElement().replaceChild(content.getElement(), prevCards);
-    }
+    const wrapperEl = wrapper.getElement();
+    const contentEl = content.getElement();
+    const prevCards = wrapperEl.querySelector('#products-content');
+    const elements = Array.from(wrapper.getElement().children);
+    elements.forEach((item) => {
+      if (item.id === content.getElement().id) {
+        wrapperEl.replaceChild(contentEl, item);
+        return;
+      }
+      if ((content instanceof SpinnerView || contentEl.id === 'no-results') && prevCards) {
+        prevCards.replaceChildren(contentEl);
+      }
+    });
   }
 
   private assambleSongTitle(title: LocalizedString): HTMLElement {
@@ -478,6 +482,7 @@ export default class CatalogView extends View {
 
   private showNoResults(search: string, filter = false) {
     const container = new ElementCreator(catalogParams.noResults.container);
+    container.setAttribute('id', catalogParams.noResults.container.id);
     const title = new ElementCreator(catalogParams.noResults.title);
     const message = new ElementCreator(catalogParams.noResults.message);
     if (filter) {
@@ -495,10 +500,10 @@ export default class CatalogView extends View {
     const productCards = new ElementCreator(catalogParams.productCards);
     productCards.setAttribute('id', catalogParams.productCards.id);
     const promises = this.prefetchedData.genres.map(async (item) => {
-      const data = await this.clientApi.getSpecificGenreById(item.id, undefined, 4);
+      const data = await this.clientApi.getSpecificGenreById(item.id, undefined, 11);
       if (data) {
         const cardsContent = new ElementCreator(catalogParams.categoriesPage.cardsContent);
-        const cards = await this.assambleCards(data, cardsContent);
+        const cards = this.assambleCategoriesPreview(data, cardsContent);
         const categoryWrapper = new ElementCreator(catalogParams.categoriesPage.categoryWrapper);
         const categoryHeading = new ElementCreator(catalogParams.categoriesPage.categoryHeading);
         const overlayLink = new ElementCreator(catalogParams.categoriesPage.overlay);
@@ -517,6 +522,23 @@ export default class CatalogView extends View {
     await Promise.all(promises);
 
     return productCards;
+  }
+
+  private assambleCategoriesPreview(fetchedData: ProductProjectionPagedQueryResponse, wrapper: ElementCreator) {
+    const data = fetchedData.results;
+    data.forEach((item) => {
+      if (item.masterVariant.attributes && item.masterVariant.images) {
+        this.assambleCategoryPreviewCard(wrapper, item.name, item.masterVariant.images);
+      }
+    });
+    return wrapper;
+  }
+
+  private assambleCategoryPreviewCard(wrapper: ElementCreator, songName: LocalizedString, imagesArr: ImageArr[]): void {
+    const productCard = new ElementCreator(catalogParams.card.wrapper);
+    const image = this.assambleImage(imagesArr, songName);
+    productCard.addInnerElement(image);
+    wrapper.addInnerElement(productCard);
   }
 
   private categoriesContentHandler(element: HTMLElement, collection: HTMLElement, textElement: HTMLElement) {
@@ -554,7 +576,6 @@ export default class CatalogView extends View {
   public async proceedToCategories() {
     this.replaceCardsContent(this.wrapper as ElementCreator, this.spinner);
     const productCards = await this.getCategoriesView();
-    this.updateCrumbNavigation();
     if (productCards) {
       if (!this.wrapper) {
         this.configure(undefined, productCards);
@@ -566,7 +587,6 @@ export default class CatalogView extends View {
 
   public async proceedToCatalog() {
     const productCards = await this.getCategoriesView();
-    this.updateCrumbNavigation();
     if (productCards) {
       if (!this.wrapper) {
         this.configure(undefined, productCards);
@@ -576,13 +596,20 @@ export default class CatalogView extends View {
     }
   }
 
-  public updateCrumbNavigation() {
-    this.bcWrapper.replaceChildren(...this.createBreadCrumbs());
+  public updateCrumbNavigation(savedLink?: string) {
+    const updatedCrumbs = this.createBreadCrumbs(savedLink);
+    if (updatedCrumbs) {
+      this.bcWrapper.replaceChildren(...updatedCrumbs);
+    }
   }
 
-  private createBreadCrumbs() {
-    const url = this.router.currentPath.split('/');
-    const crumbs = url
+  private createBreadCrumbs(savedLink?: string): HTMLElement[] | void {
+    const url = savedLink || this.router.currentPath;
+    const urlArray = url.split('/');
+    if (!urlArray.join('').startsWith('catalog')) {
+      return;
+    }
+    const crumbs = urlArray
       .filter((item) => item !== '')
       .map((item, i, arr) => {
         const itemWrapper = new ElementCreator(catalogParams.breadCrumbs.linkContainer);
@@ -591,7 +618,7 @@ export default class CatalogView extends View {
           link = new ElementCreator(catalogParams.breadCrumbs.bcLinkActive);
         }
         link.setTextContent(item.split('_').join(' '));
-        const path = `#${arr[0]}/${arr.slice(1, i + 1).join('/')}`;
+        const path = `${arr[0]}/${arr.slice(1, i + 1).join('/')}`;
         link.setAttribute('href', path);
         link.setMouseEvent((evt) => {
           evt.preventDefault();
@@ -605,10 +632,13 @@ export default class CatalogView extends View {
     return crumbs;
   }
 
-  public get breadCrumbWrapper() {
-    const wrapper = new ElementCreator(catalogParams.breadCrumbs.wrapper);
-    wrapper.addInnerElement(this.createBreadCrumbs());
-    return wrapper.getElement();
+  public get breadCrumbView() {
+    const wrapper = new ElementCreator(catalogParams.breadCrumbs.wrapper).getElement();
+    const crumbs = this.createBreadCrumbs();
+    if (crumbs) {
+      wrapper.replaceChildren(...crumbs);
+    }
+    return wrapper;
   }
 
   public get getWrapper() {
