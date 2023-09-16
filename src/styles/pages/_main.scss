@@ -26,6 +26,10 @@
   padding: 5rem;
   max-width: 120rem;
   margin: 0 auto;
+  @include media-tablet {
+    flex-direction: column;
+    width: 100%;
+  }
 }
 
 .main-slogan__wrapper {
@@ -34,6 +38,22 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  @include media-tablet {
+    width: 100%;
+    max-width: 100%;
+    // margin-top: 40rem;
+  }
+}
+
+.main__jazz {
+  .main-slogan__wrapper {
+    @include media-tablet {
+      margin-top: 40rem;
+    }
+    @include media-tablet-540-width {
+      margin-top: 2rem;
+    }
+  }
 }
 
 .main-inner__wrapper {
@@ -44,18 +64,31 @@
   padding: 5rem;
   max-width: 120rem;
   margin: 0 auto;
+  @include media-tablet {
+    flex-direction: column;
+    width: 100%;
+  }
 }
 
 .main-img__wrapper {
   width: 50%;
   max-width: 50rem;
   background-size: auto;
+  @include media-tablet {
+    width: 100%;
+  }
 }
 
 .jazz-img__wrapper {
   position: relative;
   // min-height: 50rem;
   width: 50%;
+  @include media-tablet {
+    width: 60%;
+    margin: 0 auto;
+    height: 100%;
+    bottom: 0;
+  }
 }
 
 .main-img,
@@ -68,6 +101,13 @@
 .vinyl-img {
   position: absolute;
   transition: all 0.4s;
+  @include media-tablet-540-width {
+    position: relative;
+  }
+}
+
+.vinyl-img {
+  display: none;
 }
 
 .jazz-img__wrapper:hover .vinyl-img {
@@ -88,11 +128,20 @@
 
 .main-slogan__heading {
   font-size: 5.5rem;
+  @include media-tablet-540-width {
+    font-size: 4rem;
+  }
 }
 
 .main-slogan__heading2 {
   font-size: 4rem;
   text-align: right;
+  @include media-tablet {
+    text-align: center;
+  }
+  @include media-tablet-540-width {
+    font-size: 2rem;
+  }
 }
 
 .main-slogan__info-text {
@@ -111,12 +160,18 @@
   font-size: 3rem;
   text-transform: uppercase;
   max-width: 33rem;
+  @include media-tablet-540-width {
+    font-size: 1.6rem;
+  }
 }
 
 .info-text-jazz-top {
   margin-top: 10rem;
   color: #8574dd;
   font-weight: bold;
+  @include media-tablet {
+    margin-top: 2rem;
+  }
 }
 
 .info-text-jazz-bottom {
@@ -131,23 +186,18 @@
 
 // DISCOUNT SECTIONS
 
-.main__discount {
-  display: flex;
-  flex-direction: row;
-  padding: 5rem 0;
-  width: 100%;
-  justify-content: space-around;
-  padding: 5rem;
-  max-width: 120rem;
-  margin: 0 auto;
-}
-
 .discount_FIRSTBUY {
   margin-top: 13rem;
   background-color: #fff8e6;
+  @include media-tablet {
+    margin-top: 0rem;
+  }
   .main__discount {
     display: flex;
     flex-direction: row-reverse;
+    @include media-tablet {
+      flex-direction: column;
+    }
   }
   .discount__subtitle {
     text-align: right;
@@ -161,15 +211,44 @@
   .discount__comment {
     margin-top: auto;
     text-align: end;
+    &_max-applic {
+      text-align: end;
+      @include media-tablet {
+        text-align: start;
+      }
+      @include media-tablet-540-width {
+        font-size: 1.2rem;
+      }
+    }
+    @include media-tablet {
+      text-align: start;
+    }
   }
   .discount__code {
     color: #e57600;
   }
 }
 
+.main__discount {
+  display: flex;
+  flex-direction: row;
+  padding: 5rem 0;
+  width: 100%;
+  justify-content: space-around;
+  padding: 5rem;
+  max-width: 120rem;
+  margin: 0 auto;
+  @include media-tablet {
+    flex-direction: column;
+  }
+}
+
 .discount__photo-contaner {
   width: 50%;
   img {
+    width: 100%;
+  }
+  @include media-tablet {
     width: 100%;
   }
 }
@@ -179,6 +258,10 @@
   display: flex;
   flex-direction: column;
   margin: 0 0 0 2rem;
+  @include media-tablet {
+    width: 100%;
+    margin: 0;
+  }
 }
 
 .discount__subtitle {
@@ -190,33 +273,63 @@
   align-self: start;
   border-radius: 1rem;
   margin-bottom: 1rem;
+  @include media-tablet {
+    margin-top: 1rem;
+  }
+  @include media-tablet-540-width {
+    font-size: 2rem;
+  }
 }
 
 .discount__title {
   @include font(3.2rem, 150%, 500);
   text-align: center;
+  @include media-tablet-540-width {
+    font-size: 1.9rem;
+  }
 }
 
 .discount__code-text {
-  @include font(3rem, 150%, 500);
+  @include font(2.6rem, 150%, 500);
   text-align: center;
+  @include media-laptop {
+    @include font(2rem, 150%, 500);
+  }
+  @include media-tablet-540-width {
+    font-size: 1.8rem;
+  }
+  @include media-tablet-540-width {
+    font-size: 1.4rem;
+  }
 }
 
 .discount__code {
   @include font(3.5rem, 150%, 700);
   color: #02b8e1;
+  @include media-laptop {
+    @include font(3rem, 150%, 500);
+  }
+  @include media-tablet-540-width {
+    font-size: 2.3rem;
+  }
+  @include media-tablet-540-width {
+    font-size: 2rem;
+  }
 }
 
 .discount__description {
   @include font(1.9rem, 130%, 400);
   text-align: justify;
   margin: 1rem 0;
+  @include media-tablet-540-width {
+    font-size: 1.4rem;
+  }
 }
 
 .discount__comment {
   margin-top: auto;
-  &_max-applic {
-    text-align: end;
+  @include media-tablet-540-width {
+    font-size: 1.2rem;
   }
 }
 
@@ -224,4 +337,7 @@
   @include font(2rem, 130%, 400);
   color: #00738d;
   text-align: end;
+  @include media-tablet-540-width {
+    font-size: 1.2rem;
+  }
 }
