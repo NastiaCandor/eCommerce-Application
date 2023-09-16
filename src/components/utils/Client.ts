@@ -58,6 +58,16 @@ export default class ClientAPI {
     return loginAPI;
   }
 
+  public getDiscountCodes() {
+    const discountCodes = this.apiRoot.discountCodes().get().execute();
+    return discountCodes;
+  }
+
+  public getCartDiscountByID(id: string) {
+    const cartDiscounts = this.apiRoot.cartDiscounts().withId({ ID: id }).get().execute();
+    return cartDiscounts;
+  }
+
   public async getProductById(productID: string) {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
     const getProduct = apiRoot.productProjections().withId({ ID: productID }).get().execute();

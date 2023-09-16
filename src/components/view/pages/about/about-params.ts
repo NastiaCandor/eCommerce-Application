@@ -1,6 +1,11 @@
 const aboutParams = {
   section: {
     tag: 'section',
+    cssClasses: ['main__section'],
+  },
+  container: {
+    tag: 'div',
+    cssClasses: ['main__container'],
   },
   sloganImgWrapper: {
     tag: 'div',
@@ -94,4 +99,70 @@ const aboutParams = {
   },
 };
 
-export default aboutParams;
+const discountCodeParams = {
+  container: {
+    tag: 'div',
+    cssClasses: ['discount__contaner'],
+  },
+  photoContainer: {
+    tag: 'div',
+    cssClasses: ['discount__photo-contaner'],
+  },
+  photoIMG: {
+    tag: 'img',
+    cssClasses: ['discount__photo-img'],
+  },
+  info: {
+    container: {
+      tag: 'div',
+      cssClasses: ['discount__info-contaner'],
+    },
+    title: {
+      tag: 'h3',
+      cssClasses: ['discount__title'],
+    },
+    codeText: {
+      tag: 'p',
+      cssClasses: ['discount__code-text'],
+      textContent: 'CODE: ',
+    },
+    code: {
+      tag: 'span',
+      cssClasses: ['discount__code'],
+    },
+    subtitle: {
+      tag: 'h4',
+      cssClasses: ['discount__subtitle'],
+    },
+    description: {
+      tag: 'p',
+      cssClasses: ['discount__description'],
+    },
+    validUntil: {
+      tag: 'p',
+      cssClasses: ['discount__valid-until'],
+    },
+    maxApplic: {
+      tag: 'p',
+      cssClasses: ['discount__comment_max-applic'],
+    },
+    comment: {
+      tag: 'p',
+      cssClasses: ['discount__comment'],
+      textContent: '*Use this code in your cart',
+    },
+  },
+};
+
+const DISCOUNT_PHOTOS = [
+  {
+    imgSRC: '../../../../assets/img/discount-back-to-school.png',
+    imgALT: 'Image of a school girl',
+  },
+  {
+    imgSRC: '../../../../assets/img/discount-first-buy.png',
+    imgALT: 'Image of a man',
+  },
+];
+
+export { aboutParams, discountCodeParams, DISCOUNT_PHOTOS };

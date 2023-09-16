@@ -77,7 +77,7 @@ export default class App {
   }
 
   private loadMainPage() {
-    const main = new AboutView().getElement();
+    const main = new AboutView(this.clientApi).getElement();
     this.setContent(PAGES.MAIN, main);
   }
 
