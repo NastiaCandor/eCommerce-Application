@@ -35,6 +35,8 @@ export default class CartView extends View {
   protected async configure(): Promise<void> {
     this.renderInnerWrapper();
     this.getCustomerCart();
+    this.getDiscountCodes();
+    this.getCartDiscounts();
     // this.addItem();
   }
 
@@ -66,9 +68,8 @@ export default class CartView extends View {
       if (lineItems.length === 0) {
         emptyCart.getElement().classList.remove('no-show');
       }
-      console.log(lineItems.length);
       console.log(data.body);
-      lineItems.forEach((element) => {
+      lineItems.forEach(async (element) => {
         const currPrice = element.price.discounted
           ? (element.price.discounted.value.centAmount / 100).toString()
           : (element.price.value.centAmount / 100).toString();
@@ -77,7 +78,7 @@ export default class CartView extends View {
           element.variant.attributes && element.variant.attributes[0].name === 'singer'
             ? element.variant.attributes[0].value
             : '';
-
+        // const currentVersion = await this.getCartVersion(customerID);
         cartItemsWrapper.addInnerElement(
           this.assembleCartItem(
             imgLink,
@@ -86,10 +87,11 @@ export default class CartView extends View {
             element.quantity,
             element.variant.availability?.availableQuantity as number,
             currPrice,
-            (element.totalPrice.centAmount / 100).toString(),
+            // (element.totalPrice.centAmount / 100).toString(),
             element.id,
             data.body.id,
-            data.body.version
+            customerID
+            // data.body.version
           )
         );
       });
@@ -99,11 +101,23 @@ export default class CartView extends View {
   }
 
   private insertTotalCost(data: ClientResponse<Cart>) {
-    const totalCostEl = this.CartAsideView.createTotalCost(
-      (data.body.totalPrice.centAmount / 100).toString(),
-      '0',
-      (data.body.totalPrice.centAmount / 100).toString()
-    );
+    // let subtotalSum;
+    const subtotal: number[] = [];
+    data.body.lineItems.forEach((cartItem) => {
+      if (cartItem.price.discounted) {
+        subtotal.push((cartItem.price.discounted.value.centAmount / 100) * cartItem.quantity);
+      }
+    });
+    console.log(subtotal);
+
+    const subtotalSum = subtotal.reduce((acc, value) => acc + value, 0).toString();
+    console.log(subtotalSum);
+
+    const totalSum = data.body.totalPrice.centAmount / 100;
+    console.log(totalSum);
+
+    const promoDiff = (Number(subtotal) - totalSum).toFixed(2);
+    const totalCostEl = this.CartAsideView.createTotalCost(subtotalSum.toString(), promoDiff, totalSum.toString());
     this.CartAsideView.addInnerElement(totalCostEl);
   }
 
@@ -114,10 +128,11 @@ export default class CartView extends View {
     quantity: number,
     maxQuantity: number,
     price: string,
-    totalPrice: string,
+    // totalPrice: string,
     lineItemId: string,
     cartID: string,
-    cartVersion: number
+    customerID: string
+    // cartVersion: number
   ): ElementCreator {
     const cartItem = new ElementCreator(cartParams.cartItem);
     const itemImage = new ElementCreator(cartParams.img);
@@ -146,8 +161,8 @@ export default class CartView extends View {
     const itemPrice = new ElementCreator(cartParams.price);
     itemPrice.setTextContent(`${price}$`);
 
-    const itemTotalPrice = new ElementCreator(cartParams.itemTotalPrice);
-    itemTotalPrice.setTextContent(`${totalPrice}$`);
+    // const itemTotalPrice = new ElementCreator(cartParams.itemTotalPrice);
+    // itemTotalPrice.setTextContent(`${totalPrice}$`);
 
     const buttonsWrapper = new ElementCreator(cartParams.buttonsWrapper);
 
@@ -159,8 +174,6 @@ export default class CartView extends View {
     editBtn.getElement().addEventListener('click', () => {
       editBtn.getElement().classList.add('no-show');
       confirmBtn.getElement().classList.remove('no-show');
-      console.log(maxQuantity);
-
       if (!(Number(inputEl.value) - 1 < 1)) {
         this.enableEl(minusBtn);
       }
@@ -178,16 +191,17 @@ export default class CartView extends View {
       } else confirmBtn.getElement().removeAttribute('disabled');
     });
 
-    confirmBtn.getElement().addEventListener('click', () => {
+    confirmBtn.getElement().addEventListener('click', async () => {
       editBtn.getElement().classList.remove('no-show');
       confirmBtn.getElement().classList.add('no-show');
       this.disableEl(minusBtn);
       this.disableEl(counterInput);
       this.disableEl(plusBtn);
+      const currentVersion = await this.getCartVersion(customerID);
       const updateQuantity = this.clientAPI.updateItemInCart(
         lineItemId,
         cartID,
-        cartVersion,
+        currentVersion,
         Math.ceil(Number(inputEl.value))
       );
       updateQuantity
@@ -202,8 +216,9 @@ export default class CartView extends View {
         });
     });
 
-    deleteBtn.getElement().addEventListener('click', () => {
-      const deleteItem = this.clientAPI.removeItemFromCart(lineItemId, cartID, cartVersion);
+    deleteBtn.getElement().addEventListener('click', async () => {
+      const currentVersion = await this.getCartVersion(customerID);
+      const deleteItem = this.clientAPI.removeItemFromCart(lineItemId, cartID, currentVersion);
       deleteItem
         .then((data) => {
           const { lineItems } = data.body;
@@ -229,8 +244,8 @@ export default class CartView extends View {
         minusBtn.getElement().setAttribute('disabled', 'true');
       }
       plusBtn.getElement().removeAttribute('disabled');
-      itemTotalPrice.getElement().textContent = '';
-      itemTotalPrice.setTextContent(`${(Number(price) * inputValue).toFixed(2)}$`);
+      // itemTotalPrice.getElement().textContent = '';
+      // itemTotalPrice.setTextContent(`${(Number(price) * inputValue).toFixed(2)}$`);
     });
 
     plusBtn.getElement().addEventListener('click', () => {
@@ -241,11 +256,11 @@ export default class CartView extends View {
         plusBtn.getElement().setAttribute('disabled', 'true');
       }
       minusBtn.getElement().removeAttribute('disabled');
-      itemTotalPrice.getElement().textContent = '';
-      itemTotalPrice.setTextContent(`${(Number(price) * inputValue).toFixed(2)}$`);
+      // itemTotalPrice.getElement().textContent = '';
+      // itemTotalPrice.setTextContent(`${(Number(price) * inputValue).toFixed(2)}$`);
     });
     buttonsWrapper.addInnerElement([editBtn, confirmBtn, deleteBtn]);
-    cartItem.addInnerElement([itemImage, itemName, counterWrapper, itemPrice, itemTotalPrice, buttonsWrapper]);
+    cartItem.addInnerElement([itemImage, itemName, counterWrapper, itemPrice, buttonsWrapper]);
     return cartItem;
   }
 
@@ -303,6 +318,12 @@ export default class CartView extends View {
     el.getElement().replaceChildren(newEl.getElement());
   }
 
+  private async getCartVersion(id: string) {
+    const cart = (await this.clientAPI.getCustomerCart(id)).body;
+    const { version } = cart;
+    return version;
+  }
+
   private getCookie(name: string) {
     const matches = document.cookie.match(
       new RegExp('(?:^|; )' + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)')
@@ -315,7 +336,7 @@ export default class CartView extends View {
   }
 
   private async getCustomerCart() {
-    const customerID = (await this.getCustomerIDCookie()) as string;
+    const customerID = this.getCustomerIDCookie() as string;
     const getCustomerAPI = this.clientAPI.getCustomerCart(customerID);
     getCustomerAPI.then(async (data) => {
       console.log(data.body.lineItems);
@@ -326,6 +347,20 @@ export default class CartView extends View {
     const cartID = '4e49ab8d-5842-4ead-bd4f-9030adb8fa31';
     const getCustomerAPI = this.clientAPI.addItemToCart(cartID);
     getCustomerAPI.then(async (data) => {
+      console.log(data.body);
+    });
+  }
+
+  private async getDiscountCodes() {
+    const codesAPI = this.clientAPI.getDiscountCodes();
+    codesAPI.then(async (data) => {
+      console.log(data.body);
+    });
+  }
+
+  private async getCartDiscounts() {
+    const codesAPI = this.clientAPI.getCartDiscounts();
+    codesAPI.then(async (data) => {
       console.log(data.body);
     });
   }

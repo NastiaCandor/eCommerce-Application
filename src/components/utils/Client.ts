@@ -93,12 +93,28 @@ export default class ClientAPI {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-shadow
+  public async getCartDiscountByID(ID: string) {
+    const codes = this.apiRoot.cartDiscounts().withId({ ID }).get().execute();
+    return codes;
+  }
+
+  public async getDiscountCodes() {
+    const codes = this.apiRoot.discountCodes().get().execute();
+    return codes;
+  }
+
+  public async getCartDiscounts() {
+    const codes = this.apiRoot.cartDiscounts().get().execute();
+    return codes;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-shadow
   public async addItemToCart(ID: string) {
     const args = {
       ID,
     };
     const body: CartUpdate = {
-      version: 69,
+      version: 75,
       actions: [
         {
           action: 'addLineItem',
@@ -123,6 +139,24 @@ export default class ClientAPI {
           action: 'changeLineItemQuantity',
           lineItemId: lineItemID,
           quantity,
+        },
+      ],
+    };
+    const customersAPI = this.apiRoot.carts().withId(args).post({ body }).execute();
+    return customersAPI;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  public async applyPromoCode(ID: string, version: number, promocode: string) {
+    const args = {
+      ID,
+    };
+    const body: CartUpdate = {
+      version,
+      actions: [
+        {
+          action: 'addDiscountCode',
+          code: promocode,
         },
       ],
     };

@@ -259,6 +259,9 @@ const cartParams = {
     href: '/catalog',
     textContent: 'Start shopping',
   },
+
+  wrongPromocode: "This promocode doesn't exist. Please try again",
+  noPromocode: 'Please enter a promocode',
 };
 
 export default cartParams;

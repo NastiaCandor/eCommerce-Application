@@ -2,6 +2,7 @@
 /* eslint-disable comma-dangle */
 /* eslint-disable prefer-template */
 /* eslint-disable no-useless-escape */
+import Noty from 'noty';
 import ElementCreator from '../../utils/ElementCreator';
 import View from '../View';
 import cartParams from './cart-params';
@@ -26,7 +27,6 @@ export default class CartAsideView extends View {
 
   private renderInnerWrapper() {
     const asideHeading = new ElementCreator(cartParams.asideHeading);
-    // const totalCost = this.createTotalCost('50', '0', '50');
     this.addInnerElement([asideHeading, this.createPromoCode()]);
   }
 
@@ -34,15 +34,52 @@ export default class CartAsideView extends View {
     const promoWrapper = new ElementCreator(cartParams.promoWrapper);
     const promoText = new ElementCreator(cartParams.promoText);
     promoText.setAttribute('for', cartParams.promoText.for);
+    const formEl = promoWrapper.getElement() as HTMLFormElement;
 
     const promoInput = new ElementCreator(cartParams.promoInput);
     promoInput.setAttribute('type', cartParams.promoInput.type);
     promoInput.setAttribute('id', cartParams.promoInput.id);
     promoInput.setAttribute('placeholder', cartParams.promoInput.placeholder);
+    const inputEl = promoInput.getElement() as HTMLInputElement;
 
     const promoBtn = new ElementCreator(cartParams.promoBtn);
     promoBtn.setAttribute('type', cartParams.promoBtn.type);
 
+    formEl.addEventListener('submit', (el) => {
+      el.preventDefault();
+      const customerID = this.getCustomerIDCookie() as string;
+      if (inputEl.value === '') {
+        this.showWrongPromocodeMessage(cartParams.noPromocode);
+        return;
+      }
+      const getCartAPI = this.clientAPI.getCustomerCart(customerID);
+      if (inputEl.value !== '') {
+        getCartAPI.then(async (data) => {
+          const sendDiscount = this.clientAPI.applyPromoCode(data.body.id, data.body.version, inputEl.value);
+          sendDiscount
+            .then(async (response) => {
+              const subtotal: number[] = [];
+              response.body.lineItems.forEach((cartItem) => {
+                if (cartItem.price.discounted) {
+                  subtotal.push(cartItem.price.discounted.value.centAmount / 100);
+                }
+              });
+              const subtotalSum = subtotal.reduce((acc, value) => acc + value, 0).toString();
+              const totalSum = data.body.totalPrice.centAmount / 100;
+              const promoDiff = (Number(subtotal) - totalSum).toFixed(2);
+              this.getChildren()[2].remove();
+              this.addInnerElement(this.createTotalCost(subtotalSum, promoDiff, totalSum.toString()));
+            })
+            .catch((error) => {
+              console.log(error.code);
+              if (error.code === 400) {
+                this.showWrongPromocodeMessage(cartParams.wrongPromocode);
+              }
+            });
+          console.log(data.body);
+        });
+      }
+    });
     promoWrapper.addInnerElement([promoText, promoInput, promoBtn]);
     return promoWrapper;
   }
@@ -70,5 +107,34 @@ export default class CartAsideView extends View {
 
     costWrapper.addInnerElement([subtotalWrapper, discountWrapper, totalWrapper]);
     return costWrapper;
+  }
+
+  private getCookie(name: string) {
+    const matches = document.cookie.match(
+      new RegExp('(?:^|; )' + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)')
+    );
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+  }
+
+  private getCustomerIDCookie() {
+    return this.getCookie('customer_id');
+  }
+
+  private async getCustomerCart() {
+    const customerID = (await this.getCustomerIDCookie()) as string;
+    const getCustomerAPI = this.clientAPI.getCustomerCart(customerID);
+    getCustomerAPI.then(async (data) => {
+      console.log(data.body.lineItems);
+    });
+  }
+
+  private showWrongPromocodeMessage(message: string): void {
+    new Noty({
+      theme: 'mint',
+      text: message,
+      timeout: 3000,
+      progressBar: true,
+      type: 'error',
+    }).show();
   }
 }

@@ -77,6 +77,10 @@
   max-width: 20rem;
   text-align: center;
 }
+  
+.cart-item__price {
+  font-size: 2.1rem;
+}
 
 .cart-item__image {
   height: 100%;
@@ -347,7 +351,7 @@ input::-webkit-inner-spin-button {
   justify-content: center;
   background-color: #e5edf7;
   text-transform: uppercase;
-  color:#2e2e2e;
+  color: #2e2e2e;
 }
 
 .empty-cart__btn:hover {
