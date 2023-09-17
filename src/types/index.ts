@@ -40,7 +40,7 @@ export type NotFoundType = {
   title: ElementParamsType;
   subtitle: ElementParamsType;
   errorNumber: ElementParamsType;
-  backToMainBtn: ElementParamsType;
+  backToCatalogBtn: ElementParamsType;
 };
 
 // PAGE INTERFACES

@@ -11,7 +11,8 @@ async function bootstrap() {
   try {
     spinner.render(document.body);
     await clientApi.prefetchData();
-    new App(clientApi, spinner).start();
+    const app = new App(clientApi, spinner);
+    app.start();
   } catch (e) {
     console.error(`Error while init the app: ${e}`);
   }

@@ -1,11 +1,10 @@
 .catalog__wrapper {
   display: grid;
   grid-template-areas: 'search bc bc'
-                        'catalog-aside cards cards';
-  grid-template-columns: 1fr 4fr auto;
-  padding: 2rem 0 0;
+                        'catalog-aside cards cards'
+                        'footer footer footer';
+  grid-template-columns: 0.6fr 4fr auto;
   position: relative;
-  overflow-x: hidden;
 }
 
 @media screen and (max-width: $tablet) {

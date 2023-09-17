@@ -24,10 +24,10 @@ const notFoundParams: NotFoundType = {
     cssClasses: ['not-found__error-number'],
     textContent: '404',
   },
-  backToMainBtn: {
+  backToCatalogBtn: {
     tag: 'a',
-    cssClasses: ['not-found__main-btn', 'button'],
-    textContent: 'Back to Main',
+    cssClasses: ['not-found__catalog-btn', 'button'],
+    textContent: 'Back to Catalog',
   },
 };
 

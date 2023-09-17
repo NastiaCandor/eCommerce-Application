@@ -6,7 +6,8 @@ html {
 body {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: auto;
+  min-height: 100vh;
   font-size: 1.6rem;
   background-color: $color-body-background;
   @extend %font-add-Inter;
