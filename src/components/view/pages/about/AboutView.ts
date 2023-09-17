@@ -94,7 +94,6 @@ export default class AboutView extends View {
           this.injectDiscountCodeSection(wrapper, code, ind);
           this.addInnerElement(wrapper);
         });
-        console.log(results);
       })
       .catch((error) => console.error(`Error while fetching cart discounts: ${error}`));
   }
@@ -111,7 +110,6 @@ export default class AboutView extends View {
     const infoContainer = new ElementCreator(discountCodeParams.info.container);
     const subtitle = new ElementCreator(discountCodeParams.info.subtitle);
     const cartDiscountData = await this.getCartDiscount(code.cartDiscounts[0].id);
-    console.log(cartDiscountData);
     const discountPersent = cartDiscountData.value;
     const persent = (<CartDiscountValueRelative>discountPersent).permyriad / 100;
     subtitle.setTextContent(`Discount ${persent}%`);
@@ -131,8 +129,8 @@ export default class AboutView extends View {
     if (cartDiscountData.validUntil) {
       const validUntil = new ElementCreator(discountCodeParams.info.validUntil);
       const date = new Date(cartDiscountData.validUntil);
-      const day = date.getDay();
-      const month = date.getMonth();
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
       const year = date.getFullYear();
       validUntil.setTextContent(`Ends ${day}/${month}/${year}`);
       infoContainer.addInnerElement(validUntil);
