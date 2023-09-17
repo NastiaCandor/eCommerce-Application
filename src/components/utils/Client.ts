@@ -115,11 +115,11 @@ export default class ClientAPI {
       ID,
     };
     const body: CartUpdate = {
-      version: 263,
+      version: 7,
       actions: [
         {
           action: 'addLineItem',
-          productId: 'f9dcc164-5f22-4f8b-bd58-3d9dba7c1df7',
+          productId: '22535097-9aed-4df5-a3eb-3db52b69f2e7',
           quantity: 1,
         },
       ],

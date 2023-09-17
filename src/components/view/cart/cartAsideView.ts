@@ -61,14 +61,16 @@ export default class CartAsideView extends View {
               const subtotal: number[] = [];
               response.body.lineItems.forEach((cartItem) => {
                 if (cartItem.price.discounted) {
-                  subtotal.push(cartItem.price.discounted.value.centAmount / 100);
+                  subtotal.push((cartItem.price.discounted.value.centAmount / 100) * cartItem.quantity);
+                } else if (!cartItem.price.discounted) {
+                  subtotal.push((cartItem.price.value.centAmount / 100) * cartItem.quantity);
                 }
               });
-              const subtotalSum = subtotal.reduce((acc, value) => acc + value, 0).toString();
+              const subtotalSum = subtotal.reduce((acc, value) => acc + value, 0);
               const totalSum = data.body.totalPrice.centAmount / 100;
-              const promoDiff = (Number(subtotal) - totalSum).toFixed(2);
+              const promoDiff = (subtotalSum - totalSum).toFixed(2);
               this.getChildren()[2].remove();
-              this.addInnerElement(this.createTotalCost(subtotalSum, promoDiff, totalSum.toString()));
+              this.addInnerElement(this.createTotalCost(subtotalSum.toString(), promoDiff, totalSum.toString()));
             })
             .catch((error) => {
               console.log(error.code);

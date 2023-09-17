@@ -35,8 +35,8 @@ export default class CartView extends View {
   protected async configure(): Promise<void> {
     this.renderInnerWrapper();
     this.getCustomerCart();
-    this.getDiscountCodes();
-    this.getCartDiscounts();
+    // this.getDiscountCodes();
+    // this.getCartDiscounts();
     // this.addItem();
   }
   // TODO: IF THERE IS NO DISCOUNTED PRICE + fixed poition of aside menu
@@ -53,8 +53,6 @@ export default class CartView extends View {
     topWrapper.addInnerElement([cartHeading, clearCartBtn]);
     const cartItemsWrapper = await this.createCartItemsWrapper();
     cartWrapper.addInnerElement([topWrapper, cartItemsWrapper]);
-    console.log(cartItemsWrapper.getChildren()[0]);
-    console.log(cartItemsWrapper.getChildren()[1]);
     clearCartBtn.getElement().addEventListener('click', async () => {
       clearCartBtn.getElement().classList.add('no-show');
       const customerID = this.getCustomerIDCookie() as string;
@@ -80,12 +78,6 @@ export default class CartView extends View {
         .catch((error) => {
           console.log(error);
         });
-      // const getEmptyCartAPI = this.clientAPI.getCustomerCart(customerID);
-      // this.CartAsideView.getChildren()[2].remove();
-      // getEmptyCartAPI.then((emptyCartData) => {
-      //   console.log(emptyCartData.body);
-      //   this.insertTotalCost(emptyCartData);
-      // });
     });
     this.addInnerElement(this.CartAsideView);
   }
@@ -104,7 +96,7 @@ export default class CartView extends View {
       const { lineItems } = data.body;
       if (lineItems.length === 0) {
         emptyCart.getElement().classList.remove('no-show');
-        console.log(this.getChildren()[0].children[0].children[1].classList.add('no-show'));
+        this.getChildren()[0].children[0].children[1].classList.add('no-show');
       }
       lineItems.forEach(async (element) => {
         const currPrice = element.price.discounted
@@ -115,7 +107,6 @@ export default class CartView extends View {
           element.variant.attributes && element.variant.attributes[0].name === 'singer'
             ? element.variant.attributes[0].value
             : '';
-        // const currentVersion = await this.getCartVersion(customerID);
         innerWrapper.addInnerElement(
           this.assembleCartItem(
             imgLink,
@@ -143,12 +134,17 @@ export default class CartView extends View {
     data.body.lineItems.forEach((cartItem) => {
       if (cartItem.price.discounted) {
         subtotal.push((cartItem.price.discounted.value.centAmount / 100) * cartItem.quantity);
+      } else if (!cartItem.price.discounted) {
+        subtotal.push((cartItem.price.value.centAmount / 100) * cartItem.quantity);
       }
     });
-    const subtotalSum = subtotal.reduce((acc, value) => acc + value, 0).toString();
-    const totalSum = data.body.totalPrice.centAmount / 100;
+    console.log(subtotal);
 
-    const promoDiff = (Number(subtotal) - totalSum).toFixed(2);
+    const subtotalSum = subtotal.reduce((acc, value) => acc + value, 0);
+    const totalSum = data.body.totalPrice.centAmount / 100;
+    const promoDiff = (subtotalSum - totalSum).toFixed(2);
+    console.log(subtotalSum, promoDiff, totalSum);
+
     const totalCostEl = this.CartAsideView.createTotalCost(subtotalSum.toString(), promoDiff, totalSum.toString());
     this.CartAsideView.addInnerElement(totalCostEl);
   }
@@ -341,10 +337,6 @@ export default class CartView extends View {
     return emptyCartWrapper;
   }
 
-  private clearEl(el: ElementCreator, newEl: ElementCreator) {
-    el.getElement().replaceChildren(newEl.getElement());
-  }
-
   private async getCartVersion(id: string) {
     const cart = (await this.clientAPI.getCustomerCart(id)).body;
     const { version } = cart;
@@ -371,7 +363,7 @@ export default class CartView extends View {
   }
 
   private async addItem() {
-    const cartID = '4e49ab8d-5842-4ead-bd4f-9030adb8fa31';
+    const cartID = 'adc6c058-9da0-435c-ab5d-484af4430bb9';
     const getCustomerAPI = this.clientAPI.addItemToCart(cartID);
     getCustomerAPI.then(async (data) => {
       console.log(data.body);
