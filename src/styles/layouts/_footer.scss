@@ -18,12 +18,21 @@ footer {
 };
 
 .footer__wrapper_logo {
-  width: 5rem;
-  height: 2rem;
+  width: 8rem;
+  height: 4rem;
   background-image: url('../assets/img/rslogo.svg');
   background-repeat: no-repeat;
   background-size: 100%;
-  background-position: 0 0;
+  background-position: 0 50%;
+}
+
+.footer__wrapper_logo-qc {
+  width: 7rem;
+  height: 7rem;
+  background-image: url('../assets/img/qc-logo.png');
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-position: 0 50%;
 }
 
 @media screen and (max-width: $tablet) {
