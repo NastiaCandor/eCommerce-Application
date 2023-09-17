@@ -41,7 +41,6 @@
   @include media-tablet {
     width: 100%;
     max-width: 100%;
-    // margin-top: 40rem;
   }
 }
 
@@ -340,4 +339,7 @@
   @include media-tablet-540-width {
     font-size: 1.2rem;
   }
+}
+main {
+  flex: 1;
 }

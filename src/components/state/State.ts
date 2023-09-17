@@ -1,14 +1,10 @@
 import { ACCESS_TOKEN, CUSTOMER_ID, COOKIE_RESET_DATE } from '../constants';
 
 export default class State {
-  public history: object;
+  private catalogState: Map<string, string>;
 
   constructor() {
-    this.history = {
-      // catalog: {
-      //   current
-      // }
-    };
+    this.catalogState = new Map();
   }
 
   public deleteAccessToken(): void {
@@ -38,11 +34,23 @@ export default class State {
     document.title = this.formatPageTitle(str, isSlashPrefexed);
   }
 
+  public saveCatalogState(data: string) {
+    if (this.catalogState.has('url')) {
+      const url = this.catalogState.get('url');
+      this.catalogState.set('prevurl', <string>url);
+    }
+    this.catalogState.set('url', data);
+  }
+
   public formatPageTitle(url: string, isSlashPrefexed = false): string {
     if (!url || url === '/') return 'Vinyl Vibe Store';
     if (isSlashPrefexed) {
       return `Vinyl Vibe Store - ${url.slice(1, 2).toUpperCase()}${url.slice(2)}`;
     }
     return `Vinyl Vibe Store - ${url.slice(0, 1).toUpperCase()}${url.replace('-', ' ').slice(1)}`;
+  }
+
+  public get getCatalogState() {
+    return this.catalogState;
   }
 }

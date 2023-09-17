@@ -1,11 +1,14 @@
 import { wrapperParams } from '../../constants';
+import Router from '../../router/Router';
+import PAGES from '../../router/utils/pages';
 import ElementCreator from '../../utils/ElementCreator';
 import View from '../View';
 import notFoundParams from './not-found-params';
 
 export default class NotFoundView extends View {
-  constructor() {
+  constructor(private router: Router) {
     super(notFoundParams.section);
+    this.router = router;
     this.render();
   }
 
@@ -24,7 +27,7 @@ export default class NotFoundView extends View {
     this.injectErrorNumber(innerWrapper);
     this.injectTitle(innerWrapper);
     this.injectSubtitle(innerWrapper);
-    this.injectBackToMainBtn(innerWrapper);
+    this.injectBackToCatalogBtn(innerWrapper);
 
     wrapper.getElement().classList.add('not-found__wrapper');
     wrapper.addInnerElement(innerWrapper);
@@ -47,16 +50,13 @@ export default class NotFoundView extends View {
     wrapper.addInnerElement(element);
   }
 
-  private injectBackToMainBtn(wrapper: ElementCreator): void {
-    const element = new ElementCreator(notFoundParams.backToMainBtn).getElement();
+  private injectBackToCatalogBtn(wrapper: ElementCreator): void {
+    const element = new ElementCreator(notFoundParams.backToCatalogBtn).getElement();
     this.backToMainCbHandler(element);
     wrapper.addInnerElement(element);
   }
 
   private backToMainCbHandler(btn: HTMLElement): void {
-    btn.addEventListener('click', () => {
-      const element = document.querySelector('.nav_item');
-      if (element instanceof HTMLElement) element.click();
-    });
+    btn.addEventListener('click', () => this.router.navigate(PAGES.CATALOG));
   }
 }
