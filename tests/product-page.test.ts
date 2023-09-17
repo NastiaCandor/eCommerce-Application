@@ -8,6 +8,7 @@ import ClientAPI from '../src/components/utils/Client';
 import ProductView from '../src/components/view/product-page/ProductView';
 import ElementCreator from '../src/components/utils/ElementCreator';
 import SpinnerView from '../src/components/utils/SpinnerView';
+import Router from '../src/components/router/Router';
 
 describe('Product Page', () => {
   let productView: ProductView;
@@ -17,6 +18,7 @@ describe('Product Page', () => {
   let wrapper: ElementCreator;
   let prices: Price[];
   let clientAPI: any;
+  let router: Router;
   const el = new ElementCreator({ tag: 'div' }).getElement();
   beforeEach(() => {
     clientAPI = {
@@ -38,7 +40,7 @@ describe('Product Page', () => {
       obtainUserAccessToken: (value: string) => Promise.resolve(value),
       setAccessTokenCookie: (value: string) => Promise.resolve(value),
     };
-    productView = new ProductView(<ClientAPI>(<unknown>clientAPI), '5673e423-c01e-4b35-9ef0-86b1043d08b4', el);
+    productView = new ProductView(<ClientAPI>(<unknown>clientAPI), '5673e423-c01e-4b35-9ef0-86b1043d08b4', el, router);
     Object.defineProperties(productView, {
       clientAPI: {
         value: clientAPI,

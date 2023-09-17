@@ -68,7 +68,7 @@ export default class CatalogView extends View {
     this.scrollFunction = () => {};
     this.isLoadingData = false;
     this.wrapper = null;
-    this.bcWrapper = this.breadCrumbWrapper;
+    this.bcWrapper = new ElementCreator(catalogParams.breadCrumbs.wrapper).getElement();
     this.categoriesBtn = [];
   }
 
@@ -156,7 +156,6 @@ export default class CatalogView extends View {
 
   private scrollHandler(element: ElementCreator, id?: string) {
     this.scrollFunction = async () => {
-      console.log('Inside scrollFunction: ', this.totalCount, this.itemsCount);
       const docEl = document.documentElement;
       const pxlsBeforeEnd = docEl.scrollHeight - docEl.scrollTop - docEl.clientHeight;
       element.addInnerElement(this.spinner.getElement());
@@ -229,7 +228,6 @@ export default class CatalogView extends View {
       }
       const { id } = target.dataset;
       if (id) {
-        this.updateCrumbNavigation();
         const productLink = this.prefetchedData.productsUrl.ids.get(id);
         const path = `${PAGES.PRODUCT}/${productLink || ''}`;
         this.router.navigate(path, id);
@@ -291,13 +289,13 @@ export default class CatalogView extends View {
 
   private async categoriesCbHandler() {
     if (this.categoriesBtn) {
-      this.categoriesBtn.forEach((btn) => {
-        btn.classList.remove('active');
-        btn.addEventListener('click', async (e) => {
-          e.preventDefault();
-          if (e.target instanceof HTMLAnchorElement) {
-            e.target.classList.add('active');
-            this.router.navigate(e.target.href);
+      this.categoriesBtn.forEach((btn, i, arr) => {
+        btn.addEventListener('click', (evt) => {
+          evt.preventDefault();
+          arr.forEach((item) => item.classList.remove('active'));
+          if (evt.target instanceof HTMLAnchorElement) {
+            evt.target.classList.add('active');
+            this.router.navigate(evt.target.href);
           }
         });
       });
@@ -307,7 +305,6 @@ export default class CatalogView extends View {
   public async mountCategory(key: string) {
     const categoryKey = this.prefetchedData.genres.find((item) => item.key === key);
     const id = categoryKey?.id;
-    this.updateCrumbNavigation();
     this.filterView.resetInputs();
     this.filterView.resetEndpoints();
     this.resetPageCounters();
@@ -333,14 +330,19 @@ export default class CatalogView extends View {
   }
 
   public replaceCardsContent(wrapper: ElementCreator, content: ElementCreator) {
-    const prevCards = wrapper.getElement().querySelector('#products-content');
-    if (content === this.spinner && prevCards) {
-      prevCards.replaceChildren(content.getElement());
-      return;
-    }
-    if (prevCards) {
-      wrapper.getElement().replaceChild(content.getElement(), prevCards);
-    }
+    const wrapperEl = wrapper.getElement();
+    const contentEl = content.getElement();
+    const prevCards = wrapperEl.querySelector('#products-content');
+    const elements = Array.from(wrapper.getElement().children);
+    elements.forEach((item) => {
+      if (item.id === content.getElement().id) {
+        wrapperEl.replaceChild(contentEl, item);
+        return;
+      }
+      if ((content instanceof SpinnerView || contentEl.id === 'no-results') && prevCards) {
+        prevCards.replaceChildren(contentEl);
+      }
+    });
   }
 
   private assambleSongTitle(title: LocalizedString): HTMLElement {
@@ -483,6 +485,7 @@ export default class CatalogView extends View {
 
   private showNoResults(search: string, filter = false) {
     const container = new ElementCreator(catalogParams.noResults.container);
+    container.setAttribute('id', catalogParams.noResults.container.id);
     const title = new ElementCreator(catalogParams.noResults.title);
     const message = new ElementCreator(catalogParams.noResults.message);
     if (filter) {
@@ -576,7 +579,6 @@ export default class CatalogView extends View {
   public async proceedToCategories() {
     this.replaceCardsContent(this.wrapper as ElementCreator, this.spinner);
     const productCards = await this.getCategoriesView();
-    this.updateCrumbNavigation();
     if (productCards) {
       if (!this.wrapper) {
         this.configure(undefined, productCards);
@@ -588,7 +590,6 @@ export default class CatalogView extends View {
 
   public async proceedToCatalog() {
     const productCards = await this.getCategoriesView();
-    this.updateCrumbNavigation();
     if (productCards) {
       if (!this.wrapper) {
         this.configure(undefined, productCards);
@@ -598,13 +599,20 @@ export default class CatalogView extends View {
     }
   }
 
-  public updateCrumbNavigation() {
-    this.bcWrapper.replaceChildren(...this.createBreadCrumbs());
+  public updateCrumbNavigation(savedLink?: string) {
+    const updatedCrumbs = this.createBreadCrumbs(savedLink);
+    if (updatedCrumbs) {
+      this.bcWrapper.replaceChildren(...updatedCrumbs);
+    }
   }
 
-  private createBreadCrumbs() {
-    const url = this.router.currentPath.split('/');
-    const crumbs = url
+  private createBreadCrumbs(savedLink?: string): HTMLElement[] | void {
+    const url = savedLink || this.router.currentPath;
+    const urlArray = url.split('/');
+    if (!urlArray.join('').startsWith('catalog')) {
+      return;
+    }
+    const crumbs = urlArray
       .filter((item) => item !== '')
       .map((item, i, arr) => {
         const itemWrapper = new ElementCreator(catalogParams.breadCrumbs.linkContainer);
@@ -613,7 +621,7 @@ export default class CatalogView extends View {
           link = new ElementCreator(catalogParams.breadCrumbs.bcLinkActive);
         }
         link.setTextContent(item.split('_').join(' '));
-        const path = `#${arr[0]}/${arr.slice(1, i + 1).join('/')}`;
+        const path = `${arr[0]}/${arr.slice(1, i + 1).join('/')}`;
         link.setAttribute('href', path);
         link.setMouseEvent((evt) => {
           evt.preventDefault();
@@ -627,10 +635,13 @@ export default class CatalogView extends View {
     return crumbs;
   }
 
-  public get breadCrumbWrapper() {
-    const wrapper = new ElementCreator(catalogParams.breadCrumbs.wrapper);
-    wrapper.addInnerElement(this.createBreadCrumbs());
-    return wrapper.getElement();
+  public get breadCrumbView() {
+    const wrapper = new ElementCreator(catalogParams.breadCrumbs.wrapper).getElement();
+    const crumbs = this.createBreadCrumbs();
+    if (crumbs) {
+      wrapper.replaceChildren(...crumbs);
+    }
+    return wrapper;
   }
 
   public get getWrapper() {

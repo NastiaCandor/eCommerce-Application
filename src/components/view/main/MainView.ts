@@ -1,4 +1,3 @@
-// import ElementCreator from '../../utils/ElementCreator';
 import View from '../View';
 import mainParams from './main-params';
 
@@ -9,11 +8,10 @@ export default class MainView extends View {
 
   public render(): void {
     this.configure();
-    this.appendToDOM();
   }
 
   protected configure(): void {
-    //
+    this.appendToDOM();
   }
 
   public setContent(view: HTMLElement): void {

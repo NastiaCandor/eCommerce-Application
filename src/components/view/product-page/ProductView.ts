@@ -9,6 +9,7 @@ import sliderParams from './slider-params';
 import Modal from '../../utils/Modal';
 import PAGES from '../../router/utils/pages';
 import AddToCartView from '../pages/catalog/add-to-cart/AddToCartView';
+import Router from '../../router/Router';
 
 export default class ProductView extends View {
   private clientAPI: ClientAPI;
@@ -17,8 +18,11 @@ export default class ProductView extends View {
 
   private breadCrumb: HTMLElement;
 
-  constructor(clientAPI: ClientAPI, productKey: string, breadCrumb: HTMLElement) {
+  private router: Router;
+
+  constructor(clientAPI: ClientAPI, productKey: string, breadCrumb: HTMLElement, router: Router) {
     super(productParams.section);
+    this.router = router;
     this.productID = productKey;
     this.breadCrumb = breadCrumb;
     this.clientAPI = clientAPI;
@@ -48,7 +52,7 @@ export default class ProductView extends View {
   private injectBackToCatalog(wrapper: ElementCreator): void {
     const btn = new ElementCreator(productParams.toCatalogBtn);
     btn.getElement().addEventListener('click', () => {
-      window.history.back();
+      this.router.navigate(PAGES.CATALOG);
     });
     wrapper.addInnerElement(btn);
   }

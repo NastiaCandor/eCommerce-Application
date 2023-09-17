@@ -6,18 +6,13 @@ html {
 body {
   display: flex;
   flex-direction: column;
-  overflow: auto;
-  min-height: 100vh;
   font-size: 1.6rem;
+  min-height: 100vh;
   background-color: $color-body-background;
   @extend %font-add-Inter;
   color: $color-primary-text;
   &._lock {
     overflow: hidden;
-  }
-
-  @media screen and (max-height: 1100px) {
-    overflow-y: scroll;
   }
 }
 

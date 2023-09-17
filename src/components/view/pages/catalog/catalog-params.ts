@@ -122,6 +122,7 @@ const catalogParams = {
     container: {
       tag: 'div',
       cssClasses: ['no-res__container'],
+      id: 'no-results',
     },
     title: {
       tag: 'h4',
