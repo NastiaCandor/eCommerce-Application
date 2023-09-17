@@ -12,7 +12,6 @@ const PAGES: PagesInterface = {
 
   MAIN: '/main',
   CATALOG: '/catalog',
-  SHIPPING: '/shipping',
   CONTACTS: '/contacts',
 
   CATEGORY: '/catalog/categories',

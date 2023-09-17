@@ -81,12 +81,6 @@ export default class Routes {
         },
       },
       {
-        path: `${PAGES.SHIPPING}`,
-        callback: () => {
-          this.callbacks.loadShippingPage();
-        },
-      },
-      {
         path: `${PAGES.NOT_FOUND}`,
         callback: () => {
           this.callbacks.loadNotFoundPage();

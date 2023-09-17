@@ -59,7 +59,6 @@ export default class CatalogView extends View {
     this.filterView = new FilterView(this.clientApi);
     this.searchView = new SearchView(this.clientApi);
     this.spinner = spinner;
-    this.searchFunctionality();
     this.router = router;
     this.itemsCount = 0;
     this.totalCount = 0;
@@ -90,7 +89,7 @@ export default class CatalogView extends View {
       mobileMenuBtn.getElement().classList.toggle('mobile-btn__active');
     });
     const assambledCards = cardsView || (await this.assambleCards(productInfo));
-    wrapper.addInnerElement([mobileMenuBtn, this.bcWrapper, sideBar, assambledCards, this.searchView]);
+    wrapper.addInnerElement([mobileMenuBtn, this.bcWrapper, sideBar, assambledCards]);
     window.addEventListener('resize', () => {
       if (window.innerWidth > 768) {
         sideBar.getElement().classList.remove('no-show__aside');
@@ -107,7 +106,8 @@ export default class CatalogView extends View {
     const asideWrapper = new ElementCreator(catalogParams.aside);
     const categories = this.assembleCategories();
     const buttons = this.assambleBtnWrapper();
-    asideWrapper.addInnerElement([categories, this.filterView.render(), buttons]);
+    this.searchFunctionality();
+    asideWrapper.addInnerElement([this.searchView, categories, this.filterView.render(), buttons]);
     return asideWrapper;
   }
 
@@ -122,10 +122,8 @@ export default class CatalogView extends View {
     const items = fetchedData || (await this.fetchAllCardsData());
     const cardsWrapper = wrapper || new ElementCreator(catalogParams.productCards);
     if (items) {
-      console.log('Before update: ', this.totalCount, this.itemsCount);
       this.totalCount = items.total ?? 0;
       this.itemsCount += items.count;
-      console.log('After update: ', this.totalCount, this.itemsCount);
     }
     const cardsData = items?.results;
     if (cardsData && <ProductProjection[]>cardsData) {
@@ -189,7 +187,6 @@ export default class CatalogView extends View {
   }
 
   public resetPageCounters() {
-    console.log('ff');
     this.totalCount = 0;
     this.itemsCount = 0;
     this.endpoints = null;
@@ -298,6 +295,16 @@ export default class CatalogView extends View {
             this.router.navigate(evt.target.href);
           }
         });
+        if (btn instanceof HTMLAnchorElement) {
+          const urlArr = btn.href.split('/');
+          const index = urlArr.indexOf('catalog');
+          const url = urlArr.slice(index).join('/');
+          if (this.router.currentPath === url) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        }
       });
     }
   }
@@ -415,15 +422,17 @@ export default class CatalogView extends View {
 
   public submitBtnHandler(element: HTMLElement) {
     element.addEventListener('click', async () => {
+      this.categoriesBtn.forEach((item) => item.classList.remove('active'));
       this.resetPageCounters();
-      this.endpoints = this.filterView.endPoints;
       if (this.wrapper) {
         this.replaceCardsContent(this.wrapper, this.spinner);
       }
+      this.endpoints = this.filterView.endPoints;
       const cardsData = await this.filterView.getFilterData();
       if (cardsData && cardsData.results.length > 0) {
         this.router.navigate(PAGES.FILTER);
         this.filterView.resetEndpoints();
+        this.filterView.restoreScrollPosition();
         await this.assambleCards(cardsData).then((cardsView) => {
           if (this.wrapper) {
             this.replaceCardsContent(this.wrapper, cardsView);

@@ -9,7 +9,6 @@ import MainView from '../view/main/MainView';
 import NotFoundView from '../view/not-found-page/NotFoundView';
 import CatalogView from '../view/pages/catalog/CatalogView';
 import ContactsView from '../view/pages/contacts/ContactsView';
-import ShippingView from '../view/pages/shipping/ShippingView';
 import ProfileView from '../view/profile/ProfileView';
 import RegView from '../view/registration/reg-view';
 import AboutView from '../view/pages/about/AboutView';
@@ -59,10 +58,10 @@ export default class App {
     this.clientApi = clientApi;
     this.spinner = spinner;
     this.routesClass = new Routes(this.getRoutesCallbacks(), this.clientApi);
-    this.footerView = new FooterView();
     this.prefetchedData = this.clientApi.prefetchedData;
     this.routes = this.routesClass.getRoutes();
     this.router = new Router(this.routes, this.state, this.routesClass.getTitlesMap);
+    this.footerView = new FooterView(this.router);
     this.footerView = new FooterView(this.router);
     this.notFoundView = new NotFoundView(this.router);
     this.contentContainer = new MainView();
@@ -123,11 +122,6 @@ export default class App {
     this.setContent(PAGES.PROFILE, new ProfileView(this.router, this.clientApi).getElement());
   }
 
-  private loadShippingPage() {
-    const shipping = new ShippingView().getElement();
-    this.setContent(PAGES.SHIPPING, shipping);
-  }
-
   private loadNotFoundPage() {
     this.setContent(PAGES.CATALOG, this.notFoundView.getElement());
   }
@@ -148,7 +142,6 @@ export default class App {
         return;
       }
       this.setContent(PAGES.CATALOG, this.catalogView.getElement());
-      return;
     }
   }
 
@@ -214,7 +207,6 @@ export default class App {
   private getRoutesCallbacks(): RouteCallbacks {
     return {
       loadContactsPage: this.loadContactsPage.bind(this),
-      loadShippingPage: this.loadShippingPage.bind(this),
       loadNotFoundPage: this.loadNotFoundPage.bind(this),
       loadCatalogPage: this.loadCatalogPage.bind(this),
       loadProfilePage: this.loadProfilePage.bind(this),

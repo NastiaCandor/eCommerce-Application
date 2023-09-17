@@ -62,7 +62,6 @@ export type PagesInterface = {
 
   MAIN: string;
   CATALOG: string;
-  SHIPPING: string;
   CONTACTS: string;
 
   CATEGORY: string;
@@ -144,7 +143,6 @@ export type RouteCallbacks = {
   loadSignupPage: () => void;
   loadProfilePage: () => void;
   loadMainPage: () => void;
-  loadShippingPage: () => void;
   loadNotFoundPage: () => void;
   loadCatalogPage: () => void;
   loadFilterPage: () => void;
@@ -159,4 +157,11 @@ export type RouteCallbacks = {
 export type CatalogState = {
   url: string;
   nav: HTMLElement;
+};
+
+export type FiltersScroll = {
+  [key: string]: number;
+  condition: number;
+  label: number;
+  lp: number;
 };

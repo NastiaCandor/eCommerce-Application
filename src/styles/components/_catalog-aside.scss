@@ -12,12 +12,15 @@
   border-bottom-right-radius: $border-radius3;
 
   & > * {
-    padding-bottom: 1rem;
+    padding-bottom: 3rem;
     width: 90%;
   }
   .product__categories {
     & > li {
       display: block;
+    }
+    .heading {
+      padding-bottom: 1rem;
     }
   }
   .product__category_item {
@@ -25,6 +28,7 @@
     width: 100%;
   }
   .filter-box {
+    position: relative;
     display: flex;
     flex-direction: column;
     & input[type='checkbox'] {
@@ -36,7 +40,7 @@
   }
   & .filter-box__content_label {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     width: 100%;
   }
@@ -212,48 +216,45 @@
 
 .filter-box.price-box {
   margin-top: 1.5rem;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: flex-start;
-  align-items: center;
+  align-items: flex-start;
+  row-gap: 0.2rem;
   column-gap: 0.5rem;
   user-select: none;
   cursor: pointer;
   .order-box {
-    background-color: #a7866a; 
-    padding: 1rem;
+    padding: 0.5rem;
+    border-radius: 5px;
+    background-color: #a7866a;
 
     transition: all 0.3s ease;
     &:hover {
       background-color: $color-registration-background-general;
     }
   }
-
-  .price-box_img {
-    display: inline;
-    max-width: 20%;
-  }
 }
-
 
 .sort_user-select_elements {
   display: flex;
-  gap: 0.1rem;
-  flex-wrap: wrap;
+  position: absolute;
+  column-gap: 0.1rem;
+  flex-wrap: nowrap;
+  font-size: 1.3rem;
   user-select: none;
-  cursor: pointer;
+  cursor: default;
 }
 .sort__user-select {
   display: flex;
 }
 .sort_user-select_element {
   background-color: $color-login-background;
-  padding: 1rem;
-  font-size: 1.5rem;
+  padding: 0.8rem;
+  border-radius: 5px;
   width: auto;
   height: auto;
 
   transition: all 0.3s ease;
-
   &:hover {
     background-color: #5c955d;
   }

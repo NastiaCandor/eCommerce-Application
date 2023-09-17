@@ -1,14 +1,8 @@
 .search__wrapper {
-  grid-area: search;
-  grid-row: 1;
-  grid-column: 1/2;
   background-color: #fff;
-
   border-bottom-right-radius: 5px;
-
-  @media screen and (max-width: $tablet) {
-    order: -2;
-  }
+  padding-bottom: 0;
+  margin-bottom: 1rem;
 }
 
 .search__box {
