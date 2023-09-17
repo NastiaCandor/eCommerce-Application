@@ -8,6 +8,7 @@ import Router from '../../router/Router';
 import { PagesInterface } from '../../../types';
 import navigationParams from './nav-component/nav-params';
 import PAGES from '../../router/utils/pages';
+// import CartQiantity from '../../utils/CartQuantity';
 
 export default class HeaderView extends View {
   private navigationView: NavigationView;
@@ -41,6 +42,18 @@ export default class HeaderView extends View {
 
   public render(): void {
     this.configure();
+  }
+
+  public getUserIcons() {
+    return this.linksCollection;
+  }
+
+  public updateCartSpan(quant: number) {
+    const collection = this.linksCollection;
+    const cart = collection.get('CART')?.children.namedItem('cart-span');
+    if (cart !== null && cart !== undefined) {
+      cart.textContent = `${quant}`;
+    }
   }
 
   protected configure(): void {
