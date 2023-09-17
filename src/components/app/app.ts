@@ -63,6 +63,7 @@ export default class App {
     this.prefetchedData = this.clientApi.prefetchedData;
     this.routes = this.routesClass.getRoutes();
     this.router = new Router(this.routes, this.state, this.routesClass.getTitlesMap);
+    this.footerView = new FooterView(this.router);
     this.notFoundView = new NotFoundView(this.router);
     this.contentContainer = new MainView();
     this.catalogView = new CatalogView(this.clientApi, this.router, this.spinner);
@@ -147,6 +148,7 @@ export default class App {
         return;
       }
       this.setContent(PAGES.CATALOG, this.catalogView.getElement());
+      return;
     }
   }
 

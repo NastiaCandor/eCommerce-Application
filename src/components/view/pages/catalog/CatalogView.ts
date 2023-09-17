@@ -122,8 +122,10 @@ export default class CatalogView extends View {
     const items = fetchedData || (await this.fetchAllCardsData());
     const cardsWrapper = wrapper || new ElementCreator(catalogParams.productCards);
     if (items) {
+      console.log('Before update: ', this.totalCount, this.itemsCount);
       this.totalCount = items.total ?? 0;
       this.itemsCount += items.count;
+      console.log('After update: ', this.totalCount, this.itemsCount);
     }
     const cardsData = items?.results;
     if (cardsData && <ProductProjection[]>cardsData) {
@@ -187,6 +189,7 @@ export default class CatalogView extends View {
   }
 
   public resetPageCounters() {
+    console.log('ff');
     this.totalCount = 0;
     this.itemsCount = 0;
     this.endpoints = null;

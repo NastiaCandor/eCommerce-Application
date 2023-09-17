@@ -9,12 +9,12 @@ const footerParams = {
   text1: {
     tag: 'span',
     cssClasses: ['footer__wrapper_text'],
-    textContent: 'All rights and TM belongs to their owners',
+    textContent: "2023. All rights and TM's belongs to their owners.",
   },
   text2: {
-    tag: 'span',
-    cssClasses: ['footer__wrapper_text'],
-    textContent: '2023',
+    tag: 'a',
+    cssClasses: ['footer__wrapper_logo-qc'],
+    link: '/contacts',
   },
   linkRS: {
     tag: 'a',
