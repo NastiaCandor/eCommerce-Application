@@ -19,6 +19,7 @@ const PAGES: PagesInterface = {
   PRODUCTS: 'catalog/product',
   PRODUCT: '/catalog/product',
   FILTER: 'catalog/filtred',
+  SEARCH: 'catalog/search',
 };
 
 export default PAGES;

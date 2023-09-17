@@ -8,10 +8,10 @@ import LoginView from '../view/login/LoginView';
 import MainView from '../view/main/MainView';
 import NotFoundView from '../view/not-found-page/NotFoundView';
 import CatalogView from '../view/pages/catalog/CatalogView';
-import ContactsView from '../view/pages/contacts/ContactsView';
+import ContactsView from '../view/pages/about-us/AboutView';
 import ProfileView from '../view/profile/ProfileView';
 import RegView from '../view/registration/reg-view';
-import AboutView from '../view/pages/about/AboutView';
+import AboutView from '../view/pages/main-content/MainContent';
 import Routes from '../router/utils/Routes';
 import { PrefetchedData, Route, RouteCallbacks } from '../../types';
 import ClientAPI from '../utils/Client';
@@ -193,6 +193,13 @@ export default class App {
     }
   }
 
+  private loadSearchPage() {
+    this.setContent(PAGES.CATALOG, this.catalogView.getElement());
+    if (!this.isStarted) {
+      this.router.navigate(PAGES.CATALOG);
+    }
+  }
+
   private resetForms(): void {
     this.signupForm = new RegView(this.router, this.clientApi);
     this.loginForm = new LoginView(this.router, this.clientApi);
@@ -219,6 +226,7 @@ export default class App {
       loadProductPage: this.loadProductPage.bind(this),
       mountCategory: this.mountCategory.bind(this),
       loadFilterPage: this.loadFilterPage.bind(this),
+      loadSearchPage: this.loadSearchPage.bind(this),
     };
   }
 }

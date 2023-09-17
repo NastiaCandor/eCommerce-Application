@@ -1,4 +1,4 @@
-const contactsParams = {
+const aboutParams = {
   section: {
     tag: 'section',
     cssClasses: ['contacts'],
@@ -6,8 +6,7 @@ const contactsParams = {
   wrapper: {
     tag: 'div',
     cssClasses: ['contacts__wrapper', 'wrapper'],
-    textContent: 'CONTACTS IS HERE',
   },
 };
 
-export default contactsParams;
+export default aboutParams;

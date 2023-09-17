@@ -81,6 +81,12 @@ export default class Routes {
         },
       },
       {
+        path: `${PAGES.SEARCH}`,
+        callback: () => {
+          this.callbacks.loadSearchPage();
+        },
+      },
+      {
         path: `${PAGES.NOT_FOUND}`,
         callback: () => {
           this.callbacks.loadNotFoundPage();

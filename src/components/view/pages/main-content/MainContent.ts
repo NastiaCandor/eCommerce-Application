@@ -1,10 +1,10 @@
 import ElementCreator from '../../../utils/ElementCreator';
 import View from '../../View';
-import contactsParams from './contacts-params';
+import aboutParams from './main-content-params';
 
-export default class ContactsView extends View {
+export default class MainContentView extends View {
   constructor() {
-    super(contactsParams.section);
+    super(aboutParams.section);
     this.render();
   }
 
@@ -17,6 +17,6 @@ export default class ContactsView extends View {
   }
 
   private renderInnerWrapper(): void {
-    this.addInnerElement(new ElementCreator(contactsParams.wrapper));
+    this.addInnerElement(new ElementCreator(aboutParams.wrapper));
   }
 }

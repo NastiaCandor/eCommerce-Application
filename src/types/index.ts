@@ -59,6 +59,7 @@ export type PagesInterface = {
   PRODUCTS: string;
 
   FILTER: string;
+  SEARCH: string;
 
   MAIN: string;
   CATALOG: string;
@@ -147,6 +148,7 @@ export type RouteCallbacks = {
   loadCatalogPage: () => void;
   loadFilterPage: () => void;
   loadCategoriesPage: () => void;
+  loadSearchPage: () => void;
   logoutUser: () => void;
   loadProductPage: (id: string) => void;
   mountCategory: (id: string) => void;

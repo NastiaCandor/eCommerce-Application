@@ -1,4 +1,4 @@
-const aboutParams = {
+const mainContentParams = {
   section: {
     tag: 'section',
     cssClasses: ['main'],
@@ -9,4 +9,4 @@ const aboutParams = {
   },
 };
 
-export default aboutParams;
+export default mainContentParams;

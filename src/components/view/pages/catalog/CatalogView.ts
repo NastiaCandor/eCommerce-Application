@@ -465,6 +465,7 @@ export default class CatalogView extends View {
   private getSearchedProducts(input: HTMLInputElement) {
     const search = (<HTMLInputElement>input).value;
     if (search) {
+      this.router.navigate(PAGES.SEARCH);
       const response = this.clientApi.getSearchProduct(search, 50);
       response
         .then((data) => {
@@ -484,6 +485,7 @@ export default class CatalogView extends View {
         });
     } else {
       // search is blank
+      this.router.navigate(PAGES.CATALOG);
       this.assambleCards().then((cardsView) => {
         if (this.wrapper) {
           this.replaceCardsContent(this.wrapper, cardsView);
