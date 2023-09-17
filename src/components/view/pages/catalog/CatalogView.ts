@@ -1,5 +1,13 @@
-import { Attribute, LocalizedString, Price, ProductProjection } from '@commercetools/platform-sdk';
-import { ImageArr, PrefetchedData } from '../../../../types';
+/* eslint-disable @typescript-eslint/comma-dangle */
+/* eslint-disable comma-dangle */
+import {
+  Attribute,
+  LocalizedString,
+  Price,
+  ProductProjection,
+  ProductProjectionPagedQueryResponse,
+} from '@commercetools/platform-sdk';
+import { EndPointsObject, ImageArr, PrefetchedData } from '../../../../types';
 import Router from '../../../router/Router';
 import ClientAPI from '../../../utils/Client';
 import ElementCreator from '../../../utils/ElementCreator';
@@ -10,6 +18,8 @@ import FilterView from './filter/FilterView';
 import '../../../../assets/img/filter-svgrepo-com.svg';
 import SearchView from './search/SearchView';
 import PAGES from '../../../router/utils/pages';
+import SpinnerView from '../../../utils/SpinnerView';
+import AddToCartView from './add-to-cart/AddToCartView';
 
 export default class CatalogView extends View {
   private clientApi: ClientAPI;
@@ -20,6 +30,8 @@ export default class CatalogView extends View {
 
   private wrapper: ElementCreator | null;
 
+  private cardsView: HTMLElement | null;
+
   private categoriesBtn: Array<HTMLElement>;
 
   private prefetchedData: PrefetchedData;
@@ -28,16 +40,35 @@ export default class CatalogView extends View {
 
   private bcWrapper: HTMLElement;
 
-  constructor(clientApi: ClientAPI, router: Router) {
+  private itemsCount: number;
+
+  private totalCount: number;
+
+  private isLoadingData: boolean;
+
+  private endpoints: EndPointsObject | null;
+
+  private spinner: SpinnerView;
+
+  private previousView: HTMLElement | null;
+
+  constructor(clientApi: ClientAPI, router: Router, spinner: SpinnerView) {
     super(catalogParams.section);
     this.clientApi = clientApi;
     this.prefetchedData = this.clientApi.getPrefetchedData;
     this.filterView = new FilterView(this.clientApi);
     this.searchView = new SearchView(this.clientApi);
+    this.spinner = spinner;
     this.searchFunctionality();
     this.router = router;
-    this.bcWrapper = this.breadCrumbWrapper;
+    this.itemsCount = 0;
+    this.totalCount = 0;
+    this.cardsView = null;
+    this.endpoints = null;
+    this.previousView = null;
+    this.isLoadingData = false;
     this.wrapper = null;
+    this.bcWrapper = this.breadCrumbWrapper;
     this.categoriesBtn = [];
   }
 
@@ -45,29 +76,27 @@ export default class CatalogView extends View {
     await this.configure();
   }
 
-  protected async configure(productInfo?: ProductProjection[], cardsView?: ElementCreator) {
+  protected async configure(productInfo?: ProductProjectionPagedQueryResponse, cardsView?: ElementCreator) {
     await this.init(productInfo, cardsView);
     await this.categoriesCbHandler();
   }
 
-  private async init(productInfo?: ProductProjection[], cardsView?: ElementCreator): Promise<void> {
+  private async init(productInfo?: ProductProjectionPagedQueryResponse, cardsView?: ElementCreator): Promise<void> {
     const wrapper = new ElementCreator(catalogParams.wrapper);
     const mobileMenuBtn = this.createMobileMenuBtn();
-    wrapper.addInnerElement(mobileMenuBtn);
     const sideBar = this.assamleSideBar();
     mobileMenuBtn.getElement().addEventListener('click', () => {
       sideBar.getElement().classList.toggle('no-show__aside');
       mobileMenuBtn.getElement().classList.toggle('mobile-btn__active');
     });
-    const assambledCards = cardsView || (await this.assamleCards(productInfo));
-    wrapper.addInnerElement([sideBar, assambledCards, this.bcWrapper]);
+    const assambledCards = cardsView || (await this.assambleCards(productInfo));
+    wrapper.addInnerElement([mobileMenuBtn, this.bcWrapper, sideBar, assambledCards, this.searchView]);
     window.addEventListener('resize', () => {
       if (window.innerWidth > 768) {
         sideBar.getElement().classList.remove('no-show__aside');
       }
     });
     this.wrapper = wrapper;
-    wrapper.addInnerElement(this.searchView);
     if (cardsView) {
       return this.addInnerElement(this.wrapper);
     }
@@ -82,40 +111,114 @@ export default class CatalogView extends View {
     return asideWrapper;
   }
 
-  public async fetchAllCardsData() {
-    const data = await this.clientApi.getAllCardsData();
+  public async fetchAllCardsData(offsetCount?: number) {
+    const data = await this.clientApi.getAllCardsData(offsetCount);
     if (data) {
-      return data.map((item) => item);
+      return data;
     }
   }
 
-  public async assamleCards(fetchedData?: ProductProjection[]) {
-    const cardsData = fetchedData || (await this.fetchAllCardsData());
-    const cardsWrapper = new ElementCreator(catalogParams.productCards);
+  public async assambleCards(fetchedData?: ProductProjectionPagedQueryResponse, wrapper?: ElementCreator, id?: string) {
+    const items = fetchedData || (await this.fetchAllCardsData());
+    const cardsWrapper = wrapper || new ElementCreator(catalogParams.productCards);
+    if (items) {
+      this.totalCount = items.total ?? 0;
+      this.itemsCount += items.count;
+    }
+    // this.totalCount = items?.total;
+    // this.itemsCount += items?.count;
+    const cardsData = items?.results;
     if (cardsData && <ProductProjection[]>cardsData) {
       cardsData.forEach((data) => {
-        const productCard = new ElementCreator(catalogParams.card.wrapper);
-        productCard.setAttribute('data-id', data.id);
         if (data.masterVariant.attributes && data.masterVariant.images) {
-          const songTitle = this.assambleSongTitle(data.name);
           const attributesArray = data.masterVariant.attributes.map((item) => item);
-          const singer = this.assambleSingerTitle(attributesArray);
-          const image = this.assambleImage(data.masterVariant.images, data.name);
-          const priceElement = this.assamblePrice(data.masterVariant.prices);
-          const cartBtn = this.assambleCartBtn();
-          productCard.addInnerElement([image, singer, songTitle, priceElement, cartBtn]);
-          cardsWrapper.addInnerElement(productCard);
+          this.assambleCard(
+            cardsWrapper,
+            data.id,
+            data.name,
+            attributesArray,
+            data.masterVariant.images,
+            data.masterVariant.prices
+          );
         }
-        productCard.setMouseEvent((evt) => this.cardsClickHandler(evt));
       });
+      if (!wrapper) {
+        cardsWrapper.setAttribute('id', catalogParams.productCards.id);
+        this.scrollHandler(cardsWrapper, id);
+      }
     }
+    this.cardsView = cardsWrapper.getElement();
     return cardsWrapper;
+  }
+
+  private scrollHandler(element: ElementCreator, id?: string) {
+    element.getElement().addEventListener('scroll', async (evt) => {
+      if (evt.target instanceof HTMLElement) {
+        const pxHeight = evt.target.scrollHeight - evt.target.scrollTop - evt.target.clientHeight;
+        element.addInnerElement(this.spinner.getElement());
+        if (pxHeight < 50 && !this.isLoadingData && this.isStillPages()) {
+          this.isLoadingData = true;
+          if (this.endpoints) {
+            const data = await this.filterView.getFilterData(this.endpoints, this.itemsCount);
+            if (data) {
+              await this.assambleCards(data, element);
+            }
+          } else {
+            const data = id
+              ? await this.clientApi.getSpecificGenreById(id, this.itemsCount)
+              : await this.fetchAllCardsData(this.itemsCount);
+            if (data) {
+              await this.assambleCards(data, element);
+            }
+          }
+          this.spinner.removeSelfFromNode();
+          this.isLoadingData = false;
+        }
+        if (this.itemsCount >= this.totalCount) {
+          this.spinner.removeSelfFromNode();
+        }
+      }
+    });
+  }
+
+  private isStillPages() {
+    return this.totalCount >= this.itemsCount && this.totalCount > 0 && this.itemsCount > 0;
+  }
+
+  public resetPageCounters() {
+    this.totalCount = 0;
+    this.itemsCount = 0;
+    this.endpoints = null;
+  }
+
+  private assambleCard(
+    wrapper: ElementCreator,
+    id: string,
+    songName: LocalizedString,
+    attrArr: Attribute[],
+    imagesArr: ImageArr[],
+    prices?: Price[]
+  ) {
+    const productCard = new ElementCreator(catalogParams.card.wrapper);
+    productCard.setAttribute('data-id', id);
+    const songTitle = this.assambleSongTitle(songName);
+    const attributesArray = attrArr.map((item) => item);
+    const singer = this.assambleSingerTitle(attributesArray);
+    const image = this.assambleImage(imagesArr, songName);
+    const priceElement = this.assamblePrice(prices);
+    const cartBtn = this.assambleCartBtn(id);
+    productCard.addInnerElement([image, singer, songTitle, priceElement, cartBtn]);
+    productCard.setMouseEvent((evt) => this.cardsClickHandler(evt));
+    wrapper.addInnerElement(productCard);
   }
 
   private cardsClickHandler(evt: Event) {
     if (evt.target instanceof HTMLElement) {
       let { target } = evt;
-
+      const parent = target.closest('.add-to-cart__wrapper') as HTMLElement;
+      if (parent !== null) return;
+      target = target.closest('.card__content') as HTMLElement;
+      if (target === null) return;
       while (!target.dataset.id) {
         target = target.parentElement as HTMLElement;
       }
@@ -156,13 +259,20 @@ export default class CatalogView extends View {
     const categoriesWrapper = new ElementCreator(catalogParams.categories.wrapper);
     const categoriesHeading = new ElementCreator(catalogParams.asideHeading);
     categoriesWrapper.addInnerElement(categoriesHeading);
+    let listItem = new ElementCreator(catalogParams.categoryListItem);
+    let categoryLink = new ElementCreator(catalogParams.categories.categoryLink);
+    listItem.addInnerElement(categoryLink);
+    categoryLink.setTextContent('All Categories');
+    categoryLink.setAttribute('href', '/catalog/categories');
+    this.categoriesBtn.push(categoryLink.getElement());
     const categoryBox = new ElementCreator(catalogParams.categories.categoryBox);
     const list = new ElementCreator(catalogParams.categoriesList);
+    list.addInnerElement(listItem);
     const listItems = data.map((item) => {
-      const listItem = new ElementCreator(catalogParams.categoryListItem);
-      const categoryLink = new ElementCreator(catalogParams.categories.categoryLink);
+      listItem = new ElementCreator(catalogParams.categoryListItem);
+      categoryLink = new ElementCreator(catalogParams.categories.categoryLink);
       categoryLink.setTextContent(item.name);
-      categoryLink.setAttribute('href', `/catalog/category/${item.key}`);
+      categoryLink.setAttribute('href', `/catalog/categories/${item.key}`);
       categoryLink.setAttribute('data-genre', item.key);
       listItem.addInnerElement(categoryLink);
       this.categoriesBtn.push(categoryLink.getElement());
@@ -177,9 +287,11 @@ export default class CatalogView extends View {
   private async categoriesCbHandler() {
     if (this.categoriesBtn) {
       this.categoriesBtn.forEach((btn) => {
+        btn.classList.remove('active');
         btn.addEventListener('click', async (e) => {
           e.preventDefault();
           if (e.target instanceof HTMLAnchorElement) {
+            e.target.classList.add('active');
             this.router.navigate(e.target.href);
           }
         });
@@ -191,31 +303,39 @@ export default class CatalogView extends View {
     const categoryKey = this.prefetchedData.genres.find((item) => item.key === key);
     const id = categoryKey?.id;
     this.updateCrumbNavigation();
+    this.filterView.resetInputs();
+    this.filterView.resetEndpoints();
+    this.resetPageCounters();
     if (id) {
+      this.replaceCardsContent(this.wrapper as ElementCreator, this.spinner);
       const data = await this.clientApi.getSpecificGenreById(id);
       if (data && data.results.length > 0) {
-        const dataResults = data.results;
-        await this.assamleCards(dataResults).then((cardsView) => {
+        const cardsView = await this.assambleCards(data, undefined, id);
+        if (cardsView) {
           if (this.wrapper) {
-            this.replaceCards(this.wrapper, cardsView);
+            this.replaceCardsContent(this.wrapper, cardsView);
           } else {
-            this.configure(dataResults);
+            this.configure(data);
           }
-        });
+        }
       }
     }
   }
 
   public replaceCardsAndReturnElement(wrapper: ElementCreator, cardsView: ElementCreator) {
-    const replacedNode = wrapper.getElement().childNodes[2];
-    this.updateCrumbNavigation();
-    wrapper.getElement().replaceChild(cardsView.getElement(), replacedNode);
+    this.replaceCardsContent(wrapper, cardsView);
     return this;
   }
 
-  public replaceCards(wrapper: ElementCreator, cardsView: ElementCreator) {
-    const replacedNode = wrapper.getElement().childNodes[2];
-    wrapper.getElement().replaceChild(cardsView.getElement(), replacedNode);
+  public replaceCardsContent(wrapper: ElementCreator, content: ElementCreator) {
+    const prevCards = wrapper.getElement().querySelector('#products-content');
+    if (content === this.spinner && prevCards) {
+      prevCards.replaceChildren(content.getElement());
+      return;
+    }
+    if (prevCards) {
+      wrapper.getElement().replaceChild(content.getElement(), prevCards);
+    }
   }
 
   private assambleSongTitle(title: LocalizedString): HTMLElement {
@@ -224,9 +344,10 @@ export default class CatalogView extends View {
     return songTitle.getElement();
   }
 
-  private assambleCartBtn(): HTMLElement {
-    const addCartBtn = new ElementCreator(catalogParams.card.addToCartBtn);
-    return addCartBtn.getElement();
+  private assambleCartBtn(id: string): HTMLElement {
+    const cartBtn = new AddToCartView(this.clientApi, id);
+    cartBtn.render();
+    return cartBtn.getElement();
   }
 
   private assamblePrice(priceArray: Price[] | undefined): HTMLElement {
@@ -287,16 +408,21 @@ export default class CatalogView extends View {
 
   public submitBtnHandler(element: HTMLElement) {
     element.addEventListener('click', async () => {
+      this.resetPageCounters();
+      this.endpoints = this.filterView.endPoints;
+      if (this.wrapper) {
+        this.replaceCardsContent(this.wrapper, this.spinner);
+      }
       const cardsData = await this.filterView.getFilterData();
-      if (cardsData && cardsData.length > 0) {
+      if (cardsData && cardsData.results.length > 0) {
+        this.router.navigate(PAGES.FILTER);
         this.filterView.resetEndpoints();
-        await this.assamleCards(cardsData).then((cardsView) => {
+        await this.assambleCards(cardsData).then((cardsView) => {
           if (this.wrapper) {
-            this.replaceCards(this.wrapper, cardsView);
+            this.replaceCardsContent(this.wrapper, cardsView);
           }
         });
-      }
-      if (cardsData && cardsData.length === 0) {
+      } else {
         this.showNoResults('', true);
         this.filterView.resetEndpoints();
       }
@@ -315,6 +441,7 @@ export default class CatalogView extends View {
       }
     });
     btn.addEventListener('click', () => {
+      this.resetPageCounters();
       this.getSearchedProducts(<HTMLInputElement>input);
     });
   }
@@ -325,14 +452,13 @@ export default class CatalogView extends View {
       const response = this.clientApi.getSearchProduct(search, 50);
       response
         .then((data) => {
-          const { results } = data.body;
-          if (results.length === 0) {
+          const { body } = data;
+          if (body.results.length === 0) {
             this.showNoResults(search);
           } else {
-            this.assamleCards(results).then((cardsView) => {
+            this.assambleCards(body).then((cardsView) => {
               if (this.wrapper) {
-                const replacedNode = this.wrapper.getElement().childNodes[2];
-                this.wrapper.getElement().replaceChild(cardsView.getElement(), replacedNode);
+                this.replaceCardsContent(this.wrapper, cardsView);
               }
             });
           }
@@ -342,10 +468,9 @@ export default class CatalogView extends View {
         });
     } else {
       // search is blank
-      this.assamleCards().then((cardsView) => {
+      this.assambleCards().then((cardsView) => {
         if (this.wrapper) {
-          const replacedNode = this.wrapper.getElement().childNodes[2];
-          this.wrapper.getElement().replaceChild(cardsView.getElement(), replacedNode);
+          this.replaceCardsContent(this.wrapper, cardsView);
         }
       });
     }
@@ -362,39 +487,79 @@ export default class CatalogView extends View {
     }
     container.addInnerElement([title, message]);
     if (this.wrapper) {
-      const replacedNode = this.wrapper.getElement().childNodes[2];
-      this.wrapper.getElement().replaceChild(container.getElement(), replacedNode);
+      this.replaceCardsContent(this.wrapper, container);
     }
   }
 
   private async getCategoriesView() {
-    console.log('ff');
     const productCards = new ElementCreator(catalogParams.productCards);
-    const heading = new ElementCreator(catalogParams.categoriesPage.pageHeading);
-    productCards.addInnerElement(heading);
-    this.prefetchedData.genres.forEach(async (item) => {
-      const data = await this.clientApi.getSpecificGenreById(item.id);
+    productCards.setAttribute('id', catalogParams.productCards.id);
+    const promises = this.prefetchedData.genres.map(async (item) => {
+      const data = await this.clientApi.getSpecificGenreById(item.id, undefined, 4);
       if (data) {
-        const dataResults = data.results;
-        const catWrapper = new ElementCreator(catalogParams.categoriesPage.categoryWrapper);
-        const catHeading = new ElementCreator(catalogParams.categoriesPage.categoryHeading);
-        catHeading.setTextContent(item.name);
-        const cards = await this.assamleCards(dataResults);
-        catWrapper.addInnerElement([catHeading, cards]);
-        productCards.addInnerElement(catWrapper);
+        const cardsContent = new ElementCreator(catalogParams.categoriesPage.cardsContent);
+        const cards = await this.assambleCards(data, cardsContent);
+        const categoryWrapper = new ElementCreator(catalogParams.categoriesPage.categoryWrapper);
+        const categoryHeading = new ElementCreator(catalogParams.categoriesPage.categoryHeading);
+        const overlayLink = new ElementCreator(catalogParams.categoriesPage.overlay);
+        const overlayText = new ElementCreator(catalogParams.categoriesPage.overlayText);
+        overlayText.setTextContent(`Proceed to ${item.name}`);
+        overlayLink.setAttribute('href', `/${PAGES.CATEGORIES}/${item.key}`);
+        overlayLink.addInnerElement(overlayText);
+        cards.addInnerElement(overlayLink);
+        this.categoriesContentHandler(overlayLink.getElement(), cards.getElement(), overlayText.getElement());
+        categoryHeading.setTextContent(item.name);
+        categoryWrapper.addInnerElement([categoryHeading, cards]);
+        productCards.addInnerElement(categoryWrapper);
       }
     });
+
+    await Promise.all(promises);
+
     return productCards;
   }
 
+  private categoriesContentHandler(element: HTMLElement, collection: HTMLElement, textElement: HTMLElement) {
+    const elements = Array.from(collection.children);
+    element.addEventListener('mouseenter', (evt) => {
+      if (evt.target instanceof HTMLElement) {
+        evt.target.classList.add('active');
+        textElement.classList.remove('hidden');
+        elements.forEach((card) => {
+          if (card !== evt.target) {
+            card.classList.add('blured');
+          }
+        });
+      }
+    });
+    element.addEventListener('mouseleave', (evt) => {
+      if (evt.target instanceof HTMLElement) {
+        evt.target.classList.remove('active');
+        textElement.classList.add('hidden');
+        elements.forEach((card) => {
+          if (card !== evt.target) {
+            card.classList.remove('blured');
+          }
+        });
+      }
+    });
+    element.addEventListener('click', (evt) => {
+      evt.preventDefault();
+      if (evt.target instanceof HTMLAnchorElement) {
+        this.router.navigate(evt.target.href);
+      }
+    });
+  }
+
   public async proceedToCategories() {
+    this.replaceCardsContent(this.wrapper as ElementCreator, this.spinner);
     const productCards = await this.getCategoriesView();
     this.updateCrumbNavigation();
     if (productCards) {
       if (!this.wrapper) {
         this.configure(undefined, productCards);
       } else {
-        this.replaceCards(this.wrapper, productCards);
+        this.replaceCardsContent(this.wrapper, productCards);
       }
     }
   }
@@ -406,7 +571,7 @@ export default class CatalogView extends View {
       if (!this.wrapper) {
         this.configure(undefined, productCards);
       } else {
-        this.replaceCards(this.wrapper, productCards);
+        this.replaceCardsContent(this.wrapper, productCards);
       }
     }
   }
@@ -426,15 +591,11 @@ export default class CatalogView extends View {
           link = new ElementCreator(catalogParams.breadCrumbs.bcLinkActive);
         }
         link.setTextContent(item.split('_').join(' '));
-        const path = `${arr[0]}/${arr.slice(1, i + 1).join('/')}`;
+        const path = `#${arr[0]}/${arr.slice(1, i + 1).join('/')}`;
         link.setAttribute('href', path);
         link.setMouseEvent((evt) => {
           evt.preventDefault();
           if (evt.target instanceof HTMLAnchorElement) {
-            const pathname = evt.target.pathname.slice(1);
-            if (window.location.pathname.slice(1) === pathname) {
-              return false;
-            }
             this.router.navigate(path);
           }
         });

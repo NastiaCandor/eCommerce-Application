@@ -28,13 +28,15 @@ export default class ElementCreator {
     if (params.src && params.alt) this.setImageLink(params.src, params.alt);
   }
 
-  public addInnerElement(element: ElementOrCreator | ArrayOfElementsOrCreators): void {
+  public addInnerElement(element: ElementOrCreator | HTMLElement | ArrayOfElementsOrCreators): void {
     /* method for adding inner elements to a this.element defined at constructor.
     you can pass single HTMLElement, Array of HTMLElements, ElementCreator instance,
     Array of ElementCreator instances */
-    if (element instanceof ElementCreator) this.element.append(element.getElement());
-    if (element instanceof HTMLElement) this.element.append(element);
-    if (element instanceof Array) this.arrayHandler(element);
+    if (element instanceof ElementCreator) {
+      this.element.append(element.getElement());
+    } else if (element instanceof HTMLElement) {
+      this.element.append(element);
+    } else if (element instanceof Array) this.arrayHandler(element);
   }
 
   private arrayHandler(array: ArrayOfElementsOrCreators): void {
@@ -80,6 +82,15 @@ export default class ElementCreator {
     not really usefull, because of a little usage without enviroment context.
     you can ask me for clarifry and providing more info about */
     if (typeof callback === 'function') this.element.addEventListener('click', (evt: Event) => callback(evt));
+  }
+
+  public setScrollEvent(callback: (evt: Event) => void): void {
+    /* set the provided callback from passed function, if any. works only with mouse events.
+    not really usefull, because of a little usage without enviroment context.
+    you can ask me for clarifry and providing more info about */
+    if (typeof callback === 'function') {
+      this.element.addEventListener('scroll', (evt: Event) => callback(evt));
+    }
   }
 
   private setLink(link: string): void {

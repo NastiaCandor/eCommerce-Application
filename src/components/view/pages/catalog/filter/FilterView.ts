@@ -15,7 +15,7 @@ export default class FilterView extends View {
 
   private labelBoxes: HTMLElement[];
 
-  private endPoints: EndPointsObject;
+  public endPoints: EndPointsObject;
 
   private allElements: ElementCreator[];
 
@@ -211,9 +211,7 @@ export default class FilterView extends View {
 
   public createQuaryString() {
     const valuePairs = Object.entries(this.queryObject);
-    if (!this.endPoints.filter) {
-      this.endPoints.filter = [];
-    }
+    this.endPoints.filter = [];
     valuePairs.forEach(([key, values]) => {
       if (key === 'LP') {
         const lpValues = values.map((value) => `"${value}"`).join(',');
@@ -248,7 +246,7 @@ export default class FilterView extends View {
     }
   }
 
-  private removeWriteFromqueryObject(key: string, value: string): void {
+  private removeWriteFromQueryObject(key: string, value: string): void {
     const formatKey = this.formatKey(key);
     if (this.queryObject[formatKey].some((item) => item === value)) {
       this.queryObject[formatKey] = this.queryObject[formatKey].filter((item) => item !== value);
@@ -272,17 +270,17 @@ export default class FilterView extends View {
         } else {
           target.parentElement?.classList.remove('active');
           if (datasetId) {
-            this.removeWriteFromqueryObject(datasetId, <string>target.dataset[datasetId]);
+            this.removeWriteFromQueryObject(datasetId, <string>target.dataset[datasetId]);
           }
         }
       }
     });
   }
 
-  public async getFilterData() {
+  public async getFilterData(endpoints?: EndPointsObject, offset?: number) {
     this.createQuaryString();
     try {
-      const data = await this.clientApi.fetchFilterQuary(this.endPoints);
+      const data = await this.clientApi.fetchFilterQuary(endpoints || this.endPoints, offset);
       if (data) {
         return data;
       }
