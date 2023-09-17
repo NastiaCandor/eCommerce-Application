@@ -39,6 +39,7 @@ export default class CartView extends View {
     this.getCartDiscounts();
     // this.addItem();
   }
+  // TODO: IF THERE IS NO DISCOUNTED PRICE + fixed poition of aside menu
 
   private async renderInnerWrapper() {
     const cartWrapper = new ElementCreator(cartParams.wrapper);
@@ -48,9 +49,44 @@ export default class CartView extends View {
     const cartHeading = new ElementCreator(cartParams.heading);
     const clearCartBtn = new ElementCreator(cartParams.clearCartBtn);
     clearCartBtn.addInnerElement(new ElementCreator(cartParams.clearCartBtnImg));
-    topWrapper.addInnerElement([cartHeading, clearCartBtn]);
 
-    cartWrapper.addInnerElement([topWrapper, await this.createCartItemsWrapper()]);
+    topWrapper.addInnerElement([cartHeading, clearCartBtn]);
+    const cartItemsWrapper = await this.createCartItemsWrapper();
+    cartWrapper.addInnerElement([topWrapper, cartItemsWrapper]);
+    console.log(cartItemsWrapper.getChildren()[0]);
+    console.log(cartItemsWrapper.getChildren()[1]);
+    clearCartBtn.getElement().addEventListener('click', async () => {
+      clearCartBtn.getElement().classList.add('no-show');
+      const customerID = this.getCustomerIDCookie() as string;
+      const currentVersion = await this.getCartVersion(customerID);
+      const getCartAPI = this.clientAPI.getCustomerCart(customerID);
+      this.CartAsideView.getChildren()[2].remove();
+      getCartAPI
+        .then((data) => {
+          const { lineItems } = data.body;
+          const itemsArr: string[] = [];
+          lineItems.forEach((el) => {
+            itemsArr.push(el.id);
+            const removeItemAPI = this.clientAPI.removeAllItemsFromCart(data.body.id, currentVersion, itemsArr);
+            removeItemAPI.then((emptyCartData) => {
+              console.log(emptyCartData.body);
+              this.insertTotalCost(emptyCartData);
+            });
+          });
+          cartItemsWrapper.getChildren()[0].classList.remove('no-show');
+          cartItemsWrapper.getChildren()[1].replaceChildren();
+          // update total cart price
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      // const getEmptyCartAPI = this.clientAPI.getCustomerCart(customerID);
+      // this.CartAsideView.getChildren()[2].remove();
+      // getEmptyCartAPI.then((emptyCartData) => {
+      //   console.log(emptyCartData.body);
+      //   this.insertTotalCost(emptyCartData);
+      // });
+    });
     this.addInnerElement(this.CartAsideView);
   }
 
@@ -58,28 +94,29 @@ export default class CartView extends View {
     const cartItemsWrapper = new ElementCreator(cartParams.itemsWrapper);
 
     const emptyCart = this.createEmptyCartScreen();
-    cartItemsWrapper.addInnerElement(emptyCart);
+    const innerWrapper = new ElementCreator(cartParams.itemsInnerWrapper);
+    cartItemsWrapper.addInnerElement([emptyCart, innerWrapper]);
 
     const customerID = this.getCustomerIDCookie() as string;
-    const getCustomerAPI = this.clientAPI.getCustomerCart(customerID);
+    const getCartAPI = this.clientAPI.getCustomerCart(customerID);
 
-    getCustomerAPI.then(async (data) => {
+    getCartAPI.then(async (data) => {
       const { lineItems } = data.body;
       if (lineItems.length === 0) {
         emptyCart.getElement().classList.remove('no-show');
+        console.log(this.getChildren()[0].children[0].children[1].classList.add('no-show'));
       }
-      console.log(data.body);
       lineItems.forEach(async (element) => {
         const currPrice = element.price.discounted
           ? (element.price.discounted.value.centAmount / 100).toString()
           : (element.price.value.centAmount / 100).toString();
-        const imgLink = element.variant.images ? element.variant.images[0].url : '../assets/img/no-image-available.png';
+        const imgLink = element.variant.images ? element.variant.images[0].url : cartParams.noImageAvailablePath;
         const singer =
           element.variant.attributes && element.variant.attributes[0].name === 'singer'
             ? element.variant.attributes[0].value
             : '';
         // const currentVersion = await this.getCartVersion(customerID);
-        cartItemsWrapper.addInnerElement(
+        innerWrapper.addInnerElement(
           this.assembleCartItem(
             imgLink,
             element.name['en-US'],
@@ -108,13 +145,8 @@ export default class CartView extends View {
         subtotal.push((cartItem.price.discounted.value.centAmount / 100) * cartItem.quantity);
       }
     });
-    console.log(subtotal);
-
     const subtotalSum = subtotal.reduce((acc, value) => acc + value, 0).toString();
-    console.log(subtotalSum);
-
     const totalSum = data.body.totalPrice.centAmount / 100;
-    console.log(totalSum);
 
     const promoDiff = (Number(subtotal) - totalSum).toFixed(2);
     const totalCostEl = this.CartAsideView.createTotalCost(subtotalSum.toString(), promoDiff, totalSum.toString());
@@ -206,7 +238,6 @@ export default class CartView extends View {
       );
       updateQuantity
         .then((data) => {
-          console.log(data.body);
           // update total cart price
           this.CartAsideView.getChildren()[2].remove();
           this.insertTotalCost(data);
@@ -288,10 +319,6 @@ export default class CartView extends View {
     const confirmBtn = new ElementCreator(cartParams.buttonUpdate);
     confirmBtn.setAttribute('type', cartParams.buttonUpdate.type);
     confirmBtn.setTextContent('UPDATE ✔');
-    // const btnImage = new ElementCreator(cartParams.buttonDeleteImg);
-    // btnImage.setAttribute('src', cartParams.buttonDeleteImg.src);
-    // btnImage.setAttribute('alt', cartParams.buttonDeleteImg.alt);
-    // confirmBtn.addInnerElement(btnImage);
     return confirmBtn;
   }
 

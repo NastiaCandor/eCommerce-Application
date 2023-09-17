@@ -11,6 +11,7 @@ import {
   // MyCartDraft,
   CartUpdate,
   createApiBuilderFromCtpClient,
+  CartUpdateAction,
   // CategoryPagedQueryResponse,
 } from '@commercetools/platform-sdk';
 import { ClientBuilder } from '@commercetools/sdk-client-v2';
@@ -114,7 +115,7 @@ export default class ClientAPI {
       ID,
     };
     const body: CartUpdate = {
-      version: 75,
+      version: 263,
       actions: [
         {
           action: 'addLineItem',
@@ -177,6 +178,27 @@ export default class ClientAPI {
           lineItemId: lineItemID,
         },
       ],
+    };
+    const customersAPI = this.apiRoot.carts().withId(args).post({ body }).execute();
+    return customersAPI;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  public async removeAllItemsFromCart(ID: string, version: number, itemIDArr: string[]) {
+    const args = {
+      ID,
+    };
+    const actionsArr: CartUpdateAction[] = [];
+    itemIDArr.forEach((item) => {
+      const actionObj: CartUpdateAction = {
+        action: 'removeLineItem',
+        lineItemId: item,
+      };
+      actionsArr.push(actionObj);
+    });
+    const body: CartUpdate = {
+      version,
+      actions: actionsArr,
     };
     const customersAPI = this.apiRoot.carts().withId(args).post({ body }).execute();
     return customersAPI;

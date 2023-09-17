@@ -43,6 +43,11 @@ const cartParams = {
     cssClasses: ['cart-items__wrapper'],
   },
 
+  itemsInnerWrapper: {
+    tag: 'div',
+    cssClasses: ['cart-items__inner-wrapper'],
+  },
+
   cartItem: {
     tag: 'div',
     cssClasses: ['cart__item'],
@@ -262,6 +267,7 @@ const cartParams = {
 
   wrongPromocode: "This promocode doesn't exist. Please try again",
   noPromocode: 'Please enter a promocode',
+  noImageAvailablePath: '../assets/img/no-image-available.png',
 };
 
 export default cartParams;
