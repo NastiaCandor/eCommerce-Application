@@ -104,8 +104,6 @@ export default class AddToCartView extends View {
           this.spinner.removeSelfFromNode();
           this.showSideBarMessage(`${this.productName}${ADD_ITEM_TO_CART_TEXT}`, 'add');
           this.displayButtons(wrapper, removeBtn, addBtn);
-
-          // test
           this.cartQuantity.updateCartQuantity(data);
         })
         .catch((error) => console.log(`Error while fetching adding product to the cart: ${error}`));

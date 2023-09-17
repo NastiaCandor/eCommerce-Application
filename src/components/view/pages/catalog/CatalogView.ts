@@ -193,7 +193,6 @@ export default class CatalogView extends View {
   }
 
   public resetPageCounters() {
-    console.log('ff');
     this.totalCount = 0;
     this.itemsCount = 0;
     this.endpoints = null;
