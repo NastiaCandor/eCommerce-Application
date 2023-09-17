@@ -30,8 +30,6 @@ export default class CatalogView extends View {
 
   private wrapper: ElementCreator | null;
 
-  private cardsView: HTMLElement | null;
-
   private categoriesBtn: Array<HTMLElement>;
 
   private prefetchedData: PrefetchedData;
@@ -62,7 +60,6 @@ export default class CatalogView extends View {
     this.router = router;
     this.itemsCount = 0;
     this.totalCount = 0;
-    this.cardsView = null;
     this.endpoints = null;
     this.scrollFunction = () => {};
     this.isLoadingData = false;
@@ -89,7 +86,7 @@ export default class CatalogView extends View {
       mobileMenuBtn.getElement().classList.toggle('mobile-btn__active');
     });
     const assambledCards = cardsView || (await this.assambleCards(productInfo));
-    wrapper.addInnerElement([mobileMenuBtn, this.bcWrapper, sideBar, assambledCards]);
+    wrapper.addInnerElement([mobileMenuBtn, sideBar, assambledCards]);
     window.addEventListener('resize', () => {
       if (window.innerWidth > 768) {
         sideBar.getElement().classList.remove('no-show__aside');
@@ -143,12 +140,15 @@ export default class CatalogView extends View {
       if (this.scrollFunction) {
         document.removeEventListener('scroll', this.scrollFunction);
       }
+      this.scrollHandler(cardsWrapper, id);
       if (!wrapper) {
-        cardsWrapper.setAttribute('id', catalogParams.productCards.id);
+        const contentWrapper = new ElementCreator(catalogParams.productContent);
+        contentWrapper.addInnerElement(this.bcWrapper);
+        contentWrapper.setAttribute('id', catalogParams.productContent.id);
+        contentWrapper.addInnerElement(cardsWrapper);
+        return contentWrapper;
       }
     }
-    this.cardsView = cardsWrapper.getElement();
-    this.scrollHandler(cardsWrapper, id);
     return cardsWrapper;
   }
 
@@ -341,6 +341,7 @@ export default class CatalogView extends View {
     const contentEl = content.getElement();
     const prevCards = wrapperEl.querySelector('#products-content');
     const elements = Array.from(wrapper.getElement().children);
+    console.log(wrapper, content);
     elements.forEach((item) => {
       if (item.id === content.getElement().id) {
         wrapperEl.replaceChild(contentEl, item);
@@ -511,8 +512,9 @@ export default class CatalogView extends View {
   }
 
   private async getCategoriesView() {
-    const productCards = new ElementCreator(catalogParams.productCards);
-    productCards.setAttribute('id', catalogParams.productCards.id);
+    const productCards = new ElementCreator(catalogParams.productContent);
+    productCards.setAttribute('id', catalogParams.productContent.id);
+    productCards.addInnerElement(this.bcWrapper);
     const promises = this.prefetchedData.genres.map(async (item) => {
       const data = await this.clientApi.getSpecificGenreById(item.id, undefined, 11);
       if (data) {

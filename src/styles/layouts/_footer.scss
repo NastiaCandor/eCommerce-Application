@@ -1,6 +1,5 @@
 footer {
   padding: 1rem;
-  grid-area: footer;
   opacity: 0.9;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
@@ -24,6 +23,10 @@ footer {
   background-repeat: no-repeat;
   background-size: 100%;
   background-position: 0 50%;
+  @media screen and (max-width: $tablet) {
+    width: 6rem;
+    height: 3rem;
+  }
 }
 
 .footer__wrapper_logo-qc {
@@ -31,12 +34,20 @@ footer {
   height: 7rem;
   background-image: url('../assets/img/qc-logo.png');
   background-repeat: no-repeat;
-  background-size: 100%;
-  background-position: 0 50%;
+  background-size: 95%;
+  background-position: 0 0;
+  @media screen and (max-width: $tablet) {
+    width: 5rem;
+    height: 5rem;
+  }
 }
 
-@media screen and (max-width: $tablet) {
-  .footer__wrapper_text {
-    font-size: 1.5rem;
+.footer__wrapper_text {
+  @media screen and (max-width: $tablet) {
+    font-size: 1rem;
+  }
+  @media screen and (max-width: $mobile) {
+    font-size: 0.8rem;
+    white-space: pre-wrap;
   }
 }

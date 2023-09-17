@@ -1,5 +1,10 @@
-.product__cards {
+.product__content {
+  display: flex;
+  flex-direction: column;
   grid-area: cards;
+  align-items: center;
+}
+.product__cards {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -209,24 +214,24 @@
 }
 
 .catalog__bc-nav {
-  grid-area: bc;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0.5rem 0;
-
+  align-self: flex-start;
+  margin: 1rem 2rem 2rem 2rem;
+  
   .bc-nav_item {
     color: $color-login-background;
     font-size: 2.2rem;
-    padding-right: 0.2rem;
+    padding: 0 0.5rem 0.5rem 0.5rem;
+    background-color: $color-registration-background-address;
+    border-radius: 5px;
+    margin-right: 0.7rem;
     &::after {
       content: ' > '
     }
     &.active {
       color: $color-hover-link
-    }
-    &:last-child {
-      margin: 0;
     }
     @media screen and (max-width: $tablet) {
       font-size: 1.2rem;;

@@ -1,9 +1,9 @@
 .catalog__wrapper {
   display: grid;
-  grid-template-areas: 'bc bc bc'
-                        'catalog-aside cards cards'
-                        'footer footer footer';
-  grid-template-columns: 0.6fr 4fr auto;
+  grid-template-areas: 'catalog-aside cards'
+                        'catalog-aside cards'
+                        'footer footer';
+  grid-template-columns: 15% auto;
   position: relative;
 }
 
