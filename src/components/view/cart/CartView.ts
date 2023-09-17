@@ -35,11 +35,7 @@ export default class CartView extends View {
   protected async configure(): Promise<void> {
     this.renderInnerWrapper();
     this.getCustomerCart();
-    // this.getDiscountCodes();
-    // this.getCartDiscounts();
-    // this.addItem();
   }
-  // TODO: IF THERE IS NO DISCOUNTED PRICE + fixed poition of aside menu
 
   private async renderInnerWrapper() {
     const cartWrapper = new ElementCreator(cartParams.wrapper);
@@ -55,9 +51,9 @@ export default class CartView extends View {
     cartWrapper.addInnerElement([topWrapper, cartItemsWrapper]);
     clearCartBtn.getElement().addEventListener('click', async () => {
       clearCartBtn.getElement().classList.add('no-show');
-      const customerID = this.getCustomerIDCookie() as string;
-      const currentVersion = await this.getCartVersion(customerID);
-      const getCartAPI = this.clientAPI.getCustomerCart(customerID);
+      // const customerID = this.getCustomerIDCookie() as string;
+      // const currentVersion = await this.getCartVersion();
+      const getCartAPI = this.clientAPI.getActiveCartData();
       this.CartAsideView.getChildren()[2].remove();
       getCartAPI
         .then((data) => {
@@ -65,7 +61,7 @@ export default class CartView extends View {
           const itemsArr: string[] = [];
           lineItems.forEach((el) => {
             itemsArr.push(el.id);
-            const removeItemAPI = this.clientAPI.removeAllItemsFromCart(data.body.id, currentVersion, itemsArr);
+            const removeItemAPI = this.clientAPI.removeAllItemsFromCart(itemsArr);
             removeItemAPI.then((emptyCartData) => {
               console.log(emptyCartData.body);
               this.insertTotalCost(emptyCartData);
@@ -89,8 +85,8 @@ export default class CartView extends View {
     const innerWrapper = new ElementCreator(cartParams.itemsInnerWrapper);
     cartItemsWrapper.addInnerElement([emptyCart, innerWrapper]);
 
-    const customerID = this.getCustomerIDCookie() as string;
-    const getCartAPI = this.clientAPI.getCustomerCart(customerID);
+    // const customerID = this.getCustomerIDCookie() as string;
+    const getCartAPI = this.clientAPI.getActiveCartData();
 
     getCartAPI.then(async (data) => {
       const { lineItems } = data.body;
@@ -116,9 +112,9 @@ export default class CartView extends View {
             element.variant.availability?.availableQuantity as number,
             currPrice,
             // (element.totalPrice.centAmount / 100).toString(),
-            element.id,
-            data.body.id,
-            customerID
+            element.id
+            // data.body.id
+            // customerID
             // data.body.version
           )
         );
@@ -157,9 +153,9 @@ export default class CartView extends View {
     maxQuantity: number,
     price: string,
     // totalPrice: string,
-    lineItemId: string,
-    cartID: string,
-    customerID: string
+    lineItemId: string
+    // cartID: string
+    // customerID: string
     // cartVersion: number
   ): ElementCreator {
     const cartItem = new ElementCreator(cartParams.cartItem);
@@ -225,13 +221,8 @@ export default class CartView extends View {
       this.disableEl(minusBtn);
       this.disableEl(counterInput);
       this.disableEl(plusBtn);
-      const currentVersion = await this.getCartVersion(customerID);
-      const updateQuantity = this.clientAPI.updateItemInCart(
-        lineItemId,
-        cartID,
-        currentVersion,
-        Math.ceil(Number(inputEl.value))
-      );
+      // const currentVersion = await this.getCartVersion();
+      const updateQuantity = this.clientAPI.updateItemInCart(lineItemId, Math.ceil(Number(inputEl.value)));
       updateQuantity
         .then((data) => {
           // update total cart price
@@ -244,8 +235,8 @@ export default class CartView extends View {
     });
 
     deleteBtn.getElement().addEventListener('click', async () => {
-      const currentVersion = await this.getCartVersion(customerID);
-      const deleteItem = this.clientAPI.removeItemFromCart(lineItemId, cartID, currentVersion);
+      // const currentVersion = await this.getCartVersion();
+      const deleteItem = this.clientAPI.removeItemFromCart(lineItemId);
       deleteItem
         .then((data) => {
           const { lineItems } = data.body;
@@ -337,50 +328,11 @@ export default class CartView extends View {
     return emptyCartWrapper;
   }
 
-  private async getCartVersion(id: string) {
-    const cart = (await this.clientAPI.getCustomerCart(id)).body;
-    const { version } = cart;
-    return version;
-  }
-
-  private getCookie(name: string) {
-    const matches = document.cookie.match(
-      new RegExp('(?:^|; )' + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)')
-    );
-    return matches ? decodeURIComponent(matches[1]) : undefined;
-  }
-
-  private getCustomerIDCookie() {
-    return this.getCookie('customer_id');
-  }
-
   private async getCustomerCart() {
-    const customerID = this.getCustomerIDCookie() as string;
-    const getCustomerAPI = this.clientAPI.getCustomerCart(customerID);
+    // const customerID = this.getCustomerIDCookie() as string;
+    const getCustomerAPI = this.clientAPI.getActiveCartData();
     getCustomerAPI.then(async (data) => {
       console.log(data.body.lineItems);
-    });
-  }
-
-  private async addItem() {
-    const cartID = 'adc6c058-9da0-435c-ab5d-484af4430bb9';
-    const getCustomerAPI = this.clientAPI.addItemToCart(cartID);
-    getCustomerAPI.then(async (data) => {
-      console.log(data.body);
-    });
-  }
-
-  private async getDiscountCodes() {
-    const codesAPI = this.clientAPI.getDiscountCodes();
-    codesAPI.then(async (data) => {
-      console.log(data.body);
-    });
-  }
-
-  private async getCartDiscounts() {
-    const codesAPI = this.clientAPI.getCartDiscounts();
-    codesAPI.then(async (data) => {
-      console.log(data.body);
     });
   }
 

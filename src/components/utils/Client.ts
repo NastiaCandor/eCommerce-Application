@@ -1,3 +1,4 @@
+/* eslint-disable newline-per-chained-call */
 /* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable comma-dangle */
 /* eslint-disable @typescript-eslint/comma-dangle */
@@ -8,33 +9,38 @@ import {
   CustomerDraft,
   CustomerSignin,
   CustomerUpdate,
-  // MyCartDraft,
-  CartUpdate,
+  MyCartUpdate,
   createApiBuilderFromCtpClient,
-  CartUpdateAction,
-  // CategoryPagedQueryResponse,
+  MyCartUpdateAction,
 } from '@commercetools/platform-sdk';
-import { ClientBuilder } from '@commercetools/sdk-client-v2';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
-import {
-  ctpClient,
-  ID,
-  SECRET,
-  anonMiddlewareOptions,
-  httpMiddlewareOptions,
-  // authMiddlewareOptions,
-} from './BuildClient';
-import { ACCESS_TOKEN, CUSTOMER_ID } from '../constants';
-// import { ApiRequest } from '@commercetools/platform-sdk/dist/declarations/src/generated/shared/utils/requests-utils';
+import { ctpClient, getExistingTokenFlow, ID, SECRET } from './BuildClient';
+import { ACCESS_TOKEN, ANONYMOUS_TOKEN, COOKIE_RESET_DATE, CUSTOMER_ID } from '../constants';
 
 import { EndPointsObject, PrefetchedData, PrefetchedGenres } from '../../types';
 
+enum UserState {
+  Observer,
+  Logged,
+  Anonymous,
+}
+
 export default class ClientAPI {
-  apiBuilder: ApiRoot;
+  public prefetchedData: PrefetchedData;
 
-  apiRoot: ByProjectKeyRequestBuilder;
+  private apiBuilder: ApiRoot;
 
-  prefetchedData: PrefetchedData;
+  private apiRoot: ByProjectKeyRequestBuilder;
+
+  private anonymousId: string;
+
+  private userLogged: UserState;
+
+  private anonymousCartId: string;
+
+  private cartId: string;
+
+  private cartVersion: number;
 
   constructor() {
     this.apiBuilder = createApiBuilderFromCtpClient(ctpClient);
@@ -58,31 +64,175 @@ export default class ClientAPI {
         keys: [],
       },
     };
+    this.userLogged = this.checkUserLogged();
+    this.anonymousId = '';
+    this.anonymousCartId = '';
+    this.cartId = '';
+    this.cartVersion = 1;
+  }
+
+  public resetDefaultClientAPI() {
+    this.userLogged = UserState.Observer;
+    this.apiBuilder = createApiBuilderFromCtpClient(ctpClient);
+    this.apiRoot = this.apiBuilder.withProjectKey({ projectKey: 'ecommerce-quantum' });
+    this.anonymousId = '';
+    this.anonymousCartId = '';
+    this.cartId = '';
+    this.cartVersion = 1;
+  }
+
+  private checkUserLogged() {
+    const loggedToken = this.getAccessToken(ACCESS_TOKEN);
+    const anonymToken = this.getAccessToken(ANONYMOUS_TOKEN);
+    if (loggedToken === '' && anonymToken === '') return UserState.Observer;
+    if (loggedToken !== '') {
+      this.apiRoot = createApiBuilderFromCtpClient(getExistingTokenFlow(`Bearer ${loggedToken}`)).withProjectKey({
+        projectKey: 'ecommerce-quantum',
+      });
+      return UserState.Logged;
+    }
+    this.apiRoot = createApiBuilderFromCtpClient(getExistingTokenFlow(`Bearer ${anonymToken}`)).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
+    return UserState.Anonymous;
+  }
+
+  private getAccessToken(tokenType: string) {
+    if (document.cookie === '') return '';
+    const allCookies = document.cookie.split(';');
+    const isAccessTokenExist = allCookies.some((token) => token.startsWith(tokenType));
+    if (!isAccessTokenExist) return '';
+    const token = document.cookie
+      .split('; ')
+      .filter((el) => el.includes(tokenType))
+      .map((el) => el.split('='))[0]
+      .filter((el) => !el.includes(tokenType))[0];
+    return token;
+  }
+
+  private deleteAnonymousToken() {
+    document.cookie = `${ANONYMOUS_TOKEN}${COOKIE_RESET_DATE}`;
+  }
+
+  private updateApiRoot(tokenType: string) {
+    const token = this.getAccessToken(tokenType);
+    this.apiRoot = createApiBuilderFromCtpClient(getExistingTokenFlow(`Bearer ${token}`)).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
+  }
+
+  private async getActiveCartAPI() {
+    if (this.userLogged === UserState.Observer) {
+      await this.obtainAnonymusAccessToken();
+      await this.updateApiRoot(ANONYMOUS_TOKEN);
+      this.userLogged = UserState.Anonymous;
+      await this.createCart();
+    } else {
+      const cartInfo = this.apiRoot.me().carts().get().execute();
+      await cartInfo
+        .then(async (data) => {
+          if (data.body.count === 0) {
+            await this.createCart();
+          } else {
+            await this.getCartId();
+          }
+        })
+        .catch(console.error);
+    }
+  }
+
+  public async getActiveCartData() {
+    await this.getActiveCartAPI();
+    const activeCartData = this.apiRoot.me().activeCart().get().execute();
+    return activeCartData;
+  }
+
+  private async getCartId() {
+    const cartInfo = this.apiRoot.me().activeCart().get().execute();
+    await cartInfo
+      .then(async (data) => {
+        this.cartId = data.body.id;
+        this.cartVersion = data.body.version;
+      })
+      .catch((error) => `Error while fetching cart ID: ${error}`);
+  }
+
+  private async createCart() {
+    const cartInfo = this.apiRoot
+      .me()
+      .carts()
+      .post({
+        body: {
+          currency: 'USD',
+        },
+      })
+      .execute();
+    await cartInfo
+      .then(async (data) => {
+        const anonumousId = data.body.anonymousId;
+        if (anonumousId !== undefined) this.anonymousId = anonumousId;
+        const anonymousCartId = data.body.id;
+        if (anonymousCartId !== undefined) this.anonymousCartId = anonymousCartId;
+        await this.getCartId();
+      })
+      .catch(console.log);
+  }
+
+  private async obtainAnonymusAccessToken() {
+    const url = 'https://auth.europe-west1.gcp.commercetools.com/oauth/ecommerce-quantum/anonymous/token';
+    const credentials = {
+      clientId: ID,
+      clientSecret: SECRET,
+    };
+    const authString = btoa(`${credentials.clientId}:${credentials.clientSecret}`);
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Basic ${authString}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: 'grant_type=client_credentials',
+    });
+
+    try {
+      const data = await response.json();
+      this.setAnonymousTokenCookie(data.access_token, data.expires_in);
+    } catch (e) {
+      console.log(`${e} occured when fetching access token!`);
+    }
+  }
+
+  private setAnonymousTokenCookie(token: string, time: number): void {
+    const expirationTime = new Date(Date.now() + time * 1000).toUTCString();
+    document.cookie = `${ANONYMOUS_TOKEN}=${token}; expires=${expirationTime}; path=/;`;
   }
 
   public async loginClient(clientEmail: string, clientPassword: string) {
-    const body: CustomerSignin = {
-      email: clientEmail,
-      password: clientPassword,
-    };
-    const loginAPI = await this.apiRoot.me().login().post({ body }).execute();
+    let body: CustomerSignin;
+    if (this.anonymousId !== '' && this.anonymousCartId !== '') {
+      body = {
+        email: clientEmail,
+        password: clientPassword,
+        anonymousId: this.anonymousId,
+        anonymousCartId: this.anonymousCartId,
+        anonymousCartSignInMode: 'MergeWithExistingCustomerCart',
+        updateProductData: true,
+      };
+    } else {
+      body = {
+        email: clientEmail,
+        password: clientPassword,
+        anonymousCartSignInMode: 'MergeWithExistingCustomerCart',
+      };
+    }
+    const loginAPI = this.apiRoot.me().login().post({ body }).execute();
+    await this.obtainUserAccessToken(clientEmail, clientPassword);
+    this.userLogged = UserState.Logged;
+    await this.deleteAnonymousToken();
+    await this.updateApiRoot(ACCESS_TOKEN);
+    await this.getActiveCartAPI();
     return loginAPI;
-  }
-
-  public async createCartAnon() {
-    const clientAnon = new ClientBuilder()
-      .withAnonymousSessionFlow(anonMiddlewareOptions)
-      .withHttpMiddleware(httpMiddlewareOptions)
-      .build();
-    const apiBuilderAnon = createApiBuilderFromCtpClient(clientAnon);
-    const apiRootAnon = apiBuilderAnon.withProjectKey({ projectKey: 'ecommerce-quantum' });
-
-    const customer = await apiRootAnon
-      .me()
-      .carts()
-      .post({ body: { currency: 'USD' } })
-      .execute();
-    return customer.body;
   }
 
   public async getCustomerCart(customerId: string) {
@@ -109,32 +259,10 @@ export default class ClientAPI {
     return codes;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-shadow
-  public async addItemToCart(ID: string) {
-    const args = {
-      ID,
-    };
-    const body: CartUpdate = {
-      version: 7,
-      actions: [
-        {
-          action: 'addLineItem',
-          productId: '22535097-9aed-4df5-a3eb-3db52b69f2e7',
-          quantity: 1,
-        },
-      ],
-    };
-    const customersAPI = this.apiRoot.carts().withId(args).post({ body }).execute();
-    return customersAPI;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-shadow
-  public async updateItemInCart(lineItemID: string, ID: string, version: number, quantity: number) {
-    const args = {
-      ID,
-    };
-    const body: CartUpdate = {
-      version,
+  public async updateItemInCart(lineItemID: string, quantity: number) {
+    await this.getActiveCartAPI();
+    const body: MyCartUpdate = {
+      version: this.cartVersion,
       actions: [
         {
           action: 'changeLineItemQuantity',
@@ -143,35 +271,22 @@ export default class ClientAPI {
         },
       ],
     };
-    const customersAPI = this.apiRoot.carts().withId(args).post({ body }).execute();
-    return customersAPI;
+    const updateCartAPI = this.apiRoot
+      .me()
+      .carts()
+      .withId({ ID: this.cartId })
+      .post({
+        body,
+      })
+      .execute();
+    // const customersAPI = this.apiRoot.carts().withId(args).post({ body }).execute();
+    return updateCartAPI;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-shadow
-  public async applyPromoCode(ID: string, version: number, promocode: string) {
-    const args = {
-      ID,
-    };
-    const body: CartUpdate = {
-      version,
-      actions: [
-        {
-          action: 'addDiscountCode',
-          code: promocode,
-        },
-      ],
-    };
-    const customersAPI = this.apiRoot.carts().withId(args).post({ body }).execute();
-    return customersAPI;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-shadow
-  public async removeItemFromCart(lineItemID: string, ID: string, version: number) {
-    const args = {
-      ID,
-    };
-    const body: CartUpdate = {
-      version,
+  public async removeItemFromCart(lineItemID: string) {
+    await this.getActiveCartAPI();
+    const body: MyCartUpdate = {
+      version: this.cartVersion,
       actions: [
         {
           action: 'removeLineItem',
@@ -179,29 +294,65 @@ export default class ClientAPI {
         },
       ],
     };
-    const customersAPI = this.apiRoot.carts().withId(args).post({ body }).execute();
-    return customersAPI;
+    const removeItemAPI = this.apiRoot
+      .me()
+      .carts()
+      .withId({ ID: this.cartId })
+      .post({
+        body,
+      })
+      .execute();
+    return removeItemAPI;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-shadow
-  public async removeAllItemsFromCart(ID: string, version: number, itemIDArr: string[]) {
-    const args = {
-      ID,
-    };
-    const actionsArr: CartUpdateAction[] = [];
+  public async removeAllItemsFromCart(itemIDArr: string[]) {
+    await this.getActiveCartAPI();
+
+    const actionsArr: MyCartUpdateAction[] = [];
     itemIDArr.forEach((item) => {
-      const actionObj: CartUpdateAction = {
+      const actionObj: MyCartUpdateAction = {
         action: 'removeLineItem',
         lineItemId: item,
       };
       actionsArr.push(actionObj);
     });
-    const body: CartUpdate = {
-      version,
+    const body: MyCartUpdate = {
+      version: this.cartVersion,
       actions: actionsArr,
     };
-    const customersAPI = this.apiRoot.carts().withId(args).post({ body }).execute();
-    return customersAPI;
+    // const customersAPI = this.apiRoot.me().carts().post({ body }).execute();
+    // const customersAPI = this.apiRoot.carts().withId(args).post({ body }).execute();
+    const removeAllItemsAPI = this.apiRoot
+      .me()
+      .carts()
+      .withId({ ID: this.cartId })
+      .post({
+        body,
+      })
+      .execute();
+    return removeAllItemsAPI;
+  }
+
+  public async applyPromoCode(promocode: string) {
+    await this.getActiveCartAPI();
+    const body: MyCartUpdate = {
+      version: this.cartVersion,
+      actions: [
+        {
+          action: 'addDiscountCode',
+          code: promocode,
+        },
+      ],
+    };
+    const promocodeAPI = this.apiRoot
+      .me()
+      .carts()
+      .withId({ ID: this.cartId })
+      .post({
+        body,
+      })
+      .execute();
+    return promocodeAPI;
   }
 
   public async getProductById(productID: string) {

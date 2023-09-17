@@ -47,15 +47,15 @@ export default class CartAsideView extends View {
 
     formEl.addEventListener('submit', (el) => {
       el.preventDefault();
-      const customerID = this.getCustomerIDCookie() as string;
+      // const customerID = this.getCustomerIDCookie() as string;
       if (inputEl.value === '') {
         this.showWrongPromocodeMessage(cartParams.noPromocode);
         return;
       }
-      const getCartAPI = this.clientAPI.getCustomerCart(customerID);
+      const getCartAPI = this.clientAPI.getActiveCartData();
       if (inputEl.value !== '') {
         getCartAPI.then(async (data) => {
-          const sendDiscount = this.clientAPI.applyPromoCode(data.body.id, data.body.version, inputEl.value);
+          const sendDiscount = this.clientAPI.applyPromoCode(inputEl.value);
           sendDiscount
             .then(async (response) => {
               const subtotal: number[] = [];
@@ -109,25 +109,6 @@ export default class CartAsideView extends View {
 
     costWrapper.addInnerElement([subtotalWrapper, discountWrapper, totalWrapper]);
     return costWrapper;
-  }
-
-  private getCookie(name: string) {
-    const matches = document.cookie.match(
-      new RegExp('(?:^|; )' + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)')
-    );
-    return matches ? decodeURIComponent(matches[1]) : undefined;
-  }
-
-  private getCustomerIDCookie() {
-    return this.getCookie('customer_id');
-  }
-
-  private async getCustomerCart() {
-    const customerID = (await this.getCustomerIDCookie()) as string;
-    const getCustomerAPI = this.clientAPI.getCustomerCart(customerID);
-    getCustomerAPI.then(async (data) => {
-      console.log(data.body.lineItems);
-    });
   }
 
   private showWrongPromocodeMessage(message: string): void {
