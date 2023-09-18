@@ -26,8 +26,7 @@ export default class CartAsideView extends View {
   }
 
   private renderInnerWrapper() {
-    const asideHeading = new ElementCreator(cartParams.asideHeading);
-    this.addInnerElement([asideHeading, this.createPromoCode()]);
+    this.addInnerElement([this.createPromoCode()]);
   }
 
   private createPromoCode(): ElementCreator {
@@ -88,7 +87,7 @@ export default class CartAsideView extends View {
 
   public createTotalCost(subtotal: string, discount: string, cost: string): ElementCreator {
     const costWrapper = new ElementCreator(cartParams.costWrapper);
-
+    const asideHeading = new ElementCreator(cartParams.asideHeading);
     const subtotalWrapper = new ElementCreator(cartParams.subtotalWrapper);
     const subtotalText = new ElementCreator(cartParams.subtotalText);
     const subtotalNumber = new ElementCreator(cartParams.subtotalNumber);
@@ -107,7 +106,9 @@ export default class CartAsideView extends View {
     totalCostNumber.setTextContent(`${cost}$`);
     totalWrapper.addInnerElement([totalCostText, totalCostNumber]);
 
-    costWrapper.addInnerElement([subtotalWrapper, discountWrapper, totalWrapper]);
+    const checkoutBtn = new ElementCreator(cartParams.checkoutBtn);
+    checkoutBtn.setAttribute('type', cartParams.checkoutBtn.type);
+    costWrapper.addInnerElement([asideHeading, subtotalWrapper, discountWrapper, totalWrapper, checkoutBtn]);
     return costWrapper;
   }
 

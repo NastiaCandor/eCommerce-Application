@@ -265,6 +265,13 @@ const cartParams = {
     textContent: 'Start shopping',
   },
 
+  checkoutBtn: {
+    tag: 'button',
+    cssClasses: ['checkout__btn'],
+    type: 'button',
+    textContent: 'Checkout  ➞',
+  },
+
   wrongPromocode: "This promocode doesn't exist. Please try again",
   noPromocode: 'Please enter a promocode',
   noImageAvailablePath: '../assets/img/no-image-available.png',

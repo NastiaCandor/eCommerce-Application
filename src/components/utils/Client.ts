@@ -198,6 +198,7 @@ export default class ClientAPI {
     try {
       const data = await response.json();
       this.setAnonymousTokenCookie(data.access_token, data.expires_in);
+      console.log(data);
     } catch (e) {
       console.log(`${e} occured when fetching access token!`);
     }

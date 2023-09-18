@@ -66,7 +66,6 @@ export default class CartView extends View {
             itemsArr.push(el.id);
             const removeItemAPI = this.clientAPI.removeAllItemsFromCart(itemsArr);
             removeItemAPI.then((emptyCartData) => {
-              console.log(emptyCartData.body);
               this.insertTotalCost(emptyCartData);
             });
           });
@@ -136,12 +135,10 @@ export default class CartView extends View {
         subtotal.push((cartItem.price.value.centAmount / 100) * cartItem.quantity);
       }
     });
-    console.log(subtotal);
 
     const subtotalSum = subtotal.reduce((acc, value) => acc + value, 0);
     const totalSum = data.body.totalPrice.centAmount / 100;
     const promoDiff = (subtotalSum - totalSum).toFixed(2);
-    console.log(subtotalSum, promoDiff, totalSum);
 
     const totalCostEl = this.CartAsideView.createTotalCost(subtotalSum.toFixed(2), promoDiff, totalSum.toFixed(2));
     this.CartAsideView.addInnerElement(totalCostEl);
