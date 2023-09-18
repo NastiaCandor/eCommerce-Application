@@ -141,6 +141,7 @@ export default class ClientAPI {
     }
   }
 
+
   public async getActiveCartData() {
     await this.getActiveCartAPI();
     const activeCartData = this.apiRoot.me().activeCart().get().execute();
@@ -235,6 +236,7 @@ export default class ClientAPI {
     return loginAPI;
   }
 
+
   public async updateItemInCart(lineItemID: string, quantity: number) {
     await this.getActiveCartAPI();
     const body: MyCartUpdate = {
@@ -326,12 +328,27 @@ export default class ClientAPI {
       })
       .execute();
     return promocodeAPI;
+
+  public getDiscountCodes() {
+    const discountCodes = this.apiRoot.discountCodes().get().execute();
+    return discountCodes;
+  }
+
+  public getCartDiscountByID(id: string) {
+    const cartDiscounts = this.apiRoot.cartDiscounts().withId({ ID: id }).get().execute();
+    return cartDiscounts;
   }
 
   public async getProductById(productID: string) {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
     const getProduct = apiRoot.productProjections().withId({ ID: productID }).get().execute();
     return getProduct;
+  }
+
+  public async getActiveCartData() {
+    await this.getActiveCartAPI();
+    const activeCartData = this.apiRoot.me().activeCart().get().execute();
+    return activeCartData;
   }
 
   public async getSearchProduct(search: string, limitNum: number) {
@@ -354,6 +371,74 @@ export default class ClientAPI {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
     const getProduct = apiRoot.productDiscounts().withId({ ID: discountID }).get().execute();
     return getProduct;
+  }
+
+  private async getCartId() {
+    const cartInfo = this.apiRoot.me().activeCart().get().execute();
+    await cartInfo
+      .then(async (data) => {
+        this.cartId = data.body.id;
+        this.cartVersion = data.body.version;
+      })
+      .catch((error) => `Error while fetching cart ID: ${error}`);
+  }
+
+  public async addItemCart(productID: string) {
+    await this.getActiveCartAPI();
+    const addProduct = this.apiRoot
+      .me()
+      .carts()
+      .withId({ ID: this.cartId })
+      .post({
+        body: {
+          version: this.cartVersion,
+          actions: [
+            {
+              action: 'addLineItem',
+              quantity: 1,
+              productId: productID,
+            },
+          ],
+        },
+      })
+      .execute();
+    return addProduct;
+  }
+
+  public async removeItemCart(productID: string, quantityItem?: number) {
+    await this.getActiveCartAPI();
+    let body: MyCartUpdate;
+    if (quantityItem) {
+      body = {
+        version: this.cartVersion,
+        actions: [
+          {
+            action: 'removeLineItem',
+            quantity: quantityItem,
+            lineItemId: productID,
+          },
+        ],
+      };
+    } else {
+      body = {
+        version: this.cartVersion,
+        actions: [
+          {
+            action: 'removeLineItem',
+            lineItemId: productID,
+          },
+        ],
+      };
+    }
+    const addProduct = this.apiRoot
+      .me()
+      .carts()
+      .withId({ ID: this.cartId })
+      .post({
+        body,
+      })
+      .execute();
+    return addProduct;
   }
 
   public getCustomers() {
@@ -629,11 +714,17 @@ export default class ClientAPI {
     return `Unable to fetch ${category}`;
   }
 
-  public async getAllCardsData() {
+  public async getAllCardsData(offsetCount?: number) {
+    const body = {
+      queryArgs: {
+        limit: 8,
+        offset: offsetCount,
+      },
+    };
     try {
-      const data = await this.apiRoot.productProjections().search().get().execute();
+      const data = await this.apiRoot.productProjections().get(body).execute();
       if (data.statusCode === 200) {
-        return data.body.results;
+        return data.body;
       }
     } catch (e) {
       console.log(`Error occured while fetching cards data: ${e}`);
@@ -711,15 +802,16 @@ export default class ClientAPI {
     }
   }
 
-  public async getSpecificGenreById(id: string) {
+  public async getSpecificGenreById(id: string, offsetCount?: number, limitCount = 8) {
     const query = {
       queryArgs: {
-        filter: `categories.id:"${id}"`,
-        limit: 100,
+        limit: limitCount,
+        where: `categories(id="${id}")`,
+        offset: offsetCount,
       },
     };
     try {
-      const data = await this.apiRoot.productProjections().search().get(query).execute();
+      const data = await this.apiRoot.productProjections().get(query).execute();
       if (data.statusCode === 200) {
         const response = data.body;
         return response;
@@ -856,22 +948,21 @@ export default class ClientAPI {
     }
   }
 
-  public async fetchFilterQuary(endPoints: EndPointsObject) {
+  public async fetchFilterQuary(endPoints: EndPointsObject, offsetCount?: number) {
     const query = {
       queryArgs: {
         filter: endPoints.filter,
         priceCurrency: 'USD',
         sort: endPoints.sort,
-
-        limit: 100,
+        offset: offsetCount,
+        limit: 8,
       },
     };
 
     try {
       const data = await this.apiRoot.productProjections().search().get(query).execute();
       if (data.statusCode === 200) {
-        console.log(data.body.results);
-        return data.body.results;
+        return data.body;
       }
     } catch (e) {
       console.error(`Unable to fetch filter quary: ${e}`);
@@ -909,8 +1000,6 @@ export default class ClientAPI {
   }
 
   public setCustomerIDCookie(id: string): void {
-    console.log(document.cookie);
-
     const expirationTime = new Date(Date.now() + 172800 * 1000).toUTCString();
     document.cookie = `${CUSTOMER_ID}=${id}; expires=${expirationTime}; path=/;`;
   }

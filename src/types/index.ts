@@ -40,7 +40,7 @@ export type NotFoundType = {
   title: ElementParamsType;
   subtitle: ElementParamsType;
   errorNumber: ElementParamsType;
-  backToMainBtn: ElementParamsType;
+  backToCatalogBtn: ElementParamsType;
 };
 
 // PAGE INTERFACES
@@ -117,19 +117,25 @@ export interface PrefetchedAttributes<T> {
   lp: T[];
 }
 
+// ENDPOINTS
+
 export type EndPointsObject = {
   filter: string[];
   sort: string[];
-};
-
-export type ImageArr = {
-  url?: string;
 };
 
 export interface QueryObject extends PrefetchedAttributes<string> {
   priceRange: string[];
   sort: string[];
 }
+
+// IMAGE ARRAY TYPE
+
+export type ImageArr = {
+  url?: string;
+};
+
+// CALLBACK TYPES FOR ROUTING
 
 export type RouteCallbacks = {
   loadLoginPage: () => void;
@@ -146,4 +152,19 @@ export type RouteCallbacks = {
   logoutUser: () => void;
   loadProductPage: (id: string) => void;
   mountCategory: (id: string) => void;
+};
+
+// CATALOG STATE TYPE
+
+export type CatalogState = {
+  url: string;
+  nav: HTMLElement;
+};
+
+// CART QUANTITY
+export const cartSpanParams = {
+  span: {
+    tag: 'span',
+    cssClasses: ['cart-quant__span'],
+  },
 };

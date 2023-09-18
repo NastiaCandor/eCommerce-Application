@@ -21,6 +21,9 @@ export default class Router {
   }
 
   public navigate(url: string, productId = '') {
+    if (this.currentPath.startsWith('catalog')) {
+      this.state.saveCatalogState(this.currentPath);
+    }
     this.state.pushState(url);
     this.processUrl(this.currentPath, productId);
   }
@@ -39,6 +42,9 @@ export default class Router {
   }
 
   private routeTo(path: string, productId = '') {
+    if (this.currentPath.startsWith('catalog')) {
+      this.state.saveCatalogState(path);
+    }
     this.request = this.parseUrl(path);
     let pathToFind =
       this.request.resource === '' ? `/${this.request.path}` : `${this.request.path}/${this.request.resource}`;
@@ -62,11 +68,11 @@ export default class Router {
       return;
     }
     if (this.request.category) {
-      this.state.setPageTitle(`${this.request.category}${this.request.id ?? ''}`, false);
+      this.state.setPageTitle(`${this.request.category}${this.request.id ?? ''}`);
     } else if (this.request.resource) {
-      this.state.setPageTitle(`${this.request.path}`, false);
+      this.state.setPageTitle(`${this.request.resource}`, true);
     } else {
-      this.state.setPageTitle(route.path);
+      this.state.setPageTitle(route.path, false, true);
     }
 
     route.callback();

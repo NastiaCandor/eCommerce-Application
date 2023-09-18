@@ -22,6 +22,7 @@ export default class UserIconsView extends View {
   }
 
   protected configure(): void {
+    super.setAttribute('id', 'header__user-icons');
     this.injectIconItems(this.iconsCollection);
   }
 
@@ -45,6 +46,11 @@ export default class UserIconsView extends View {
       imageItem.setImageLink(userIconsParams[key].iconsSrc[i], userIconsParams[key].iconsAlt[i]);
       item.addInnerElement(imageItem);
       item.addInnerElement(span);
+      if (name === 'Cart') {
+        const cartSpan = new ElementCreator(userIconsParams.cartSpan);
+        cartSpan.setAttribute('id', 'cart-span');
+        item.addInnerElement(cartSpan);
+      }
       span.setTextContent(name);
       const nameKey = this.formatKeyToUpperCase(name);
       const link = this.formatNameToLinkName(name);

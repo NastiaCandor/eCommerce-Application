@@ -16,8 +16,6 @@
     width: 90%;
   }
   .product__categories {
-    width: 100%;
-    min-width: 23rem;
     & > li {
       display: block;
     }
@@ -263,5 +261,4 @@
 
 .hidden {
   display: none;
-  
 }

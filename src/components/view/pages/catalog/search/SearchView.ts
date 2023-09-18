@@ -13,7 +13,6 @@ export default class SearchView extends View {
 
   public render() {
     this.configure();
-    return this.getElement();
   }
 
   protected async configure() {

@@ -1,6 +1,7 @@
 const catalogParams = {
   section: {
     tag: 'section',
+    cssClasses: ['catalog'],
   },
   aside: {
     tag: 'aside',
@@ -30,6 +31,7 @@ const catalogParams = {
   productCards: {
     tag: 'div',
     cssClasses: ['product__cards'],
+    id: 'products-content',
   },
   categories: {
     wrapper: {
@@ -120,6 +122,7 @@ const catalogParams = {
     container: {
       tag: 'div',
       cssClasses: ['no-res__container'],
+      id: 'no-results',
     },
     title: {
       tag: 'h4',
@@ -150,6 +153,19 @@ const catalogParams = {
     },
   },
   categoriesPage: {
+    cardsContent: {
+      tag: 'div',
+      cssClasses: ['product__cards', 'category-view'],
+      id: 'products-content',
+    },
+    overlay: {
+      tag: 'a',
+      cssClasses: ['category-overlay'],
+    },
+    overlayText: {
+      tag: 'span',
+      cssClasses: ['category-overlay_text', 'hidden'],
+    },
     pageHeading: {
       tag: 'h3',
       cssClasses: ['heading'],

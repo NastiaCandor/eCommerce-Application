@@ -32,14 +32,14 @@ export default class ProfileShipAdrsView extends View {
 
   private currentVersion: number;
 
-  constructor() {
+  constructor(clientAPI: ClientAPI) {
     super(ShipAdrsParams.addressWrapper);
     this.streetInput = new StreetInputView();
     this.cityInput = new CityInputView();
     this.countryInput = new CountryInputView();
     this.postcodeInput = new PostcodeInputView();
     this.render();
-    this.clientAPI = new ClientAPI();
+    this.clientAPI = clientAPI;
     this.currentVersion = 0;
   }
 
@@ -90,7 +90,7 @@ export default class ProfileShipAdrsView extends View {
       const cityName = adrs.city as string;
       const countryName = adrs.country as string;
       const postalCode = adrs.postalCode as string;
-      const adrsItem = new ShipAddressItemView();
+      const adrsItem = new ShipAddressItemView(this.clientAPI);
       adrsItem.renderInnerWrapper(streetName, cityName, countryName, postalCode, adrsID, defaultStatus);
       adrsItemsWrapper.addInnerElement(adrsItem);
     });
@@ -191,7 +191,7 @@ export default class ProfileShipAdrsView extends View {
           const cityName = adrs.city as string;
           const countryName = adrs.country as string;
           const postalCode = adrs.postalCode as string;
-          const adrsItem = new ShipAddressItemView();
+          const adrsItem = new ShipAddressItemView(this.clientAPI);
           adrsItem.renderInnerWrapper(streetName, cityName, countryName, postalCode, adrsID, 'false');
           this.getElement().replaceChildren();
           this.renderInnerWrapper();

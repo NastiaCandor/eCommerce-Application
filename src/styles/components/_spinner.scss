@@ -1,0 +1,55 @@
+// took idea from here https://codepen.io/vank0/pen/mrRwLg
+
+.spinner-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100%;
+  font-size: 30px;
+  position: relative;
+  vertical-align: top;
+  transition: .3s color, .3s border, .3s transform, .3s opacity;
+}
+
+.spinner {
+  box-sizing: content-box;
+  position: relative;
+  width: 1em;
+  height: 1em;
+  color: inherit;
+  vertical-align: middle;
+  pointer-events: none;
+	border: .2em solid transparent;
+	border-top-color: currentcolor;
+	border-radius: 50%;
+	animation: 1s loading linear infinite;
+	&:before {
+		content: '';
+		display: block;
+		width: inherit;
+		height: inherit;
+		position: absolute;
+		top: -0.2em;
+		;
+		left: -0.2em;
+		;
+		border: 0.2em solid currentcolor;
+		border-radius: 50%;
+		opacity: 0.5;
+	}
+}
+
+.product__cards > .spinner-box {
+  height: 40vh;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+@keyframes loading {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}

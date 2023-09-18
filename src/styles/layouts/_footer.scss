@@ -1,0 +1,42 @@
+footer {
+  padding: 1rem;
+  grid-area: footer;
+  opacity: 0.9;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.footer_container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0;
+}
+
+.footer__wrapper_logo, .footer__wrapper_text {
+  display: block;
+};
+
+.footer__wrapper_logo {
+  width: 8rem;
+  height: 4rem;
+  background-image: url('../assets/img/rslogo.svg');
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-position: 0 50%;
+}
+
+.footer__wrapper_logo-qc {
+  width: 7rem;
+  height: 7rem;
+  background-image: url('../assets/img/qc-logo.png');
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-position: 0 50%;
+}
+
+@media screen and (max-width: $tablet) {
+  .footer__wrapper_text {
+    font-size: 1.5rem;
+  }
+}
