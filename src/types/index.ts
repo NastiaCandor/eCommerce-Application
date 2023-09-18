@@ -63,7 +63,7 @@ export type PagesInterface = {
 
   MAIN: string;
   CATALOG: string;
-  CONTACTS: string;
+  ABOUT_US: string;
 
   CATEGORY: string;
   CATEGORIES: string;
@@ -140,7 +140,7 @@ export type ImageArr = {
 export type RouteCallbacks = {
   loadLoginPage: () => void;
   loadCartPage: () => void;
-  loadContactsPage: () => void;
+  loadAboutPage: () => void;
   loadSignupPage: () => void;
   loadProfilePage: () => void;
   loadMainPage: () => void;

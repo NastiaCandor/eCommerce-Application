@@ -1,7 +1,7 @@
 import { ACCESS_TOKEN, CUSTOMER_ID, COOKIE_RESET_DATE } from '../constants';
 
 export default class State {
-  private catalogState: Map<string, string>;
+  private catalogState: Map<string, string | boolean>;
 
   constructor() {
     this.catalogState = new Map();
@@ -42,10 +42,14 @@ export default class State {
     this.catalogState.set('url', data);
   }
 
+  public resetCatalogPage(isRequire = false) {
+    this.catalogState.set('resetRequire', isRequire);
+  }
+
   public formatPageTitle(url: string, isSlashPrefexed = false): string {
     if (!url || url === '/') return 'Vinyl Vibe Store';
     if (isSlashPrefexed) {
-      return `Vinyl Vibe Store - ${url.slice(1, 2).toUpperCase()}${url.slice(2)}`;
+      return `Vinyl Vibe Store - ${url.slice(1, 2).toUpperCase()}${url.slice(2).replace('_', ' ')}`;
     }
     return `Vinyl Vibe Store - ${url.slice(0, 1).toUpperCase()}${url.replace('-', ' ').slice(1)}`;
   }

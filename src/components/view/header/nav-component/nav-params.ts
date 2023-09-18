@@ -9,7 +9,7 @@ const navigationParams = {
     cssClasses: ['nav_item'],
   },
 
-  navItemsNames: ['Main', 'Catalog', 'Contacts'],
+  navItemsNames: ['Main', 'Catalog', 'About Us'],
 };
 
 export default navigationParams;

@@ -75,9 +75,9 @@ export default class Routes {
         },
       },
       {
-        path: `${PAGES.CONTACTS}`,
+        path: `${PAGES.ABOUT_US}`,
         callback: () => {
-          this.callbacks.loadContactsPage();
+          this.callbacks.loadAboutPage();
         },
       },
       {

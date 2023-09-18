@@ -105,6 +105,10 @@ export default class Router {
     return !this.state.isAccessTokenValid() && linksForSignedIn.includes(url);
   }
 
+  public requestCatalogReset(isRequire = false) {
+    this.state.resetCatalogPage(isRequire);
+  }
+
   private startInit(): void {
     window.addEventListener('DOMContentLoaded', () => {
       this.urlChangeHandler();

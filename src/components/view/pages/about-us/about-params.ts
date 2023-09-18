@@ -1,11 +1,11 @@
 const aboutParams = {
   section: {
     tag: 'section',
-    cssClasses: ['contacts'],
+    cssClasses: ['about-us'],
   },
   wrapper: {
     tag: 'div',
-    cssClasses: ['contacts__wrapper', 'wrapper'],
+    cssClasses: ['about-us__wrapper', 'wrapper'],
   },
 };
 

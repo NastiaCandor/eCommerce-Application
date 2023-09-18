@@ -12,7 +12,7 @@ const PAGES: PagesInterface = {
 
   MAIN: '/main',
   CATALOG: '/catalog',
-  CONTACTS: '/contacts',
+  ABOUT_US: '/about_us',
 
   CATEGORY: '/catalog/categories',
   CATEGORIES: 'catalog/categories',

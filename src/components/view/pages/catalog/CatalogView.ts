@@ -341,7 +341,6 @@ export default class CatalogView extends View {
     const contentEl = content.getElement();
     const prevCards = wrapperEl.querySelector('#products-content');
     const elements = Array.from(wrapper.getElement().children);
-    console.log(wrapper, content);
     elements.forEach((item) => {
       if (item.id === content.getElement().id) {
         wrapperEl.replaceChild(contentEl, item);

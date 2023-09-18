@@ -8,10 +8,9 @@ import LoginView from '../view/login/LoginView';
 import MainView from '../view/main/MainView';
 import NotFoundView from '../view/not-found-page/NotFoundView';
 import CatalogView from '../view/pages/catalog/CatalogView';
-import ContactsView from '../view/pages/about-us/AboutView';
+import AboutView from '../view/pages/about-us/AboutView';
 import ProfileView from '../view/profile/ProfileView';
 import RegView from '../view/registration/reg-view';
-import AboutView from '../view/pages/main-content/MainContent';
 import Routes from '../router/utils/Routes';
 import { PrefetchedData, Route, RouteCallbacks } from '../../types';
 import ClientAPI from '../utils/Client';
@@ -95,7 +94,17 @@ export default class App {
     this.contentContainer.setContent(view);
   }
 
-  private loadMainPage() {
+  private async loadMainPage() {
+    if (this.state.getCatalogState.get('resetRequire') === true) {
+      await this.catalogView.assambleCards().then((element) => {
+        const wrapper = this.catalogView.getWrapper;
+        if (wrapper) {
+          this.catalogView.replaceCardsAndReturnElement(wrapper, element);
+          this.setContent(PAGES.CATALOG, this.catalogView.getElement());
+        }
+        this.state.resetCatalogPage(false);
+      });
+    }
     const main = new AboutView().getElement();
     this.setContent(PAGES.MAIN, main);
   }
@@ -109,9 +118,9 @@ export default class App {
     this.setContent(PAGES.CART, cart);
   }
 
-  private loadContactsPage() {
-    const contacts = new ContactsView().getElement();
-    this.setContent(PAGES.CONTACTS, contacts);
+  private loadAboutPage() {
+    const about = new AboutView().getElement();
+    this.setContent(PAGES.ABOUT_US, about);
   }
 
   private loadSignupPage() {
@@ -137,7 +146,7 @@ export default class App {
       });
     } else {
       const url = this.state.getCatalogState.get('prevurl');
-      if (url && url?.split('/').length > 1) {
+      if (url && typeof url === 'string' && url?.split('/').length > 1) {
         this.router.navigate(url);
         return;
       }
@@ -182,6 +191,7 @@ export default class App {
   private logoutUser() {
     this.router.stateDeleteToken();
     this.clientApi.resetDefaultClientAPI();
+    this.state.resetCatalogPage(true);
     this.router.navigate(PAGES.MAIN);
     this.resetForms();
   }
@@ -213,7 +223,7 @@ export default class App {
 
   private getRoutesCallbacks(): RouteCallbacks {
     return {
-      loadContactsPage: this.loadContactsPage.bind(this),
+      loadAboutPage: this.loadAboutPage.bind(this),
       loadNotFoundPage: this.loadNotFoundPage.bind(this),
       loadCatalogPage: this.loadCatalogPage.bind(this),
       loadProfilePage: this.loadProfilePage.bind(this),
