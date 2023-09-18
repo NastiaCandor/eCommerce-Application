@@ -198,7 +198,6 @@ export default class ClientAPI {
     try {
       const data = await response.json();
       this.setAnonymousTokenCookie(data.access_token, data.expires_in);
-      console.log(data);
     } catch (e) {
       console.log(`${e} occured when fetching access token!`);
     }
@@ -236,30 +235,6 @@ export default class ClientAPI {
     return loginAPI;
   }
 
-  public async getCustomerCart(customerId: string) {
-    const args = {
-      customerId,
-    };
-    const customersAPI = this.apiRoot.carts().withCustomerId(args).get().execute();
-    return customersAPI;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-shadow
-  public async getCartDiscountByID(ID: string) {
-    const codes = this.apiRoot.cartDiscounts().withId({ ID }).get().execute();
-    return codes;
-  }
-
-  public async getDiscountCodes() {
-    const codes = this.apiRoot.discountCodes().get().execute();
-    return codes;
-  }
-
-  public async getCartDiscounts() {
-    const codes = this.apiRoot.cartDiscounts().get().execute();
-    return codes;
-  }
-
   public async updateItemInCart(lineItemID: string, quantity: number) {
     await this.getActiveCartAPI();
     const body: MyCartUpdate = {
@@ -280,7 +255,6 @@ export default class ClientAPI {
         body,
       })
       .execute();
-    // const customersAPI = this.apiRoot.carts().withId(args).post({ body }).execute();
     return updateCartAPI;
   }
 
@@ -321,8 +295,6 @@ export default class ClientAPI {
       version: this.cartVersion,
       actions: actionsArr,
     };
-    // const customersAPI = this.apiRoot.me().carts().post({ body }).execute();
-    // const customersAPI = this.apiRoot.carts().withId(args).post({ body }).execute();
     const removeAllItemsAPI = this.apiRoot
       .me()
       .carts()
