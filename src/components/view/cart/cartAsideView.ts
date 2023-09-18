@@ -70,7 +70,7 @@ export default class CartAsideView extends View {
               const totalSum = data.body.totalPrice.centAmount / 100;
               const promoDiff = (subtotalSum - totalSum).toFixed(2);
               this.getChildren()[2].remove();
-              this.addInnerElement(this.createTotalCost(subtotalSum.toString(), promoDiff, totalSum.toString()));
+              this.addInnerElement(this.createTotalCost(subtotalSum.toFixed(2), promoDiff, totalSum.toFixed(2)));
             })
             .catch((error) => {
               console.log(error.code);

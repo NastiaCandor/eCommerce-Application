@@ -35,6 +35,9 @@ export default class CartView extends View {
   protected async configure(): Promise<void> {
     this.renderInnerWrapper();
     this.getCustomerCart();
+    // this.getDiscountCodes();
+    // this.getCartDiscounts();
+    // this.addItem();
   }
 
   private async renderInnerWrapper() {
@@ -125,7 +128,6 @@ export default class CartView extends View {
   }
 
   private insertTotalCost(data: ClientResponse<Cart>) {
-    // let subtotalSum;
     const subtotal: number[] = [];
     data.body.lineItems.forEach((cartItem) => {
       if (cartItem.price.discounted) {
@@ -141,7 +143,7 @@ export default class CartView extends View {
     const promoDiff = (subtotalSum - totalSum).toFixed(2);
     console.log(subtotalSum, promoDiff, totalSum);
 
-    const totalCostEl = this.CartAsideView.createTotalCost(subtotalSum.toString(), promoDiff, totalSum.toString());
+    const totalCostEl = this.CartAsideView.createTotalCost(subtotalSum.toFixed(2), promoDiff, totalSum.toFixed(2));
     this.CartAsideView.addInnerElement(totalCostEl);
   }
 
@@ -328,6 +330,23 @@ export default class CartView extends View {
     return emptyCartWrapper;
   }
 
+  private async getCartVersion() {
+    const cart = (await this.clientAPI.getActiveCartData()).body;
+    const { version } = cart;
+    return version;
+  }
+
+  // private getCookie(name: string) {
+  //   const matches = document.cookie.match(
+  //     new RegExp('(?:^|; )' + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)')
+  //   );
+  //   return matches ? decodeURIComponent(matches[1]) : undefined;
+  // }
+
+  // private getCustomerIDCookie() {
+  //   return this.getCookie('customer_id');
+  // }
+
   private async getCustomerCart() {
     // const customerID = this.getCustomerIDCookie() as string;
     const getCustomerAPI = this.clientAPI.getActiveCartData();
@@ -335,6 +354,28 @@ export default class CartView extends View {
       console.log(data.body.lineItems);
     });
   }
+
+  // private async addItem() {
+  //   const cartID = 'adc6c058-9da0-435c-ab5d-484af4430bb9';
+  //   const getCustomerAPI = this.clientAPI.addItemToCart(cartID);
+  //   getCustomerAPI.then(async (data) => {
+  //     console.log(data.body);
+  //   });
+  // }
+
+  // private async getDiscountCodes() {
+  //   const codesAPI = this.clientAPI.getDiscountCodes();
+  //   codesAPI.then(async (data) => {
+  //     console.log(data.body);
+  //   });
+  // }
+
+  // private async getCartDiscounts() {
+  //   const codesAPI = this.clientAPI.getCartDiscounts();
+  //   codesAPI.then(async (data) => {
+  //     console.log(data.body);
+  //   });
+  // }
 
   private isValid(num: number, max: number) {
     const isValid = !Number.isNaN(num) && num >= 1 && num <= max;
