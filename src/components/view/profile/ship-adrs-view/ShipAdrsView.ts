@@ -367,7 +367,6 @@ export default class ProfileShipAdrsView extends View {
   private createSaveBtn(): ElementCreator {
     const btn = new ElementCreator(ShipAdrsParams.buttonSave);
     btn.setAttribute('type', ShipAdrsParams.buttonSave.type);
-    btn.setTextContent(ShipAdrsParams.buttonSave.textContent);
     return btn;
   }
 }
