@@ -6,6 +6,7 @@ import ClientAPI from '../../../../utils/Client';
 import ElementCreator from '../../../../utils/ElementCreator';
 import SpinnerView from '../../../../utils/SpinnerView';
 import { ADD_ITEM_TO_CART_TEXT, REMOVE_ITEM_TO_CART_TEXT } from '../../../../constants';
+import CartQiantity from '../../../../utils/CartQuantity';
 
 export default class AddToCartView extends View {
   private clientAPI: ClientAPI;
@@ -18,13 +19,16 @@ export default class AddToCartView extends View {
 
   private productName: string;
 
-  constructor(clientAPI: ClientAPI, productID: string) {
+  private cartQuantity: CartQiantity;
+
+  constructor(clientAPI: ClientAPI, productID: string, cartQuantity: CartQiantity) {
     super(addToCartParams.wrapper);
     this.clientAPI = clientAPI;
     this.productID = productID;
     this.lineItemID = '';
     this.spinner = new SpinnerView();
     this.productName = '';
+    this.cartQuantity = cartQuantity;
   }
 
   public render(body?: ProductProjection): void {
@@ -59,9 +63,9 @@ export default class AddToCartView extends View {
         const items = data.body.lineItems;
         const productInfo = items.filter((item) => item.productId === this.productID);
         if (productInfo.length > 0) {
-          const { quantity } = productInfo[0];
+          // const { quantity } = productInfo[0];
           this.lineItemID = productInfo[0].id;
-          console.log('quant', quantity);
+          // console.log('quant', quantity);
           super.getElement().removeChild(addToCartBtn.getElement());
           super.addInnerElement(removeFromCartBtn);
           this.spinner.removeSelfFromNode();
@@ -100,6 +104,7 @@ export default class AddToCartView extends View {
           this.spinner.removeSelfFromNode();
           this.showSideBarMessage(`${this.productName}${ADD_ITEM_TO_CART_TEXT}`, 'add');
           this.displayButtons(wrapper, removeBtn, addBtn);
+          this.cartQuantity.updateCartQuantity(data);
         })
         .catch((error) => console.log(`Error while fetching adding product to the cart: ${error}`));
     });
@@ -112,10 +117,13 @@ export default class AddToCartView extends View {
       wrapper.append(this.spinner.getElement());
       this.clientAPI
         .removeItemCart(this.lineItemID)
-        .then(() => {
+        .then((data) => {
           this.spinner.removeSelfFromNode();
           this.displayButtons(wrapper, addBtn, removeBtn);
           this.showSideBarMessage(`${this.productName}${REMOVE_ITEM_TO_CART_TEXT}`, 'remove');
+
+          // test
+          this.cartQuantity.updateCartQuantity(data);
         })
         .catch((error) => console.log(`Error while fetching removing product to the cart: ${error}`));
     });

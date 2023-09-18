@@ -160,3 +160,11 @@ export type CatalogState = {
   url: string;
   nav: HTMLElement;
 };
+
+// CART QUANTITY
+export const cartSpanParams = {
+  span: {
+    tag: 'span',
+    cssClasses: ['cart-quant__span'],
+  },
+};
