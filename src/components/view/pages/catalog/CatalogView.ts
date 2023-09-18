@@ -2,6 +2,8 @@
 /* eslint-disable comma-dangle */
 import {
   Attribute,
+  Cart,
+  ClientResponse,
   LocalizedString,
   Price,
   ProductProjection,
@@ -132,6 +134,7 @@ export default class CatalogView extends View {
       console.log('After update: ', this.totalCount, this.itemsCount);
     }
     const cardsData = items?.results;
+    const activeCart = await this.clientApi.getActiveCartData();
     if (cardsData && <ProductProjection[]>cardsData) {
       cardsData.forEach((data) => {
         if (data.masterVariant.attributes && data.masterVariant.images) {
@@ -142,6 +145,7 @@ export default class CatalogView extends View {
             data.name,
             attributesArray,
             data.masterVariant.images,
+            activeCart,
             data.masterVariant.prices
           );
         }
@@ -204,6 +208,7 @@ export default class CatalogView extends View {
     songName: LocalizedString,
     attrArr: Attribute[],
     imagesArr: ImageArr[],
+    activeCart: ClientResponse<Cart>,
     prices?: Price[]
   ) {
     const productCard = new ElementCreator(catalogParams.card.wrapper);
@@ -213,7 +218,7 @@ export default class CatalogView extends View {
     const singer = this.assambleSingerTitle(attributesArray);
     const image = this.assambleImage(imagesArr, songName);
     const priceElement = this.assamblePrice(prices);
-    const cartBtn = this.assambleCartBtn(id);
+    const cartBtn = this.assambleCartBtn(id, activeCart);
     productCard.addInnerElement([image, singer, songTitle, priceElement, cartBtn]);
     productCard.setMouseEvent((evt) => this.cardsClickHandler(evt));
     wrapper.addInnerElement(productCard);
@@ -354,9 +359,9 @@ export default class CatalogView extends View {
     return songTitle.getElement();
   }
 
-  private assambleCartBtn(id: string): HTMLElement {
+  private assambleCartBtn(id: string, activeCart: ClientResponse<Cart>): HTMLElement {
     const cartBtn = new AddToCartView(this.clientApi, id, this.cartQuantity);
-    cartBtn.render();
+    cartBtn.render(undefined, activeCart);
     return cartBtn.getElement();
   }
 
