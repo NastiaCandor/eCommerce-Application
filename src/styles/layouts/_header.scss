@@ -7,6 +7,8 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  max-width: 120rem;
+  margin: 0 auto;
 }
 
 .header__wrapper_logo {

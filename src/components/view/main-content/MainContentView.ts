@@ -1,9 +1,9 @@
 import View from '../View';
-import mainParams from './main-params';
+import mainContentParams from './main-content-params';
 
 export default class MainView extends View {
   constructor() {
-    super(mainParams.main);
+    super(mainContentParams.main);
   }
 
   public render(): void {

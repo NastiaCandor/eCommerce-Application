@@ -5,10 +5,11 @@ import Router from '../router/Router';
 import CartView from '../view/cart/CartView';
 import HeaderView from '../view/header/HeaderView';
 import LoginView from '../view/login/LoginView';
-import MainView from '../view/main/MainView';
+import MainContentView from '../view/main-content/MainContentView';
 import NotFoundView from '../view/not-found-page/NotFoundView';
 import CatalogView from '../view/pages/catalog/CatalogView';
 import AboutView from '../view/pages/about-us/AboutView';
+import MainView from '../view/pages/main/MainView';
 import ProfileView from '../view/profile/ProfileView';
 import RegView from '../view/registration/reg-view';
 import Routes from '../router/utils/Routes';
@@ -22,7 +23,7 @@ import FooterView from '../view/footer/FooterView';
 export default class App {
   private header: HeaderView;
 
-  private contentContainer: MainView;
+  private contentContainer: MainContentView;
 
   private router: Router;
 
@@ -37,6 +38,8 @@ export default class App {
   private clientApi: ClientAPI;
 
   private routes: Route[];
+
+  private mainView: MainView;
 
   private state: State;
 
@@ -60,10 +63,10 @@ export default class App {
     this.prefetchedData = this.clientApi.prefetchedData;
     this.routes = this.routesClass.getRoutes();
     this.router = new Router(this.routes, this.state, this.routesClass.getTitlesMap);
-    this.footerView = new FooterView(this.router);
+    this.mainView = new MainView(this.clientApi);
     this.footerView = new FooterView(this.router);
     this.notFoundView = new NotFoundView(this.router);
-    this.contentContainer = new MainView();
+    this.contentContainer = new MainContentView();
     this.catalogView = new CatalogView(this.clientApi, this.router, this.spinner);
     this.header = new HeaderView(this.router);
     this.signupForm = new RegView(this.router, this.clientApi);
@@ -105,8 +108,7 @@ export default class App {
         this.state.resetCatalogPage(false);
       });
     }
-    const main = new AboutView().getElement();
-    this.setContent(PAGES.MAIN, main);
+    this.setContent(PAGES.MAIN, this.mainView.getElement());
   }
 
   private loadLoginPage() {
