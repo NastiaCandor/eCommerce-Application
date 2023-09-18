@@ -31,7 +31,7 @@
       margin: 0.1rem 1rem;
     }
     & .active {
-      background-color: $color-login-background;
+      background-color: #f3df97; // leave this color for chosen item
     }
   }
   & .filter-box__content_label {
@@ -169,7 +169,7 @@
   }
 
   .filter-box__content__items {
-    width: calc(100vw - 2rem);
+    width: calc(100vw - 4rem);// leave this one - fix scroll overflow
   }
 
   .catalog__aside a,
@@ -187,7 +187,7 @@
     z-index: 20;
     top: 4rem;
     height: 100%;
-    top: -10rem;
+    // top: -10rem;
   }
 
   .mobile-menu__btn {
@@ -198,6 +198,8 @@
     width: 100vw;
     top: 0rem;
     transition: 0.3s;
+    background-color: #f1cf9c;
+    height: 5.3rem;
     & img {
       display: none;
     }
@@ -246,7 +248,7 @@
   display: flex;
 }
 .sort_user-select_element {
-  background-color: $color-login-background;
+  background-color: #efcf5c;
   padding: 1rem;
   font-size: 1.5rem;
   width: auto;

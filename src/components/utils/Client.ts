@@ -141,13 +141,6 @@ export default class ClientAPI {
     }
   }
 
-
-  public async getActiveCartData() {
-    await this.getActiveCartAPI();
-    const activeCartData = this.apiRoot.me().activeCart().get().execute();
-    return activeCartData;
-  }
-
   private async getCartId() {
     const cartInfo = this.apiRoot.me().activeCart().get().execute();
     await cartInfo
@@ -235,7 +228,6 @@ export default class ClientAPI {
     await this.getActiveCartAPI();
     return loginAPI;
   }
-
 
   public async updateItemInCart(lineItemID: string, quantity: number) {
     await this.getActiveCartAPI();
@@ -328,6 +320,7 @@ export default class ClientAPI {
       })
       .execute();
     return promocodeAPI;
+  }
 
   public getDiscountCodes() {
     const discountCodes = this.apiRoot.discountCodes().get().execute();
@@ -371,16 +364,6 @@ export default class ClientAPI {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
     const getProduct = apiRoot.productDiscounts().withId({ ID: discountID }).get().execute();
     return getProduct;
-  }
-
-  private async getCartId() {
-    const cartInfo = this.apiRoot.me().activeCart().get().execute();
-    await cartInfo
-      .then(async (data) => {
-        this.cartId = data.body.id;
-        this.cartVersion = data.body.version;
-      })
-      .catch((error) => `Error while fetching cart ID: ${error}`);
   }
 
   public async addItemCart(productID: string) {
