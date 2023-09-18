@@ -56,7 +56,6 @@ const mainParams = {
 
   infoTextJazz2: {
     tag: 'a',
-    href: '#',
     cssClasses: ['info-text-jazz', 'info-text-jazz-bottom'],
     textContent: 'Jazz Vinyl Records Out Now!',
   },

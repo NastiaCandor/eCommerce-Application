@@ -6,13 +6,18 @@ import '../../../../assets/img/The_Gershwin_Song.jpg';
 import '../../../../assets/img/vinyl.png';
 import ClientAPI from '../../../utils/Client';
 import { DISCOUNT_PHOTOS, mainParams, discountCodeParams } from './main-params';
+import Router from '../../../router/Router';
+import PAGES from '../../../router/utils/pages';
 
 export default class MainView extends View {
   private clientAPI: ClientAPI;
 
-  constructor(clientAPI: ClientAPI) {
+  private router: Router;
+
+  constructor(clientAPI: ClientAPI, router: Router) {
     super(mainParams.section);
     this.clientAPI = clientAPI;
+    this.router = router;
     this.render();
   }
 
@@ -70,6 +75,12 @@ export default class MainView extends View {
     const sloganHeading2 = new ElementCreator(mainParams.sloganHeading2);
     const shopInfoJazz = new ElementCreator(mainParams.infoTextJazz);
     const shopInfoJazz2 = new ElementCreator(mainParams.infoTextJazz2);
+    const resource = this.clientAPI.prefetchedData.genres.find((item) => item.key === 'blues-jazz');
+    const path = `${PAGES.CATEGORY}/${resource?.key}`;
+    shopInfoJazz2.getElement().addEventListener('click', () => {
+      this.router.navigate(path);
+      window.scrollTo(0, 0);
+    });
     sloganWrapper2.addInnerElement([sloganHeading2, shopInfoJazz, shopInfoJazz2]);
 
     const imgWrapperJazz = new ElementCreator(mainParams.imgWrapperJazz);

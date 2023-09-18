@@ -1,9 +1,12 @@
 .catalog__wrapper {
   display: grid;
+  justify-content: center;
+  max-width: 120rem;
+  margin: 0 auto;
   grid-template-areas: 'catalog-aside cards'
                         'catalog-aside cards'
                         'footer footer';
-  grid-template-columns: 15% auto;
+  grid-template-columns: 30rem  fit-content(90rem);
   position: relative;
 }
 
@@ -16,3 +19,5 @@
     }
   }
 }
+
+

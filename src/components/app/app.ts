@@ -63,7 +63,7 @@ export default class App {
     this.prefetchedData = this.clientApi.prefetchedData;
     this.routes = this.routesClass.getRoutes();
     this.router = new Router(this.routes, this.state, this.routesClass.getTitlesMap);
-    this.mainView = new MainView(this.clientApi);
+    this.mainView = new MainView(this.clientApi, this.router);
     this.footerView = new FooterView(this.router);
     this.notFoundView = new NotFoundView(this.router);
     this.contentContainer = new MainContentView();

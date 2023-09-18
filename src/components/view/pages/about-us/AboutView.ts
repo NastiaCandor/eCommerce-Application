@@ -1,10 +1,10 @@
 import ElementCreator from '../../../utils/ElementCreator';
 import View from '../../View';
-import contactsParams from './about-params';
+import { aboutParams, developersInfo } from './about-params';
 
 export default class AboutView extends View {
   constructor() {
-    super(contactsParams.section);
+    super(aboutParams.section);
     this.render();
   }
 
@@ -13,10 +13,43 @@ export default class AboutView extends View {
   }
 
   protected configure(): void {
-    this.renderInnerWrapper();
+    console.log(developersInfo);
+    this.assambleHeading();
+    this.assamblePersons();
+    this.assambleSchoolInfo();
   }
 
-  private renderInnerWrapper(): void {
-    this.addInnerElement(new ElementCreator(contactsParams.wrapper));
+  private assambleHeading(): void {
+    const headingWrapper = new ElementCreator(aboutParams.aboutHeading);
+    const headingTitle1 = new ElementCreator(aboutParams.aboutHeadingTitle1);
+    const headingTitle2 = new ElementCreator(aboutParams.aboutHeadingTitle2);
+    const headingImage = new ElementCreator(aboutParams.aboutHeadingImage);
+    headingWrapper.addInnerElement([headingTitle1, headingImage, headingTitle2]);
+    this.addInnerElement(headingWrapper);
+  }
+
+  private assamblePersons(): void {
+    const personsWrapper = new ElementCreator(aboutParams.personsWrapper);
+    const personsHeading = new ElementCreator(aboutParams.personsWrapperTitle);
+    personsWrapper.addInnerElement(personsHeading);
+    personsWrapper.addInnerElement(this.assamblePerson());
+
+    this.addInnerElement(personsWrapper);
+  }
+
+  private assamblePerson(): HTMLElement {
+    const personWrapper = new ElementCreator(aboutParams.personWrapper);
+
+    return personWrapper.getElement();
+  }
+
+  private assambleSchoolInfo(): void {
+    const schoolWrapper = new ElementCreator(aboutParams.rsWrapper);
+    const rsTitle1 = new ElementCreator(aboutParams.rsTitle1);
+    const rsTitle2 = new ElementCreator(aboutParams.rsTitle2);
+    const rsLink = new ElementCreator(aboutParams.rsLogo);
+    schoolWrapper.addInnerElement([rsTitle1, rsLink, rsTitle2]);
+
+    this.addInnerElement(schoolWrapper);
   }
 }
