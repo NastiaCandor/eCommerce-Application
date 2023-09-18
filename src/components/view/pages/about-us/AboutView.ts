@@ -1,3 +1,4 @@
+import { DeveloperInfo } from '../../../../types';
 import ElementCreator from '../../../utils/ElementCreator';
 import View from '../../View';
 import { aboutParams, developersInfo } from './about-params';
@@ -31,16 +32,49 @@ export default class AboutView extends View {
   private assamblePersons(): void {
     const personsWrapper = new ElementCreator(aboutParams.personsWrapper);
     const personsHeading = new ElementCreator(aboutParams.personsWrapperTitle);
-    personsWrapper.addInnerElement(personsHeading);
-    personsWrapper.addInnerElement(this.assamblePerson());
+    const persons = new ElementCreator(aboutParams.personsInnerWrapper);
+
+    persons.addInnerElement(this.assamblePersonCard());
+    personsWrapper.addInnerElement([personsHeading, persons]);
 
     this.addInnerElement(personsWrapper);
   }
 
-  private assamblePerson(): HTMLElement {
-    const personWrapper = new ElementCreator(aboutParams.personWrapper);
+  private assamblePersonCard(): HTMLElement[] {
+    const developersData = developersInfo;
+    const personsArr = new Array<HTMLElement>();
+    Object.keys(developersData).forEach((id) => {
+      const devInfo: DeveloperInfo = developersData[id];
+      const personWrapper = new ElementCreator(aboutParams.personWrapper);
+      const topWrapper = new ElementCreator(aboutParams.personTopContainer);
+      const image = new ElementCreator(aboutParams.personImg);
+      const roleWrapper = new ElementCreator(aboutParams.personRoleContainer);
+      const name = new ElementCreator(aboutParams.personName);
+      const role = new ElementCreator(aboutParams.personRole);
+      const contributionTitle = new ElementCreator(aboutParams.personContributionTitle);
+      const contributionsList = new ElementCreator(aboutParams.personContributionItems);
+      contributionsList.addInnerElement(contributionTitle);
+      const contributionsListItems = devInfo.contributions.map((item) => {
+        const listItem = new ElementCreator(aboutParams.personContribution);
+        listItem.setTextContent(item);
+        return listItem;
+      });
+      const bio = new ElementCreator(aboutParams.personBio);
+      const link = new ElementCreator(aboutParams.personLink);
+      contributionsList.addInnerElement(contributionsListItems);
+      image.getElement().classList.add(`${id}-img`);
+      role.setTextContent(devInfo.role);
+      name.setTextContent(devInfo.name);
+      bio.setTextContent(`« ${devInfo.bio} »`);
+      link.setAttribute('href', devInfo.link);
 
-    return personWrapper.getElement();
+      roleWrapper.addInnerElement([name, role]);
+      topWrapper.addInnerElement([image, roleWrapper]);
+      personWrapper.addInnerElement([topWrapper, contributionsList, bio, link]);
+
+      personsArr.push(personWrapper.getElement());
+    });
+    return personsArr;
   }
 
   private assambleSchoolInfo(): void {

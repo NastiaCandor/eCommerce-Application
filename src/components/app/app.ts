@@ -70,7 +70,6 @@ export default class App {
     this.footerView = new FooterView(this.router);
     this.notFoundView = new NotFoundView(this.router);
     this.contentContainer = new MainContentView();
-    this.catalogView = new CatalogView(this.clientApi, this.router, this.spinner);
     this.header = new HeaderView(this.router);
     this.signupForm = new RegView(this.router, this.clientApi);
     this.loginForm = new LoginView(this.router, this.clientApi);

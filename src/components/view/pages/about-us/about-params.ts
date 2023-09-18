@@ -1,3 +1,5 @@
+import { DevelopersData } from '../../../../types';
+
 const aboutParams = {
   section: {
     tag: 'section',
@@ -31,14 +33,26 @@ const aboutParams = {
     cssClasses: ['about-us__heading_title'],
     textContent: 'Our Team:',
   },
+  personsInnerWrapper: {
+    tag: 'div',
+    cssClasses: ['about-us__persons-wrapper'],
+  },
   personWrapper: {
     tag: 'div',
     cssClasses: ['about-us__person'],
   },
   personImg: {
-    tag: 'img',
+    tag: 'div',
     cssClasses: ['about-us__person_img'],
     alt: "QuantumCoders developer's photo",
+  },
+  personTopContainer: {
+    tag: 'div',
+    cssClasses: ['about-us__person_top'],
+  },
+  personRoleContainer: {
+    tag: 'div',
+    cssClasses: ['about-us__person_role-wrapper'],
   },
   personName: {
     tag: 'span',
@@ -51,11 +65,15 @@ const aboutParams = {
   personContributionItems: {
     tag: 'ul',
     cssClasses: ['about-us__person_contribution-items'],
-    textContent: 'Contributions: ',
   },
   personContribution: {
     tag: 'li',
     cssClasses: ['about-us__person_contribution-item'],
+  },
+  personContributionTitle: {
+    tag: 'li',
+    cssClasses: ['about-us__person_contribution-item-title'],
+    textContent: 'Contributions: ',
   },
   personBio: {
     tag: 'p',
@@ -72,12 +90,12 @@ const aboutParams = {
   rsTitle1: {
     tag: 'span',
     cssClasses: ['about-us__rs-wrapper_title'],
-    textContent: 'Special thanks to ',
+    textContent: 'Special thanks to  ',
   },
   rsTitle2: {
     tag: 'span',
     cssClasses: ['about-us__rs-wrapper_title'],
-    textContent: 'whom made our study and collobaration possible!',
+    textContent: '  whom made our study and collobaration possible!',
   },
   rsLogo: {
     tag: 'a',
@@ -85,21 +103,8 @@ const aboutParams = {
   },
 };
 
-const developersInfo = {
+const developersInfo: DevelopersData = {
   dev0: {
-    name: 'Anastasia Dubova',
-    role: 'Front-End Developer/Team-lead',
-    contributions: [
-      'Manage task board',
-      'Implementation of Login page',
-      'Implementation of Detailed Product page',
-      'Implementation of adding/removing items to the cart from Catalog and Product pages',
-      'Implementation of anonymous and logged user cart, and anonymous to logged cart merge functionality',
-    ],
-    bio: 'After multiple tries of finding myself in different fields and having several degrees I finally realized what I am really passionate about, and this is Front-End. I believe that now I can truly express myself.',
-    link: 'https://github.com/nastiacandor',
-  },
-  dev1: {
     name: 'Elena Anisimova',
     role: 'Front-End Developer',
     contributions: [
@@ -108,8 +113,21 @@ const developersInfo = {
       'Catalog page development',
       'Webpack Configuration',
     ],
-    bio: 'to be proceeded',
+    bio: 'My name is Elena, I currently reside in China. Working on creating an online store project with server based on Commercetools API allowed me to gain experience of being part of the IT team and deepen my knowledge of web development, hopefully helping me to achieve my goal of becoming a developer.',
     link: 'https://github.com/elenaanisimova',
+  },
+  dev1: {
+    name: 'Anastasia Dubova',
+    role: 'Front-End Developer/Team-lead',
+    contributions: [
+      'Implementation of anonymous and logged user cart, and anonymous to logged cart merge functionality',
+      'Implementation of Login page',
+      'Implementation of Detailed Product page',
+      'Manage task board',
+      'Implementation of adding/removing items to the cart from Catalog and Product pages',
+    ],
+    bio: 'After multiple tries of finding myself in different fields and having several degrees I finally realized what I am really passionate about, and this is Front-End. I believe that now I can truly express myself.',
+    link: 'https://github.com/nastiacandor',
   },
   dev2: {
     name: 'Nikolai Shvechkov',
@@ -120,7 +138,7 @@ const developersInfo = {
       'Catalog page development',
       'Webpack Configuration',
     ],
-    bio: 'to be proceeded',
+    bio: 'I enjoy collaborating with others and my goal is to create engaging and user-friendly websites that are visually appealing and easy to use. Always learning and exploring new technologies and techniques to stay up-to-date with the latest trends in web development.',
     link: 'https://github.com/getgitgood',
   },
 };
