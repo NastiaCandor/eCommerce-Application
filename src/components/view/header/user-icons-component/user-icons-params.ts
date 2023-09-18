@@ -4,6 +4,12 @@ const userIconsParams = {
     cssClasses: ['header__user-icons'],
   },
 
+  cartSpan: {
+    tag: 'span',
+    cssClasses: ['cart-span'],
+    textContent: '0',
+  },
+
   authItem: {
     tag: 'a',
     cssClasses: ['user-icon_item'],

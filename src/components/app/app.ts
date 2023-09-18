@@ -19,6 +19,7 @@ import State from '../state/State';
 import ProductView from '../view/product-page/ProductView';
 import SpinnerView from '../utils/SpinnerView';
 import FooterView from '../view/footer/FooterView';
+import CartQiantity from '../utils/CartQuantity';
 
 export default class App {
   private header: HeaderView;
@@ -55,6 +56,8 @@ export default class App {
 
   private footerView: FooterView;
 
+  private cartQuantity: CartQiantity;
+
   constructor(clientApi: ClientAPI, spinner: SpinnerView) {
     this.state = new State();
     this.clientApi = clientApi;
@@ -71,6 +74,8 @@ export default class App {
     this.header = new HeaderView(this.router);
     this.signupForm = new RegView(this.router, this.clientApi);
     this.loginForm = new LoginView(this.router, this.clientApi);
+    this.cartQuantity = new CartQiantity(this.header, this.clientApi);
+    this.catalogView = new CatalogView(this.clientApi, this.router, this.spinner, this.cartQuantity);
     this.isCatalogLeaved = false;
     this.isStarted = false;
   }
@@ -93,6 +98,7 @@ export default class App {
       this.isCatalogLeaved = false;
     }
     this.header.updateIcons();
+    this.cartQuantity.updateCartQuantity();
     this.header.updateLinksStatus(page);
     this.contentContainer.setContent(view);
   }
@@ -181,6 +187,7 @@ export default class App {
         this.clientApi,
         cardData,
         this.catalogView.breadCrumbView,
+        this.cartQuantity,
         // eslint-disable-next-line @typescript-eslint/comma-dangle, comma-dangle
         this.router
       ).getElement();
@@ -195,6 +202,7 @@ export default class App {
     this.clientApi.resetDefaultClientAPI();
     this.state.resetCatalogPage(true);
     this.router.navigate(PAGES.MAIN);
+    // this.cartQuantity.updateCartSpan();
     this.resetForms();
   }
 

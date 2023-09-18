@@ -20,6 +20,7 @@ import SearchView from './search/SearchView';
 import PAGES from '../../../router/utils/pages';
 import SpinnerView from '../../../utils/SpinnerView';
 import AddToCartView from './add-to-cart/AddToCartView';
+import CartQiantity from '../../../utils/CartQuantity';
 
 export default class CatalogView extends View {
   private clientApi: ClientAPI;
@@ -50,7 +51,9 @@ export default class CatalogView extends View {
 
   private scrollFunction: (ev: Event) => void;
 
-  constructor(clientApi: ClientAPI, router: Router, spinner: SpinnerView) {
+  private cartQuantity: CartQiantity;
+
+  constructor(clientApi: ClientAPI, router: Router, spinner: SpinnerView, cartQuantity: CartQiantity) {
     super(catalogParams.section);
     this.clientApi = clientApi;
     this.prefetchedData = this.clientApi.getPrefetchedData;
@@ -66,6 +69,7 @@ export default class CatalogView extends View {
     this.wrapper = null;
     this.bcWrapper = new ElementCreator(catalogParams.breadCrumbs.wrapper).getElement();
     this.categoriesBtn = [];
+    this.cartQuantity = cartQuantity;
   }
 
   public async render() {
@@ -359,7 +363,7 @@ export default class CatalogView extends View {
   }
 
   private assambleCartBtn(id: string): HTMLElement {
-    const cartBtn = new AddToCartView(this.clientApi, id);
+    const cartBtn = new AddToCartView(this.clientApi, id, this.cartQuantity);
     cartBtn.render();
     return cartBtn.getElement();
   }
