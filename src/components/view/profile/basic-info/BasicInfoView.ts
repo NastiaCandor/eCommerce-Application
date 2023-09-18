@@ -249,7 +249,6 @@ export default class BasicInfoView extends View {
     const btn = new ElementCreator(BasicInfoParams.buttonSave);
     btn.setAttribute('type', BasicInfoParams.buttonSave.type);
     btn.setAttribute('disabled', 'true');
-    btn.setTextContent(BasicInfoParams.buttonSave.textContent);
     return btn;
   }
 }

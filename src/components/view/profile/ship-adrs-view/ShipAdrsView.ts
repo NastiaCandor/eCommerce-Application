@@ -99,14 +99,6 @@ export default class ProfileShipAdrsView extends View {
 
   private createAdrsItemsWrapper() {
     const adrsItemsWrapper = new ElementCreator(ShipAdrsParams.addressItemsWrapper);
-    // const element = adrsItemsWrapper.getElement() as Element;
-    // element.addEventListener('click', (el: Event) => {
-    //   const { target } = el;
-    //   if ((target as HTMLElement).classList.contains('default-adrs__wrapper')) {
-    //     this.getElement().replaceChildren();
-    //     this.renderInnerWrapper();
-    //   }
-    // });
     return adrsItemsWrapper;
   }
 
@@ -375,7 +367,6 @@ export default class ProfileShipAdrsView extends View {
   private createSaveBtn(): ElementCreator {
     const btn = new ElementCreator(ShipAdrsParams.buttonSave);
     btn.setAttribute('type', ShipAdrsParams.buttonSave.type);
-    btn.setTextContent(ShipAdrsParams.buttonSave.textContent);
     return btn;
   }
 }

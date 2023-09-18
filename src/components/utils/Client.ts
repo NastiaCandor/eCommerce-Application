@@ -11,7 +11,7 @@ import {
   CustomerUpdate,
   MyCartUpdate,
   createApiBuilderFromCtpClient,
-  // CategoryPagedQueryResponse,
+  MyCartUpdateAction,
 } from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 import { ctpClient, getExistingTokenFlow, ID, SECRET } from './BuildClient';
@@ -141,6 +141,16 @@ export default class ClientAPI {
     }
   }
 
+  private async getCartId() {
+    const cartInfo = this.apiRoot.me().activeCart().get().execute();
+    await cartInfo
+      .then(async (data) => {
+        this.cartId = data.body.id;
+        this.cartVersion = data.body.version;
+      })
+      .catch((error) => `Error while fetching cart ID: ${error}`);
+  }
+
   private async createCart() {
     const cartInfo = this.apiRoot
       .me()
@@ -219,6 +229,99 @@ export default class ClientAPI {
     return loginAPI;
   }
 
+  public async updateItemInCart(lineItemID: string, quantity: number) {
+    await this.getActiveCartAPI();
+    const body: MyCartUpdate = {
+      version: this.cartVersion,
+      actions: [
+        {
+          action: 'changeLineItemQuantity',
+          lineItemId: lineItemID,
+          quantity,
+        },
+      ],
+    };
+    const updateCartAPI = this.apiRoot
+      .me()
+      .carts()
+      .withId({ ID: this.cartId })
+      .post({
+        body,
+      })
+      .execute();
+    return updateCartAPI;
+  }
+
+  public async removeItemFromCart(lineItemID: string) {
+    await this.getActiveCartAPI();
+    const body: MyCartUpdate = {
+      version: this.cartVersion,
+      actions: [
+        {
+          action: 'removeLineItem',
+          lineItemId: lineItemID,
+        },
+      ],
+    };
+    const removeItemAPI = this.apiRoot
+      .me()
+      .carts()
+      .withId({ ID: this.cartId })
+      .post({
+        body,
+      })
+      .execute();
+    return removeItemAPI;
+  }
+
+  public async removeAllItemsFromCart(itemIDArr: string[]) {
+    await this.getActiveCartAPI();
+
+    const actionsArr: MyCartUpdateAction[] = [];
+    itemIDArr.forEach((item) => {
+      const actionObj: MyCartUpdateAction = {
+        action: 'removeLineItem',
+        lineItemId: item,
+      };
+      actionsArr.push(actionObj);
+    });
+    const body: MyCartUpdate = {
+      version: this.cartVersion,
+      actions: actionsArr,
+    };
+    const removeAllItemsAPI = this.apiRoot
+      .me()
+      .carts()
+      .withId({ ID: this.cartId })
+      .post({
+        body,
+      })
+      .execute();
+    return removeAllItemsAPI;
+  }
+
+  public async applyPromoCode(promocode: string) {
+    await this.getActiveCartAPI();
+    const body: MyCartUpdate = {
+      version: this.cartVersion,
+      actions: [
+        {
+          action: 'addDiscountCode',
+          code: promocode,
+        },
+      ],
+    };
+    const promocodeAPI = this.apiRoot
+      .me()
+      .carts()
+      .withId({ ID: this.cartId })
+      .post({
+        body,
+      })
+      .execute();
+    return promocodeAPI;
+  }
+
   public getDiscountCodes() {
     const discountCodes = this.apiRoot.discountCodes().get().execute();
     return discountCodes;
@@ -261,16 +364,6 @@ export default class ClientAPI {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
     const getProduct = apiRoot.productDiscounts().withId({ ID: discountID }).get().execute();
     return getProduct;
-  }
-
-  private async getCartId() {
-    const cartInfo = this.apiRoot.me().activeCart().get().execute();
-    await cartInfo
-      .then(async (data) => {
-        this.cartId = data.body.id;
-        this.cartVersion = data.body.version;
-      })
-      .catch((error) => `Error while fetching cart ID: ${error}`);
   }
 
   public async addItemCart(productID: string) {
