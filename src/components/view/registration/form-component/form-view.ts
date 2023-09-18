@@ -519,7 +519,6 @@ export default class FormView extends View {
   private createSubmitBtn(): ElementCreator {
     const btn = new ElementCreator(formParams.button);
     btn.setAttribute('type', formParams.button.type);
-    btn.setTextContent(formParams.button.textContent);
     return btn;
   }
 }

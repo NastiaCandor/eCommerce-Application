@@ -375,7 +375,6 @@ export default class ProfileBillAdrsView extends View {
   private createSaveBtn(): ElementCreator {
     const btn = new ElementCreator(BillAdrsParams.buttonSave);
     btn.setAttribute('type', BillAdrsParams.buttonSave.type);
-    btn.setTextContent(BillAdrsParams.buttonSave.textContent);
     return btn;
   }
 }

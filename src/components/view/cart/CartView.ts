@@ -12,6 +12,7 @@ import '../../../assets/img/no-image-available.png';
 import '../../../assets/img/pencil.svg';
 import '../../../assets/img/shopping-basket-empty.svg';
 import Router from '../../router/Router';
+import CartQiantity from '../../utils/CartQuantity';
 
 export default class CartView extends View {
   private clientAPI: ClientAPI;
@@ -20,10 +21,13 @@ export default class CartView extends View {
 
   private router: Router;
 
-  constructor(clientApi: ClientAPI, router: Router) {
+  private cartQuantity: CartQiantity;
+
+  constructor(clientApi: ClientAPI, router: Router, cartQuan: CartQiantity) {
     super(cartParams.section);
     this.clientAPI = clientApi;
     this.CartAsideView = new CartAsideView();
+    this.cartQuantity = cartQuan;
     this.router = router;
     this.render();
   }
@@ -34,10 +38,6 @@ export default class CartView extends View {
 
   protected async configure(): Promise<void> {
     this.renderInnerWrapper();
-    this.getCustomerCart();
-    // this.getDiscountCodes();
-    // this.getCartDiscounts();
-    // this.addItem();
   }
 
   private async renderInnerWrapper() {
@@ -54,12 +54,11 @@ export default class CartView extends View {
     cartWrapper.addInnerElement([topWrapper, cartItemsWrapper]);
     clearCartBtn.getElement().addEventListener('click', async () => {
       clearCartBtn.getElement().classList.add('no-show');
-      // const customerID = this.getCustomerIDCookie() as string;
-      // const currentVersion = await this.getCartVersion();
       const getCartAPI = this.clientAPI.getActiveCartData();
-      this.CartAsideView.getChildren()[2].remove();
+      this.CartAsideView.getChildren()[1].remove();
       getCartAPI
         .then((data) => {
+          this.cartQuantity.updateCartQuantity(data);
           const { lineItems } = data.body;
           const itemsArr: string[] = [];
           lineItems.forEach((el) => {
@@ -87,7 +86,6 @@ export default class CartView extends View {
     const innerWrapper = new ElementCreator(cartParams.itemsInnerWrapper);
     cartItemsWrapper.addInnerElement([emptyCart, innerWrapper]);
 
-    // const customerID = this.getCustomerIDCookie() as string;
     const getCartAPI = this.clientAPI.getActiveCartData();
 
     getCartAPI.then(async (data) => {
@@ -113,11 +111,7 @@ export default class CartView extends View {
             element.quantity,
             element.variant.availability?.availableQuantity as number,
             currPrice,
-            // (element.totalPrice.centAmount / 100).toString(),
             element.id
-            // data.body.id
-            // customerID
-            // data.body.version
           )
         );
       });
@@ -151,11 +145,7 @@ export default class CartView extends View {
     quantity: number,
     maxQuantity: number,
     price: string,
-    // totalPrice: string,
     lineItemId: string
-    // cartID: string
-    // customerID: string
-    // cartVersion: number
   ): ElementCreator {
     const cartItem = new ElementCreator(cartParams.cartItem);
     const itemImage = new ElementCreator(cartParams.img);
@@ -188,51 +178,14 @@ export default class CartView extends View {
     const itemPrice = new ElementCreator(cartParams.price);
     itemPrice.setTextContent(`${price}$`);
 
-    // const itemTotalPrice = new ElementCreator(cartParams.itemTotalPrice);
-    // itemTotalPrice.setTextContent(`${totalPrice}$`);
-
     const buttonsWrapper = new ElementCreator(cartParams.buttonsWrapper);
     const deleteBtn = this.createDeleteBtn();
 
-    // listeners
-    // editBtn.getElement().addEventListener('click', () => {
-    //   editBtn.getElement().classList.add('no-show');
-    //   confirmBtn.getElement().classList.remove('no-show');
-    //   if (!(Number(inputEl.value) - 1 < 1)) {
-    //     this.enableEl(minusBtn);
-    //   }
-    //   if (maxQuantity > 1) {
-    //     this.enableEl(counterInput);
-    //   }
-    //   if (!(Number(inputEl.value) + 1 > maxQuantity)) {
-    //     this.enableEl(plusBtn);
-    //   }
-    // });
-
-    // inputEl.addEventListener('input', () => {
-    //   if (!this.isValid(Number(inputEl.value), maxQuantity)) {
-    //     confirmBtn.setAttribute('disabled', 'true');
-    //   } else confirmBtn.getElement().removeAttribute('disabled');
-    // });
-
-    // confirmBtn.getElement().addEventListener('click', async () => {
-    //   const updateQuantity = this.clientAPI.updateItemInCart(lineItemId, Math.ceil(Number(inputEl.value)));
-    //   updateQuantity
-    //     .then((data) => {
-    //       // update total cart price
-    //       this.CartAsideView.getChildren()[2].remove();
-    //       this.insertTotalCost(data);
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //     });
-    // });
-
     deleteBtn.getElement().addEventListener('click', async () => {
-      // const currentVersion = await this.getCartVersion();
       const deleteItem = this.clientAPI.removeItemFromCart(lineItemId);
       deleteItem
         .then((data) => {
+          this.cartQuantity.updateCartQuantity(data);
           const { lineItems } = data.body;
           if (lineItems.length === 0) {
             const cartWrapper = cartItem.getElement().parentNode as ParentNode;
@@ -240,7 +193,7 @@ export default class CartView extends View {
           }
           cartItem.getElement().remove();
           // update total cart price
-          this.CartAsideView.getChildren()[2].remove();
+          this.CartAsideView.getChildren()[1].remove();
           this.insertTotalCost(data);
         })
         .catch((error) => {
@@ -259,8 +212,9 @@ export default class CartView extends View {
       const updateQuantity = this.clientAPI.updateItemInCart(lineItemId, Math.ceil(Number(inputEl.value)));
       updateQuantity
         .then((data) => {
+          this.cartQuantity.updateCartQuantity(data);
           // update total cart price
-          this.CartAsideView.getChildren()[2].remove();
+          this.CartAsideView.getChildren()[1].remove();
           this.insertTotalCost(data);
         })
         .catch((error) => {
@@ -279,8 +233,9 @@ export default class CartView extends View {
       const updateQuantity = this.clientAPI.updateItemInCart(lineItemId, Math.ceil(Number(inputEl.value)));
       updateQuantity
         .then((data) => {
+          this.cartQuantity.updateCartQuantity(data);
           // update total cart price
-          this.CartAsideView.getChildren()[2].remove();
+          this.CartAsideView.getChildren()[1].remove();
           this.insertTotalCost(data);
         })
         .catch((error) => {
@@ -307,7 +262,6 @@ export default class CartView extends View {
     const emptyCartImg = new ElementCreator(cartParams.emptyCartImg);
     emptyCartImg.setImageLink(cartParams.emptyCartImg.src, cartParams.emptyCartImg.alt);
     const emptyCartHeading = new ElementCreator(cartParams.emptyCartHeading);
-    // const emptyCartText = new ElementCreator(cartParams.emptyCartText);
     const emptyCartBtn = new ElementCreator(cartParams.emptyCartBtn);
     emptyCartBtn.setAttribute('href', cartParams.emptyCartBtn.href);
     emptyCartBtn.getElement().addEventListener('click', (e) => {
@@ -319,69 +273,5 @@ export default class CartView extends View {
 
     emptyCartWrapper.addInnerElement([emptyCartImg, emptyCartHeading, emptyCartBtn]);
     return emptyCartWrapper;
-  }
-
-  private async getCartVersion() {
-    const cart = (await this.clientAPI.getActiveCartData()).body;
-    const { version } = cart;
-    return version;
-  }
-
-  // private getCookie(name: string) {
-  //   const matches = document.cookie.match(
-  //     new RegExp('(?:^|; )' + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)')
-  //   );
-  //   return matches ? decodeURIComponent(matches[1]) : undefined;
-  // }
-
-  // private getCustomerIDCookie() {
-  //   return this.getCookie('customer_id');
-  // }
-
-  private async getCustomerCart() {
-    // const customerID = this.getCustomerIDCookie() as string;
-    const getCustomerAPI = this.clientAPI.getActiveCartData();
-    getCustomerAPI.then(async (data) => {
-      console.log(data.body.lineItems);
-    });
-  }
-
-  // private async addItem() {
-  //   const cartID = 'adc6c058-9da0-435c-ab5d-484af4430bb9';
-  //   const getCustomerAPI = this.clientAPI.addItemToCart(cartID);
-  //   getCustomerAPI.then(async (data) => {
-  //     console.log(data.body);
-  //   });
-  // }
-
-  // private async getDiscountCodes() {
-  //   const codesAPI = this.clientAPI.getDiscountCodes();
-  //   codesAPI.then(async (data) => {
-  //     console.log(data.body);
-  //   });
-  // }
-
-  // private async getCartDiscounts() {
-  //   const codesAPI = this.clientAPI.getCartDiscounts();
-  //   codesAPI.then(async (data) => {
-  //     console.log(data.body);
-  //   });
-  // }
-
-  private isValid(num: number, max: number) {
-    const isValid = !Number.isNaN(num) && num >= 1 && num <= max;
-    return isValid;
-  }
-
-  private enableEl(el: ElementCreator) {
-    if (el.getElement().getAttribute('disabled')) {
-      el.getElement().removeAttribute('disabled');
-    }
-  }
-
-  private disableEl(el: ElementCreator) {
-    if (!el.getElement().getAttribute('disabled')) {
-      el.getElement().setAttribute('disabled', 'true');
-    }
   }
 }
