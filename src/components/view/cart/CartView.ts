@@ -169,20 +169,24 @@ export default class CartView extends View {
 
     const counterWrapper = new ElementCreator(cartParams.counterWrapper);
     const minusBtn = new ElementCreator(cartParams.counterBtnMinus);
-    minusBtn.setAttribute('disabled', 'true');
+    if (quantity === 1) {
+      minusBtn.setAttribute('disabled', 'true');
+    }
 
     const counterInput = new ElementCreator(cartParams.counterInput);
     counterInput.setAttribute('type', cartParams.counterInput.type);
 
     counterInput.setAttribute('min', '1');
-    counterInput.setAttribute('disabled', 'true');
+    counterInput.setAttribute('readonly', 'true');
     counterInput.setAttribute('max', maxQuantity.toString());
     const inputEl = counterInput.getElement() as HTMLInputElement;
     inputEl.value = quantity.toString();
 
     const plusBtn = new ElementCreator(cartParams.counterBtnPlus);
     counterWrapper.addInnerElement([minusBtn, counterInput, plusBtn]);
-    plusBtn.setAttribute('disabled', 'true');
+    if (quantity === maxQuantity) {
+      plusBtn.setAttribute('disabled', 'true');
+    }
 
     const itemPrice = new ElementCreator(cartParams.price);
     itemPrice.setTextContent(`${price}$`);
@@ -191,50 +195,41 @@ export default class CartView extends View {
     // itemTotalPrice.setTextContent(`${totalPrice}$`);
 
     const buttonsWrapper = new ElementCreator(cartParams.buttonsWrapper);
-
-    const editBtn = this.createEditBtn();
-    const confirmBtn = this.createConfirmBtn();
     const deleteBtn = this.createDeleteBtn();
 
     // listeners
-    editBtn.getElement().addEventListener('click', () => {
-      editBtn.getElement().classList.add('no-show');
-      confirmBtn.getElement().classList.remove('no-show');
-      if (!(Number(inputEl.value) - 1 < 1)) {
-        this.enableEl(minusBtn);
-      }
-      if (maxQuantity > 1) {
-        this.enableEl(counterInput);
-      }
-      if (!(Number(inputEl.value) + 1 > maxQuantity)) {
-        this.enableEl(plusBtn);
-      }
-    });
+    // editBtn.getElement().addEventListener('click', () => {
+    //   editBtn.getElement().classList.add('no-show');
+    //   confirmBtn.getElement().classList.remove('no-show');
+    //   if (!(Number(inputEl.value) - 1 < 1)) {
+    //     this.enableEl(minusBtn);
+    //   }
+    //   if (maxQuantity > 1) {
+    //     this.enableEl(counterInput);
+    //   }
+    //   if (!(Number(inputEl.value) + 1 > maxQuantity)) {
+    //     this.enableEl(plusBtn);
+    //   }
+    // });
 
-    inputEl.addEventListener('input', () => {
-      if (!this.isValid(Number(inputEl.value), maxQuantity)) {
-        confirmBtn.setAttribute('disabled', 'true');
-      } else confirmBtn.getElement().removeAttribute('disabled');
-    });
+    // inputEl.addEventListener('input', () => {
+    //   if (!this.isValid(Number(inputEl.value), maxQuantity)) {
+    //     confirmBtn.setAttribute('disabled', 'true');
+    //   } else confirmBtn.getElement().removeAttribute('disabled');
+    // });
 
-    confirmBtn.getElement().addEventListener('click', async () => {
-      editBtn.getElement().classList.remove('no-show');
-      confirmBtn.getElement().classList.add('no-show');
-      this.disableEl(minusBtn);
-      this.disableEl(counterInput);
-      this.disableEl(plusBtn);
-      // const currentVersion = await this.getCartVersion();
-      const updateQuantity = this.clientAPI.updateItemInCart(lineItemId, Math.ceil(Number(inputEl.value)));
-      updateQuantity
-        .then((data) => {
-          // update total cart price
-          this.CartAsideView.getChildren()[2].remove();
-          this.insertTotalCost(data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    });
+    // confirmBtn.getElement().addEventListener('click', async () => {
+    //   const updateQuantity = this.clientAPI.updateItemInCart(lineItemId, Math.ceil(Number(inputEl.value)));
+    //   updateQuantity
+    //     .then((data) => {
+    //       // update total cart price
+    //       this.CartAsideView.getChildren()[2].remove();
+    //       this.insertTotalCost(data);
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //     });
+    // });
 
     deleteBtn.getElement().addEventListener('click', async () => {
       // const currentVersion = await this.getCartVersion();
@@ -264,8 +259,16 @@ export default class CartView extends View {
         minusBtn.getElement().setAttribute('disabled', 'true');
       }
       plusBtn.getElement().removeAttribute('disabled');
-      // itemTotalPrice.getElement().textContent = '';
-      // itemTotalPrice.setTextContent(`${(Number(price) * inputValue).toFixed(2)}$`);
+      const updateQuantity = this.clientAPI.updateItemInCart(lineItemId, Math.ceil(Number(inputEl.value)));
+      updateQuantity
+        .then((data) => {
+          // update total cart price
+          this.CartAsideView.getChildren()[2].remove();
+          this.insertTotalCost(data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     });
 
     plusBtn.getElement().addEventListener('click', () => {
@@ -276,22 +279,20 @@ export default class CartView extends View {
         plusBtn.getElement().setAttribute('disabled', 'true');
       }
       minusBtn.getElement().removeAttribute('disabled');
-      // itemTotalPrice.getElement().textContent = '';
-      // itemTotalPrice.setTextContent(`${(Number(price) * inputValue).toFixed(2)}$`);
+      const updateQuantity = this.clientAPI.updateItemInCart(lineItemId, Math.ceil(Number(inputEl.value)));
+      updateQuantity
+        .then((data) => {
+          // update total cart price
+          this.CartAsideView.getChildren()[2].remove();
+          this.insertTotalCost(data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     });
-    buttonsWrapper.addInnerElement([editBtn, confirmBtn, deleteBtn]);
+    buttonsWrapper.addInnerElement([deleteBtn]);
     cartItem.addInnerElement([itemImage, itemName, counterWrapper, itemPrice, buttonsWrapper]);
     return cartItem;
-  }
-
-  private createEditBtn(): ElementCreator {
-    const editBtn = new ElementCreator(cartParams.buttonEdit);
-    editBtn.setAttribute('type', cartParams.buttonEdit.type);
-    const btnImage = new ElementCreator(cartParams.buttonEditImg);
-    btnImage.setAttribute('src', cartParams.buttonEditImg.src);
-    btnImage.setAttribute('alt', cartParams.buttonEditImg.alt);
-    editBtn.addInnerElement(btnImage);
-    return editBtn;
   }
 
   private createDeleteBtn(): ElementCreator {
@@ -302,13 +303,6 @@ export default class CartView extends View {
     btnImage.setAttribute('alt', cartParams.buttonDeleteImg.alt);
     deleteBtn.addInnerElement(btnImage);
     return deleteBtn;
-  }
-
-  private createConfirmBtn(): ElementCreator {
-    const confirmBtn = new ElementCreator(cartParams.buttonUpdate);
-    confirmBtn.setAttribute('type', cartParams.buttonUpdate.type);
-    confirmBtn.setTextContent('UPDATE ✔');
-    return confirmBtn;
   }
 
   private createEmptyCartScreen(): ElementCreator {
