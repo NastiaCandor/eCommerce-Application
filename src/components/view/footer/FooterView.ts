@@ -27,7 +27,7 @@ export default class FooterView extends View {
   private linkHandler(link: ElementCreator) {
     link.setMouseEvent((evt) => {
       evt.preventDefault();
-      this.router.navigate(PAGES.CONTACTS);
+      this.router.navigate(PAGES.ABOUT_US);
     });
   }
 

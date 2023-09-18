@@ -12,14 +12,14 @@ const PAGES: PagesInterface = {
 
   MAIN: '/main',
   CATALOG: '/catalog',
-  SHIPPING: '/shipping',
-  CONTACTS: '/contacts',
+  ABOUT_US: '/about_us',
 
   CATEGORY: '/catalog/categories',
   CATEGORIES: 'catalog/categories',
   PRODUCTS: 'catalog/product',
   PRODUCT: '/catalog/product',
   FILTER: 'catalog/filtred',
+  SEARCH: 'catalog/search',
 };
 
 export default PAGES;

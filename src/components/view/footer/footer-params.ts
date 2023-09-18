@@ -14,7 +14,7 @@ const footerParams = {
   text2: {
     tag: 'a',
     cssClasses: ['footer__wrapper_logo-qc'],
-    link: '/contacts',
+    link: '/about',
   },
   linkRS: {
     tag: 'a',

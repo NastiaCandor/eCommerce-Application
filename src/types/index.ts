@@ -59,11 +59,11 @@ export type PagesInterface = {
   PRODUCTS: string;
 
   FILTER: string;
+  SEARCH: string;
 
   MAIN: string;
   CATALOG: string;
-  SHIPPING: string;
-  CONTACTS: string;
+  ABOUT_US: string;
 
   CATEGORY: string;
   CATEGORIES: string;
@@ -140,15 +140,15 @@ export type ImageArr = {
 export type RouteCallbacks = {
   loadLoginPage: () => void;
   loadCartPage: () => void;
-  loadContactsPage: () => void;
+  loadAboutPage: () => void;
   loadSignupPage: () => void;
   loadProfilePage: () => void;
   loadMainPage: () => void;
-  loadShippingPage: () => void;
   loadNotFoundPage: () => void;
   loadCatalogPage: () => void;
   loadFilterPage: () => void;
   loadCategoriesPage: () => void;
+  loadSearchPage: () => void;
   logoutUser: () => void;
   loadProductPage: (id: string) => void;
   mountCategory: (id: string) => void;
@@ -161,10 +161,34 @@ export type CatalogState = {
   nav: HTMLElement;
 };
 
+export type FiltersScroll = {
+  [key: string]: number;
+  condition: number;
+  label: number;
+  lp: number;
+};
 // CART QUANTITY
 export const cartSpanParams = {
   span: {
     tag: 'span',
     cssClasses: ['cart-quant__span'],
   },
+};
+
+// DEVELOPERS Data
+
+export type DevelopersData = {
+  [key: string]: DeveloperInfo;
+  dev0: DeveloperInfo;
+  dev1: DeveloperInfo;
+  dev2: DeveloperInfo;
+};
+
+export type DeveloperInfo = {
+  [key: string]: string | string[];
+  name: string;
+  role: string;
+  contributions: string[];
+  bio: string;
+  link: string;
 };

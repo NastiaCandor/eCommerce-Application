@@ -67,7 +67,8 @@
   position: relative;
   display: flex;
   justify-content: center;
-  max-width: 15%;
+  margin-top: 0.2rem;
+  max-width: 30%;
   z-index: 40;
   @media screen and (max-width: 1200px) {
     max-width: 25%;

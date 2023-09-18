@@ -208,6 +208,7 @@ export default class LoginView extends View {
         if (data.statusCode === 200) {
           // await this.clientAPI.obtainUserAccessToken(email, password);
           this.clientAPI.setCustomerIDCookie(data.body.customer.id);
+          this.router.requestCatalogReset(true);
           this.router.navigate(PAGES.MAIN);
           const { firstName } = data.body.customer;
           const { lastName } = data.body.customer;

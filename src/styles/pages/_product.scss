@@ -1,6 +1,11 @@
 .product__wrapper {
   max-width: 100rem;
   padding: 0;
+
+  > .catalog__bc-nav {
+    margin-left: 0;
+    justify-content: flex-start;
+  }
 }
 
 .product__display {

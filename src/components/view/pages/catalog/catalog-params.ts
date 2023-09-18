@@ -24,6 +24,11 @@ const catalogParams = {
     tag: 'div',
     cssClasses: ['catalog__wrapper'],
   },
+  productContent: {
+    tag: 'div',
+    cssClasses: ['product__content'],
+    id: 'products-content',
+  },
   catalogContent: {
     tag: 'div',
     cssClasses: ['catalog__content'],
@@ -31,7 +36,6 @@ const catalogParams = {
   productCards: {
     tag: 'div',
     cssClasses: ['product__cards'],
-    id: 'products-content',
   },
   categories: {
     wrapper: {
@@ -85,27 +89,6 @@ const catalogParams = {
       cssClasses: ['product__add-to-cart-btn', 'button'],
     },
   },
-  pagination: {
-    container: {
-      tag: 'div',
-      cssClasses: ['pagination'],
-    },
-    pagiPrev: {
-      tag: 'a',
-      cssClasses: ['pagi-btn', 'pagi-prev'],
-      textContent: '<',
-    },
-    pagiCurrPage: {
-      tag: 'a',
-      cssClasses: ['pagi-btn', 'pagi-counter'],
-      textContent: '1',
-    },
-    pagiNext: {
-      tag: 'a',
-      cssClasses: ['pagi-btn', 'pagi-next'],
-      textContent: '>',
-    },
-  },
 
   mobileBtn: {
     tag: 'button',
@@ -156,7 +139,6 @@ const catalogParams = {
     cardsContent: {
       tag: 'div',
       cssClasses: ['product__cards', 'category-view'],
-      id: 'products-content',
     },
     overlay: {
       tag: 'a',

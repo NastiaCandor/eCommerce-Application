@@ -75,15 +75,15 @@ export default class Routes {
         },
       },
       {
-        path: `${PAGES.CONTACTS}`,
+        path: `${PAGES.ABOUT_US}`,
         callback: () => {
-          this.callbacks.loadContactsPage();
+          this.callbacks.loadAboutPage();
         },
       },
       {
-        path: `${PAGES.SHIPPING}`,
+        path: `${PAGES.SEARCH}`,
         callback: () => {
-          this.callbacks.loadShippingPage();
+          this.callbacks.loadSearchPage();
         },
       },
       {

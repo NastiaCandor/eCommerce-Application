@@ -5,14 +5,13 @@ import Router from '../router/Router';
 import CartView from '../view/cart/CartView';
 import HeaderView from '../view/header/HeaderView';
 import LoginView from '../view/login/LoginView';
-import MainView from '../view/main/MainView';
+import MainContentView from '../view/main-content/MainContentView';
 import NotFoundView from '../view/not-found-page/NotFoundView';
 import CatalogView from '../view/pages/catalog/CatalogView';
-import ContactsView from '../view/pages/contacts/ContactsView';
-import ShippingView from '../view/pages/shipping/ShippingView';
+import AboutView from '../view/pages/about-us/AboutView';
+import MainView from '../view/pages/main/MainView';
 import ProfileView from '../view/profile/ProfileView';
 import RegView from '../view/registration/reg-view';
-import AboutView from '../view/pages/about/AboutView';
 import Routes from '../router/utils/Routes';
 import { PrefetchedData, Route, RouteCallbacks } from '../../types';
 import ClientAPI from '../utils/Client';
@@ -25,7 +24,7 @@ import CartQiantity from '../utils/CartQuantity';
 export default class App {
   private header: HeaderView;
 
-  private contentContainer: MainView;
+  private contentContainer: MainContentView;
 
   private router: Router;
 
@@ -40,6 +39,8 @@ export default class App {
   private clientApi: ClientAPI;
 
   private routes: Route[];
+
+  private mainView: MainView;
 
   private state: State;
 
@@ -62,13 +63,13 @@ export default class App {
     this.clientApi = clientApi;
     this.spinner = spinner;
     this.routesClass = new Routes(this.getRoutesCallbacks(), this.clientApi);
-    // this.footerView = new FooterView();
     this.prefetchedData = this.clientApi.prefetchedData;
     this.routes = this.routesClass.getRoutes();
     this.router = new Router(this.routes, this.state, this.routesClass.getTitlesMap);
+    this.mainView = new MainView(this.clientApi, this.router);
     this.footerView = new FooterView(this.router);
     this.notFoundView = new NotFoundView(this.router);
-    this.contentContainer = new MainView();
+    this.contentContainer = new MainContentView();
     this.header = new HeaderView(this.router);
     this.signupForm = new RegView(this.router, this.clientApi);
     this.loginForm = new LoginView(this.router, this.clientApi);
@@ -101,9 +102,18 @@ export default class App {
     this.contentContainer.setContent(view);
   }
 
-  private loadMainPage() {
-    const main = new AboutView(this.clientApi).getElement();
-    this.setContent(PAGES.MAIN, main);
+  private async loadMainPage() {
+    if (this.state.getCatalogState.get('resetRequire') === true) {
+      await this.catalogView.assambleCards().then((element) => {
+        const wrapper = this.catalogView.getWrapper;
+        if (wrapper) {
+          this.catalogView.replaceCardsAndReturnElement(wrapper, element);
+          this.setContent(PAGES.CATALOG, this.catalogView.getElement());
+        }
+        this.state.resetCatalogPage(false);
+      });
+    }
+    this.setContent(PAGES.MAIN, this.mainView.getElement());
   }
 
   private loadLoginPage() {
@@ -115,9 +125,9 @@ export default class App {
     this.setContent(PAGES.CART, cart);
   }
 
-  private loadContactsPage() {
-    const contacts = new ContactsView().getElement();
-    this.setContent(PAGES.CONTACTS, contacts);
+  private loadAboutPage() {
+    const about = new AboutView().getElement();
+    this.setContent(PAGES.ABOUT_US, about);
   }
 
   private loadSignupPage() {
@@ -126,11 +136,6 @@ export default class App {
 
   private loadProfilePage() {
     this.setContent(PAGES.PROFILE, new ProfileView(this.router, this.clientApi).getElement());
-  }
-
-  private loadShippingPage() {
-    const shipping = new ShippingView().getElement();
-    this.setContent(PAGES.SHIPPING, shipping);
   }
 
   private loadNotFoundPage() {
@@ -148,7 +153,7 @@ export default class App {
       });
     } else {
       const url = this.state.getCatalogState.get('prevurl');
-      if (url && url?.split('/').length > 1) {
+      if (url && typeof url === 'string' && url?.split('/').length > 1) {
         this.router.navigate(url);
         return;
       }
@@ -194,12 +199,20 @@ export default class App {
   private logoutUser() {
     this.router.stateDeleteToken();
     this.clientApi.resetDefaultClientAPI();
+    this.state.resetCatalogPage(true);
     this.router.navigate(PAGES.MAIN);
     // this.cartQuantity.updateCartSpan();
     this.resetForms();
   }
 
   private loadFilterPage() {
+    this.setContent(PAGES.CATALOG, this.catalogView.getElement());
+    if (!this.isStarted) {
+      this.router.navigate(PAGES.CATALOG);
+    }
+  }
+
+  private loadSearchPage() {
     this.setContent(PAGES.CATALOG, this.catalogView.getElement());
     if (!this.isStarted) {
       this.router.navigate(PAGES.CATALOG);
@@ -219,8 +232,7 @@ export default class App {
 
   private getRoutesCallbacks(): RouteCallbacks {
     return {
-      loadContactsPage: this.loadContactsPage.bind(this),
-      loadShippingPage: this.loadShippingPage.bind(this),
+      loadAboutPage: this.loadAboutPage.bind(this),
       loadNotFoundPage: this.loadNotFoundPage.bind(this),
       loadCatalogPage: this.loadCatalogPage.bind(this),
       loadProfilePage: this.loadProfilePage.bind(this),
@@ -233,6 +245,7 @@ export default class App {
       loadProductPage: this.loadProductPage.bind(this),
       mountCategory: this.mountCategory.bind(this),
       loadFilterPage: this.loadFilterPage.bind(this),
+      loadSearchPage: this.loadSearchPage.bind(this),
     };
   }
 }
