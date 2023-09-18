@@ -161,9 +161,17 @@ export type CatalogState = {
   nav: HTMLElement;
 };
 
+
 export type FiltersScroll = {
   [key: string]: number;
   condition: number;
   label: number;
   lp: number;
+}
+// CART QUANTITY
+export const cartSpanParams = {
+  span: {
+    tag: 'span',
+    cssClasses: ['cart-quant__span'],
+  },
 };

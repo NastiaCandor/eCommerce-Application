@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/comma-dangle */
+/* eslint-disable comma-dangle */
 import { Attribute, Price, ProductDiscount, ProductProjection, TypedMoney, Image } from '@commercetools/platform-sdk';
 import { Splide } from '@splidejs/splide';
 import { wrapperParams } from '../../constants';
@@ -10,6 +12,7 @@ import Modal from '../../utils/Modal';
 import PAGES from '../../router/utils/pages';
 import AddToCartView from '../pages/catalog/add-to-cart/AddToCartView';
 import Router from '../../router/Router';
+import CartQiantity from '../../utils/CartQuantity';
 
 export default class ProductView extends View {
   private clientAPI: ClientAPI;
@@ -20,12 +23,21 @@ export default class ProductView extends View {
 
   private router: Router;
 
-  constructor(clientAPI: ClientAPI, productKey: string, breadCrumb: HTMLElement, router: Router) {
+  private cartQuantity: CartQiantity;
+
+  constructor(
+    clientAPI: ClientAPI,
+    productKey: string,
+    breadCrumb: HTMLElement,
+    cartQuan: CartQiantity,
+    router: Router
+  ) {
     super(productParams.section);
     this.router = router;
     this.productID = productKey;
     this.breadCrumb = breadCrumb;
     this.clientAPI = clientAPI;
+    this.cartQuantity = cartQuan;
     this.render();
   }
 
@@ -365,7 +377,7 @@ export default class ProductView extends View {
   }
 
   private addToCartFunctionality(wrapper: ElementCreator, body: ProductProjection): void {
-    const addToCartBtn = new AddToCartView(this.clientAPI, this.productID);
+    const addToCartBtn = new AddToCartView(this.clientAPI, this.productID, this.cartQuantity);
     addToCartBtn.render(body);
     wrapper.addInnerElement(addToCartBtn);
   }
