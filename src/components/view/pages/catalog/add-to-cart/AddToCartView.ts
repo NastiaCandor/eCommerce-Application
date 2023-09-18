@@ -31,15 +31,15 @@ export default class AddToCartView extends View {
     this.cartQuantity = cartQuantity;
   }
 
-  public render(body?: ProductProjection): void {
-    this.configure(body);
+  public render(body?: ProductProjection, activeCart?: ClientResponse<Cart>): void {
+    this.configure(body, activeCart);
   }
 
-  public configure(body?: ProductProjection): void {
-    this.renderInnerWrapper(body);
+  public configure(body?: ProductProjection, activeCart?: ClientResponse<Cart>): void {
+    this.renderInnerWrapper(body, activeCart);
   }
 
-  private async renderInnerWrapper(bodyResevied?: ProductProjection): Promise<void> {
+  private async renderInnerWrapper(bodyResevied?: ProductProjection, cartBody?: ClientResponse<Cart>): Promise<void> {
     const addToCartBtn = new ElementCreator(addToCartParams.addToCartBtn);
     super.addInnerElement(addToCartBtn);
     let body = bodyResevied;
@@ -48,32 +48,32 @@ export default class AddToCartView extends View {
     }
     if (body === undefined) return;
     this.productName = body.name['en-US'];
-    this.getActiveCartInfo(addToCartBtn);
+    let activeCart = cartBody;
+    if (activeCart === undefined) {
+      activeCart = await this.clientAPI.getActiveCartData();
+    }
+    if (activeCart === undefined) return;
+    this.cartBtnFunctionality(addToCartBtn, activeCart);
   }
 
-  private async getActiveCartInfo(addToCartBtn: ElementCreator) {
+  private async cartBtnFunctionality(addToCartBtn: ElementCreator, activeCart: ClientResponse<Cart>) {
     super.addInnerElement(this.spinner.getElement());
     const wrapper = super.getElement();
     const removeFromCartBtn = new ElementCreator(addToCartParams.removeFromCartBtn);
     this.addItemFunctionality(wrapper, addToCartBtn, removeFromCartBtn);
     this.removeItemBtnFunctionality(wrapper, removeFromCartBtn, addToCartBtn);
-    const activeCart = this.clientAPI.getActiveCartData();
-    activeCart
-      .then((data) => {
-        const items = data.body.lineItems;
-        const productInfo = items.filter((item) => item.productId === this.productID);
-        if (productInfo.length > 0) {
-          // const { quantity } = productInfo[0];
-          this.lineItemID = productInfo[0].id;
-          // console.log('quant', quantity);
-          super.getElement().removeChild(addToCartBtn.getElement());
-          super.addInnerElement(removeFromCartBtn);
-          this.spinner.removeSelfFromNode();
-        } else {
-          this.spinner.removeSelfFromNode();
-        }
-      })
-      .catch((error) => console.log(`Error while fetching active cart information: ${error}`));
+    const items = activeCart.body.lineItems;
+    const productInfo = items.filter((item) => item.productId === this.productID);
+    if (productInfo.length > 0) {
+      // const { quantity } = productInfo[0];
+      this.lineItemID = productInfo[0].id;
+      // console.log('quant', quantity);
+      super.getElement().removeChild(addToCartBtn.getElement());
+      super.addInnerElement(removeFromCartBtn);
+      this.spinner.removeSelfFromNode();
+    } else {
+      this.spinner.removeSelfFromNode();
+    }
   }
 
   private getLineItemID(data: ClientResponse<Cart>) {
