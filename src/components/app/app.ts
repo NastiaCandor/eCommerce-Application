@@ -121,7 +121,7 @@ export default class App {
   }
 
   private loadCartPage() {
-    const cart = new CartView().getElement();
+    const cart = new CartView(this.clientApi, this.router, this.cartQuantity).getElement();
     this.setContent(PAGES.CART, cart);
   }
 

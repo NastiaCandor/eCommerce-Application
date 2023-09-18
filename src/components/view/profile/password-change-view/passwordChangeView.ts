@@ -188,7 +188,6 @@ export default class ProfilePasswordFormView extends View {
   private createSaveBtn(): ElementCreator {
     const btn = new ElementCreator(PasswordChangeParams.buttonSave);
     btn.setAttribute('type', PasswordChangeParams.buttonSave.type);
-    btn.setTextContent(PasswordChangeParams.buttonSave.textContent);
     return btn;
   }
 }

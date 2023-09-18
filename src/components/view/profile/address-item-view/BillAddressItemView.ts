@@ -204,7 +204,6 @@ export default class BillAddressItemView extends View {
     const btn = new ElementCreator(AddressItemParams.buttonSave);
     btn.setAttribute('type', AddressItemParams.buttonSave.type);
     btn.setAttribute('disabled', 'true');
-    btn.setTextContent(AddressItemParams.buttonSave.textContent);
     return btn;
   }
 
