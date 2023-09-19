@@ -103,6 +103,12 @@ section > .user-icon_item {
   border-radius: 50%;
   @include font(1.2rem, 100%, 500);
   @include media-tablet {
+    left: 1rem;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .cart-span { 
     left: 0;
   }
 }

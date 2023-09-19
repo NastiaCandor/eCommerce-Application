@@ -105,19 +105,23 @@
   }
 }
 
-.vinyl-img {
-  display: none;
-}
-
 .jazz-img__wrapper:hover .vinyl-img {
   transition: all 0.5s ease-out;
-  transform: translateX(9rem);
+  transform: translateX(6rem);
+  @include media-tablet {
+    transform: none;
+  }
 }
 
 .jazz-img__wrapper:hover .jazz-img {
   transition: all 0.5s ease-out;
   box-shadow: 1px 1px 13px 2px rgba(0, 0, 0, 0.379);
+  @include media-tablet {
+    box-shadow: none;
+  }
 }
+
+
 
 .main-slogan__heading,
 .main-slogan__heading2 {

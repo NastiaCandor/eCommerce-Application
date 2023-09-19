@@ -152,7 +152,7 @@
   position: fixed;
   top: 13.5rem;
   left: 0.1rem;
-  z-index: 100;
+  z-index: 200;
   padding: 0;
   display: none;
 }
@@ -246,9 +246,11 @@
   user-select: none;
   cursor: default;
 }
+
 .sort__user-select {
   display: flex;
 }
+
 .sort_user-select_element {
   background-color: #efcf5c;
   padding: 1rem;
@@ -258,7 +260,7 @@
 
   transition: all 0.3s ease;
   &:hover {
-    background-color: #5c955d;
+    background-color: #debf50;
   }
 }
 
