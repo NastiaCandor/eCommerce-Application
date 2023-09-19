@@ -72,12 +72,12 @@ export default class CartAsideView extends View {
               this.addInnerElement(this.createTotalCost(subtotalSum.toFixed(2), promoDiff, totalSum.toFixed(2)));
             })
             .catch((error) => {
-              console.log(error.code);
               if (error.code === 400) {
                 this.showWrongPromocodeMessage(cartParams.wrongPromocode);
+              } else {
+                console.log(error.code, error.message);
               }
             });
-          console.log(data.body);
         });
       }
     });

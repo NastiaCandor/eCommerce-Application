@@ -54,28 +54,47 @@ export default class CartView extends View {
     cartWrapper.addInnerElement([topWrapper, cartItemsWrapper]);
     clearCartBtn.getElement().addEventListener('click', async () => {
       clearCartBtn.getElement().classList.add('no-show');
-      const getCartAPI = this.clientAPI.getActiveCartData();
-      this.CartAsideView.getChildren()[1].remove();
-      getCartAPI
-        .then((data) => {
-          this.cartQuantity.updateCartQuantity(data);
-          const { lineItems } = data.body;
-          const itemsArr: string[] = [];
-          lineItems.forEach((el) => {
-            itemsArr.push(el.id);
-            const removeItemAPI = this.clientAPI.removeAllItemsFromCart(itemsArr);
-            removeItemAPI.then((emptyCartData) => {
-              this.insertTotalCost(emptyCartData);
-            });
-          });
+      try {
+        const getCartAPI = await this.clientAPI.getActiveCartData();
+        this.CartAsideView.getChildren()[1].remove();
+        if (getCartAPI.statusCode === 200) {
+          this.cartQuantity.updateCartQuantity(getCartAPI);
+          const { lineItems } = getCartAPI.body;
+          const promises = lineItems.map((el) => el.id);
+          const itemsArr = await Promise.all(promises);
+          const emptyCartData = await this.clientAPI.removeAllItemsFromCart(itemsArr);
+          this.insertTotalCost(emptyCartData);
           cartItemsWrapper.getChildren()[0].classList.remove('no-show');
           cartItemsWrapper.getChildren()[1].replaceChildren();
-          // update total cart price
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+        }
+      } catch (e) {
+        console.log(e);
+      }
     });
+
+    // ALWAYS AWAIT PROMISES TO EXECUTE :)
+
+    // getCartAPI
+    //   .then((data) => {
+    //     this.cartQuantity.updateCartQuantity(data);
+    //     const { lineItems } = data.body;
+    //     const itemsArr: string[] = [];
+    //     lineItems.forEach((el) => {
+    //       itemsArr.push(el.id);
+    //       const removeItemAPI = this.clientAPI.removeAllItemsFromCart(itemsArr);
+    //       removeItemAPI.then((emptyCartData) => {
+    //         this.insertTotalCost(emptyCartData);
+    //       });
+    //     });
+    //     cartItemsWrapper.getChildren()[0].classList.remove('no-show');
+    //     cartItemsWrapper.getChildren()[1].replaceChildren();
+    //     // update total cart price
+    //   })
+    //     .catch((error) => {
+    //       console.log(error);
+    //     });
+    // });
+
     this.addInnerElement(this.CartAsideView);
   }
 

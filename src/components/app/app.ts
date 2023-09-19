@@ -155,9 +155,7 @@ export default class App {
       const url = this.state.getCatalogState.get('prevurl');
       if (url && typeof url === 'string' && url?.split('/').length > 1) {
         this.router.navigate(url);
-        return;
       }
-      this.setContent(PAGES.CATALOG, this.catalogView.getElement());
     }
   }
 
@@ -187,8 +185,9 @@ export default class App {
         cardData,
         this.catalogView.breadCrumbView,
         this.cartQuantity,
+        this.router,
         // eslint-disable-next-line @typescript-eslint/comma-dangle, comma-dangle
-        this.router
+        this.state
       ).getElement();
       this.setContent(PAGES.CATALOG, product);
     } else {

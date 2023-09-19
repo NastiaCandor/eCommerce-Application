@@ -14,7 +14,6 @@ export default class AboutView extends View {
   }
 
   protected configure(): void {
-    console.log(developersInfo);
     this.assambleHeading();
     this.assamblePersons();
     this.assambleSchoolInfo();

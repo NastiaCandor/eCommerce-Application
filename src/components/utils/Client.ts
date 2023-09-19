@@ -289,7 +289,7 @@ export default class ClientAPI {
       version: this.cartVersion,
       actions: actionsArr,
     };
-    const removeAllItemsAPI = this.apiRoot
+    const removeAllItemsAPI = await this.apiRoot
       .me()
       .carts()
       .withId({ ID: this.cartId })

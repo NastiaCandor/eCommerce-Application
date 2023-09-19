@@ -262,6 +262,7 @@ export default class CatalogView extends View {
       const { id } = target.dataset;
       if (id) {
         const productLink = this.prefetchedData.productsUrl.ids.get(id);
+        // console.log(this.prefetchedData.productsUrl.ids);
         const path = `${PAGES.PRODUCT}/${productLink || ''}`;
         this.router.navigate(path, id);
         this.createBreadCrumbs();

@@ -21,9 +21,6 @@ export default class Router {
   }
 
   public navigate(url: string, productId = '') {
-    if (this.currentPath.startsWith('catalog')) {
-      this.state.saveCatalogState(this.currentPath);
-    }
     this.state.pushState(url);
     this.processUrl(this.currentPath, productId);
   }
@@ -76,6 +73,9 @@ export default class Router {
     }
 
     route.callback();
+    if (this.currentPath.startsWith('catalog')) {
+      this.state.saveCatalogState(this.currentPath);
+    }
   }
 
   private parseUrl(url: string): UserRequest {
