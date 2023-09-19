@@ -55,6 +55,8 @@ export default class CatalogView extends View {
 
   private cartQuantity: CartQiantity;
 
+  private scrollPos: number;
+
   constructor(clientApi: ClientAPI, router: Router, spinner: SpinnerView, cartQuantity: CartQiantity) {
     super(catalogParams.section);
     this.clientApi = clientApi;
@@ -65,6 +67,7 @@ export default class CatalogView extends View {
     this.router = router;
     this.itemsCount = 0;
     this.totalCount = 0;
+    this.scrollPos = 0;
     this.endpoints = null;
     this.scrollFunction = () => {};
     this.isLoadingData = false;
@@ -86,18 +89,28 @@ export default class CatalogView extends View {
   private async init(productInfo?: ProductProjectionPagedQueryResponse, cardsView?: ElementCreator): Promise<void> {
     const wrapper = new ElementCreator(catalogParams.wrapper);
     const mobileMenuBtn = this.createMobileMenuBtn();
-    const sideBar = this.assamleSideBar();
+    const sideBar = this.assamleSideBar(mobileMenuBtn);
+    const assambledCards = cardsView || (await this.assambleCards(productInfo));
+    window.addEventListener('resize', () => {
+      const cards = document.querySelector('#products-content');
+      if (cards) {
+        cards.classList.remove('no-show__aside', 'hidden');
+      }
+    });
     mobileMenuBtn.getElement().addEventListener('click', () => {
+      const cards = wrapper.getElement().querySelector('#products-content');
+      const footer = document.querySelector('footer');
+      if (cards && footer) {
+        footer.classList.add('element-hidden');
+        this.scrollPos = window.scrollY;
+        cards.classList.add('element-hidden');
+      }
+      window.scrollTo(0, 0);
+      assambledCards.getElement().classList.toggle('no-show__aside');
       sideBar.getElement().classList.toggle('no-show__aside');
       mobileMenuBtn.getElement().classList.toggle('mobile-btn__active');
     });
-    const assambledCards = cardsView || (await this.assambleCards(productInfo));
     wrapper.addInnerElement([mobileMenuBtn, sideBar, assambledCards]);
-    window.addEventListener('resize', () => {
-      if (window.innerWidth > 768) {
-        sideBar.getElement().classList.remove('no-show__aside');
-      }
-    });
     this.wrapper = wrapper;
     if (cardsView) {
       return this.addInnerElement(this.wrapper);
@@ -105,12 +118,26 @@ export default class CatalogView extends View {
     this.addInnerElement(this.wrapper);
   }
 
-  public assamleSideBar() {
+  public assamleSideBar(menuBtn: ElementCreator) {
     const asideWrapper = new ElementCreator(catalogParams.aside);
     const categories = this.assembleCategories();
+    const closeBtn = new ElementCreator(catalogParams.closeBtn);
+    closeBtn.getElement().addEventListener('click', () => {
+      const cards = document.querySelector('#products-content');
+      const footer = document.querySelector('footer');
+      if (cards && footer) {
+        document.documentElement.style.scrollBehavior = 'auto';
+        footer.classList.remove('element-hidden');
+        cards.classList.remove('element-hidden');
+        window.scrollTo(0, this.scrollPos);
+        document.documentElement.style.scrollBehavior = 'smooth';
+      }
+      menuBtn.getElement().classList.toggle('mobile-btn__active');
+      asideWrapper.getElement().classList.remove('no-show__aside');
+    });
     const buttons = this.assambleBtnWrapper();
     this.searchFunctionality();
-    asideWrapper.addInnerElement([this.searchView, categories, this.filterView.render(), buttons]);
+    asideWrapper.addInnerElement([closeBtn, this.searchView, categories, this.filterView.render(), buttons]);
     return asideWrapper;
   }
 
@@ -165,7 +192,7 @@ export default class CatalogView extends View {
       const docEl = document.documentElement;
       const pxlsBeforeEnd = docEl.scrollHeight - docEl.scrollTop - docEl.clientHeight;
       element.addInnerElement(this.spinner.getElement());
-      if (pxlsBeforeEnd < 50 && !this.isLoadingData && this.isStillPages()) {
+      if (pxlsBeforeEnd < 150 && !this.isLoadingData && this.isStillPages()) {
         this.isLoadingData = true;
         if (this.endpoints) {
           const data = await this.filterView.getFilterData(this.endpoints, this.itemsCount);
@@ -299,6 +326,16 @@ export default class CatalogView extends View {
         btn.addEventListener('click', (evt) => {
           evt.preventDefault();
           arr.forEach((item) => item.classList.remove('active'));
+          const btnMenu = document.body.querySelector('.mobile-menu__btn');
+          const aside = document.body.querySelector('.catalog__aside');
+          const cards = document.querySelector('#products-content');
+          const footer = document.querySelector('footer');
+          if (btnMenu && aside && cards && footer) {
+            cards.classList.remove('element-hidden');
+            btnMenu.classList.toggle('mobile-btn__active');
+            aside.classList.toggle('no-show__aside');
+            footer.classList.remove('element-hidden');
+          }
           if (evt.target instanceof HTMLAnchorElement) {
             evt.target.classList.add('active');
             this.router.navigate(evt.target.href);
@@ -431,6 +468,16 @@ export default class CatalogView extends View {
 
   public submitBtnHandler(element: HTMLElement) {
     element.addEventListener('click', async () => {
+      const cards = document.querySelector('#products-content');
+      const footer = document.querySelector('footer');
+      const aside = document.querySelector('.catalog__aside');
+      const btn = document.querySelector('.mobile-menu__btn');
+      if (cards && footer && aside && btn) {
+        cards.classList.remove('element-hidden');
+        footer.classList.remove('element-hidden');
+        aside.classList.remove('no-show__aside');
+        btn.classList.remove('mobile-btn__active');
+      }
       this.categoriesBtn.forEach((item) => item.classList.remove('active'));
       this.resetPageCounters();
       if (this.wrapper) {
@@ -532,6 +579,7 @@ export default class CatalogView extends View {
         const categoryHeading = new ElementCreator(catalogParams.categoriesPage.categoryHeading);
         const overlayLink = new ElementCreator(catalogParams.categoriesPage.overlay);
         const overlayText = new ElementCreator(catalogParams.categoriesPage.overlayText);
+        overlayLink.setAttribute('data-genre', item.key);
         overlayText.setTextContent(`Proceed to ${item.name}`);
         overlayLink.setAttribute('href', `/${PAGES.CATEGORIES}/${item.key}`);
         overlayLink.addInnerElement(overlayText);
@@ -592,6 +640,16 @@ export default class CatalogView extends View {
     element.addEventListener('click', (evt) => {
       evt.preventDefault();
       if (evt.target instanceof HTMLAnchorElement) {
+        const genreKey = evt.target.dataset.genre;
+        if (genreKey && this.categoriesBtn) {
+          this.categoriesBtn.forEach((item) => {
+            if (item.dataset.genre === genreKey) {
+              item.classList.add('active');
+            } else {
+              item.classList.remove('active');
+            }
+          });
+        }
         this.router.navigate(evt.target.href);
       }
     });

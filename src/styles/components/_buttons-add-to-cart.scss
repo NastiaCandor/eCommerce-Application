@@ -26,6 +26,11 @@
     top: 0rem;
     padding-top: 1rem;
     height: calc(100% - 1rem);
+
+    @media screen and (max-width: $tablet) {
+      top: 0;
+      align-content: flex-start;
+    }
   }
   .product__add-to-cart-btn {
     color: #00000000;

@@ -49,6 +49,7 @@
     }
     
     @media screen and (max-width: $tablet) {
+      justify-content: space-between;
       display: flex;
     }
 
@@ -60,6 +61,8 @@
 }
 
 .header__menu.hidden {
+  pointer-events: none;
+  display: flex;
   opacity: 0;
   top: -100%;
 }
@@ -79,6 +82,8 @@
     width: 1.8em;
     margin-bottom: 0.5em;
     background-color: $color-burger-span;
+    
+    pointer-events: none;
 
     transition: all 0.3s ease-in-out;
   }

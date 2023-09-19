@@ -95,14 +95,22 @@ export default class HeaderView extends View {
   }
 
   private burgerMenuHandler(btn: HTMLElement, menu: HTMLElement): void {
+    window.addEventListener('click', (evt) => {
+      const target = <HTMLElement>evt.target;
+      if (!menu.contains(target) && (target !== btn || !btn.contains(target))) {
+        menu.classList.add('hidden');
+        btn.classList.remove('clicked');
+      }
+    });
     btn.addEventListener('click', () => {
       if (menu instanceof HTMLElement) {
-        // ask Natasha about ability to do so:
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        menu.classList.contains('hidden') ? menu.classList.remove('hidden') : menu.classList.add('hidden');
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        btn.classList.contains('clicked') ? btn.classList.remove('clicked') : btn.classList.add('clicked');
-        // if she denied to allow - replace with if/else statement
+        if (menu.classList.contains('hidden')) {
+          menu.classList.remove('hidden');
+          btn.classList.add('clicked');
+        } else {
+          menu.classList.add('hidden');
+          btn.classList.remove('clicked');
+        }
       }
     });
   }
@@ -141,6 +149,12 @@ export default class HeaderView extends View {
       const page = key as keyof PagesInterface;
       value.addEventListener('click', (evt) => {
         evt.preventDefault();
+        const menu = document.body.querySelector('.header__menu');
+        const btn = document.body.querySelector('.header__menu_btn');
+        if (menu && btn) {
+          menu.classList.add('hidden');
+          btn.classList.remove('clicked');
+        }
         this.navigateToPage(page);
       });
     });
