@@ -28,7 +28,15 @@
   .product__category_item {
     display: inline-block;
     width: 100%;
+
+    padding: 0.5rem;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      background-color: #5c955d76;
+    }
   }
+
   .filter-box {
     position: relative;
     display: flex;
@@ -45,13 +53,20 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    padding: 0.5rem;
+    cursor: pointer;
+
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      background-color: #5c955d76;
+    }
   }
 
   .filter-box__content__items {
     max-height: 20vh;
     overflow-y:auto;
     background-color: #faf8f1;
-    padding: 1rem;
   }
   .filter-box__content_item {
     display: flex;
@@ -234,7 +249,7 @@
   user-select: none;
   cursor: pointer;
   .order-box {
-    padding: 0.5rem;
+    padding: 0.30rem;
     border-radius: 5px;
     background-color: #a7866a;
 
@@ -259,17 +274,20 @@
 }
 .sort_user-select_element {
   background-color: #efcf5c;
-  padding: 1rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 5px;
   font-size: 1.5rem;
   width: auto;
   height: auto;
 
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, opacity 0.3s ease;;
   &:hover {
     background-color: #5c955d;
   }
-}
-
-.hidden {
-  display: none;
+  &.hidden {
+    color: transparent;
+    opacity: 0;
+    position: absolute;
+    pointer-events: none;
+  }
 }

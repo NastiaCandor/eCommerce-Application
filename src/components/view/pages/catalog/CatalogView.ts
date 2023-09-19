@@ -567,6 +567,7 @@ export default class CatalogView extends View {
         const categoryHeading = new ElementCreator(catalogParams.categoriesPage.categoryHeading);
         const overlayLink = new ElementCreator(catalogParams.categoriesPage.overlay);
         const overlayText = new ElementCreator(catalogParams.categoriesPage.overlayText);
+        overlayLink.setAttribute('data-genre', item.key);
         overlayText.setTextContent(`Proceed to ${item.name}`);
         overlayLink.setAttribute('href', `/${PAGES.CATEGORIES}/${item.key}`);
         overlayLink.addInnerElement(overlayText);
@@ -627,6 +628,16 @@ export default class CatalogView extends View {
     element.addEventListener('click', (evt) => {
       evt.preventDefault();
       if (evt.target instanceof HTMLAnchorElement) {
+        const genreKey = evt.target.dataset.genre;
+        if (genreKey && this.categoriesBtn) {
+          this.categoriesBtn.forEach((item) => {
+            if (item.dataset.genre === genreKey) {
+              item.classList.add('active');
+            } else {
+              item.classList.remove('active');
+            }
+          });
+        }
         this.router.navigate(evt.target.href);
       }
     });
