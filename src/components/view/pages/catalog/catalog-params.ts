@@ -24,6 +24,11 @@ const catalogParams = {
     tag: 'div',
     cssClasses: ['catalog__wrapper'],
   },
+  closeBtn: {
+    tag: 'button',
+    cssClasses: ['catalog__aside_close-btn'],
+    textContent: 'Close filters',
+  },
   productContent: {
     tag: 'div',
     cssClasses: ['product__content'],
@@ -92,7 +97,7 @@ const catalogParams = {
 
   mobileBtn: {
     tag: 'button',
-    cssClasses: ['mobile-menu__btn', 'show-btn'],
+    cssClasses: ['mobile-menu__btn'],
   },
 
   mobileBtnImg: {

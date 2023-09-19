@@ -11,6 +11,8 @@
   border-top-right-radius: $border-radius3;
   border-bottom-right-radius: $border-radius3;
 
+  transition: all 0.3s ease-in-out;
+
   & > * {
     padding-bottom: 3rem;
     width: 90%;
@@ -164,12 +166,14 @@
 
 @media screen and (max-width: $tablet) {
   .catalog__aside {
-    display: none;
     margin-bottom: 0rem !important;
     width: 100vw;
     position: absolute;
-    height: auto;
-    transition: 0.3s;
+    opacity: 0;
+    top: 0;
+    left: -100%;
+    height: fit-content;
+    transition: all 0.3s ease;
   }
 
   .filter-box__content__items {
@@ -184,14 +188,16 @@
   .catalog__aside .filter-box__span {
     padding: 0.1rem 0.2rem;
   }
-
   .catalog__aside.no-show__aside {
     display: flex;
     position: absolute;
     z-index: 20;
-    top: 4rem;
-    height: 100%;
-    // top: -10rem;
+    opacity: 1;
+    top: 0;
+    left: 0;
+    height: fit-content;
+
+    transition: all 0.3s ease;
   }
 
   .mobile-menu__btn {
@@ -199,20 +205,22 @@
   }
 
   .mobile-btn__active {
-    width: 100vw;
-    top: 0rem;
-    transition: 0.3s;
-    background-color: #f1cf9c;
-    height: 5.3rem;
-    & img {
-      display: none;
-    }
-    &::after {
-      content: 'Close filters';
-      font-size: 1.6rem;
-      font-weight: bold;
-      text-transform: uppercase;
-    }
+    display: none;
+  }
+}
+
+.catalog__aside_close-btn {
+  font-size: 1.6rem;
+  padding: 1rem 0;
+  margin-bottom: 1rem;
+  background-color: #f1cf9c;
+  width: 100%;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-align: center;
+  @media screen and (min-width: $tablet) {
+    display: none;
   }
 }
 
