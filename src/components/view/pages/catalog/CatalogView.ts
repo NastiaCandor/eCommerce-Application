@@ -101,9 +101,9 @@ export default class CatalogView extends View {
       const cards = wrapper.getElement().querySelector('#products-content');
       const footer = document.querySelector('footer');
       if (cards && footer) {
-        footer.classList.add('hidden');
+        footer.classList.add('element-hidden');
         this.scrollPos = window.scrollY;
-        cards.classList.add('hidden');
+        cards.classList.add('element-hidden');
       }
       window.scrollTo(0, 0);
       assambledCards.getElement().classList.toggle('no-show__aside');
@@ -127,8 +127,8 @@ export default class CatalogView extends View {
       const footer = document.querySelector('footer');
       if (cards && footer) {
         document.documentElement.style.scrollBehavior = 'auto';
-        footer.classList.remove('hidden');
-        cards.classList.remove('hidden');
+        footer.classList.remove('element-hidden');
+        cards.classList.remove('element-hidden');
         window.scrollTo(0, this.scrollPos);
         document.documentElement.style.scrollBehavior = 'smooth';
       }
@@ -192,7 +192,7 @@ export default class CatalogView extends View {
       const docEl = document.documentElement;
       const pxlsBeforeEnd = docEl.scrollHeight - docEl.scrollTop - docEl.clientHeight;
       element.addInnerElement(this.spinner.getElement());
-      if (pxlsBeforeEnd < 50 && !this.isLoadingData && this.isStillPages()) {
+      if (pxlsBeforeEnd < 150 && !this.isLoadingData && this.isStillPages()) {
         this.isLoadingData = true;
         if (this.endpoints) {
           const data = await this.filterView.getFilterData(this.endpoints, this.itemsCount);
@@ -329,10 +329,12 @@ export default class CatalogView extends View {
           const btnMenu = document.body.querySelector('.mobile-menu__btn');
           const aside = document.body.querySelector('.catalog__aside');
           const cards = document.querySelector('#products-content');
-          if (btnMenu && aside && cards) {
-            cards.classList.remove('hidden');
+          const footer = document.querySelector('footer');
+          if (btnMenu && aside && cards && footer) {
+            cards.classList.remove('element-hidden');
             btnMenu.classList.toggle('mobile-btn__active');
             aside.classList.toggle('no-show__aside');
+            footer.classList.remove('element-hidden');
           }
           if (evt.target instanceof HTMLAnchorElement) {
             evt.target.classList.add('active');
@@ -466,6 +468,16 @@ export default class CatalogView extends View {
 
   public submitBtnHandler(element: HTMLElement) {
     element.addEventListener('click', async () => {
+      const cards = document.querySelector('#products-content');
+      const footer = document.querySelector('footer');
+      const aside = document.querySelector('.catalog__aside');
+      const btn = document.querySelector('.mobile-menu__btn');
+      if (cards && footer && aside && btn) {
+        cards.classList.remove('element-hidden');
+        footer.classList.remove('element-hidden');
+        aside.classList.remove('no-show__aside');
+        btn.classList.remove('mobile-btn__active');
+      }
       this.categoriesBtn.forEach((item) => item.classList.remove('active'));
       this.resetPageCounters();
       if (this.wrapper) {
