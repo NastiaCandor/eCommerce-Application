@@ -13,6 +13,7 @@ import PAGES from '../../router/utils/pages';
 import AddToCartView from '../pages/catalog/add-to-cart/AddToCartView';
 import Router from '../../router/Router';
 import CartQiantity from '../../utils/CartQuantity';
+import State from '../../state/State';
 
 export default class ProductView extends View {
   private clientAPI: ClientAPI;
@@ -25,15 +26,19 @@ export default class ProductView extends View {
 
   private cartQuantity: CartQiantity;
 
+  private state: State;
+
   constructor(
     clientAPI: ClientAPI,
     productKey: string,
     breadCrumb: HTMLElement,
     cartQuan: CartQiantity,
-    router: Router
+    router: Router,
+    state: State
   ) {
     super(productParams.section);
     this.router = router;
+    this.state = state;
     this.productID = productKey;
     this.breadCrumb = breadCrumb;
     this.clientAPI = clientAPI;
@@ -64,7 +69,12 @@ export default class ProductView extends View {
   private injectBackToCatalog(wrapper: ElementCreator): void {
     const btn = new ElementCreator(productParams.toCatalogBtn);
     btn.getElement().addEventListener('click', () => {
-      this.router.navigate(PAGES.CATALOG);
+      const url = this.state.getCatalogState.get('prevurl');
+      if (typeof url === 'string') {
+        this.router.navigate(url);
+      } else {
+        this.router.navigate(PAGES.CATALOG);
+      }
     });
     wrapper.addInnerElement(btn);
   }

@@ -35,11 +35,24 @@ export default class State {
   }
 
   public saveCatalogState(data: string) {
-    if (this.catalogState.has('url')) {
-      const url = this.catalogState.get('url');
+    const url = this.catalogState.get('url');
+    const prevurl = this.catalogState.get('prevurl');
+    if (url && url !== data) {
       this.catalogState.set('prevurl', <string>url);
     }
+    if (prevurl && url && data === 'catalog') {
+      this.catalogState.set('prevurl', url);
+      this.catalogState.set('url', prevurl);
+      return;
+    }
+    if (!prevurl) {
+      this.catalogState.set('prevurl', 'catalog/categories');
+    }
     this.catalogState.set('url', data);
+  }
+
+  public iconsUpdateState(isRequire: boolean) {
+    this.catalogState.set('iconsUpdateRequire', isRequire);
   }
 
   public resetCatalogPage(isRequire = false) {

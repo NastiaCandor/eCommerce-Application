@@ -387,6 +387,7 @@ input::-webkit-inner-spin-button {
 @media screen and (width < $tablet) {
   .cart {
     flex-direction: column;
+    min-height: calc(100vh - 12rem);
   }
 
   .cart__wrapper {
@@ -471,7 +472,7 @@ input::-webkit-inner-spin-button {
   .aside__menu {
     flex-direction: column;
     gap: 2rem;
-    padding: 1rem 2rem 1rem 2rem
+    padding: 1rem 2rem 1rem 2rem;
   }
 
   .promo-code__wrapper {
@@ -512,7 +513,7 @@ input::-webkit-inner-spin-button {
 
   .cart-item__title {
     max-width: 100%;
-    font-size: calc(1vw + 9px);
+    font-size: calc(1vw + 7px);
   }
 
   .cart-item__counter-wrapper {
@@ -531,4 +532,59 @@ input::-webkit-inner-spin-button {
   .buttons-wrapper {
     justify-content: flex-end;
   }
+}
+
+.prompt__window {
+  position: fixed;
+  z-index: 12;
+  top: calc(50% - 14rem);
+  left: calc(50% - 14rem);
+  background-color: white;
+  width: 28rem;
+  height: auto;
+  border-radius: $border-radius3;
+  padding: 3rem;
+  text-align: center;
+  font-size: 1.8rem;
+  // display: none;
+}
+
+.prompt__btn__wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.prompt__window__confirm-btn,
+.prompt__window__cancel-btn {
+  font-weight: bold;
+  border-radius: 3px;
+  width: 10rem;
+  padding: 1.5rem;
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  background-color: #e5edf7;
+  text-transform: uppercase;
+  color: #2e2e2e;
+}
+
+.prompt__window__confirm-btn:hover,
+.prompt__window__cancel-btn:hover {
+  background-color: #deeaf8;
+}
+
+.cart__popup-back {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #000;
+  opacity: 0.7;
+  transition: 0.3s all linear;
+  overflow: hidden;
+  // display: none;
+  z-index: 11;
 }

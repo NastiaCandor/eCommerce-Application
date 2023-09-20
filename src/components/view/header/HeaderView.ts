@@ -165,6 +165,7 @@ export default class HeaderView extends View {
     const updatedIcons = new UserIconsView();
     const collection = updatedIcons.getIconsCollection;
     this.linksCallbackHandler(collection);
+    console.log(collection);
     collection.forEach((value, key) => this.linksCollection.set(key, value));
     if (previousIcons instanceof HTMLElement) {
       this.wrapper.getElement().replaceChild(updatedIcons.getElement(), previousIcons);

@@ -113,7 +113,7 @@ const developersInfo: DevelopersData = {
       'Created Profile page',
       'Created Shopping Cart page',
     ],
-    bio: 'My name is Elena, I currently reside in China. Working on creating an online store project with server based on Commercetools API allowed me to gain experience of being part of the IT team and deepen my knowledge of web development, hopefully helping me to achieve my goal of becoming a developer.',
+    bio: 'Working on creating an online store project with server based on Commercetools API allowed me to gain experience of being part of the IT team and deepen my knowledge of web development, hopefully helping me to achieve my goal of becoming a developer.',
     link: 'https://github.com/elenaanisimova',
   },
   dev1: {

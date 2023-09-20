@@ -3,6 +3,7 @@
 /* eslint-disable prefer-template */
 /* eslint-disable no-useless-escape */
 import { Cart, ClientResponse } from '@commercetools/platform-sdk';
+import Noty from 'noty';
 import ElementCreator from '../../utils/ElementCreator';
 import View from '../View';
 import cartParams from './cart-params';
@@ -13,6 +14,7 @@ import '../../../assets/img/pencil.svg';
 import '../../../assets/img/shopping-basket-empty.svg';
 import Router from '../../router/Router';
 import CartQiantity from '../../utils/CartQuantity';
+import PAGES from '../../router/utils/pages';
 
 export default class CartView extends View {
   private clientAPI: ClientAPI;
@@ -51,31 +53,14 @@ export default class CartView extends View {
 
     topWrapper.addInnerElement([cartHeading, clearCartBtn]);
     const cartItemsWrapper = await this.createCartItemsWrapper();
-    cartWrapper.addInnerElement([topWrapper, cartItemsWrapper]);
+    const popUpBack = this.createPopUpBack();
+    const promptWindow = this.createPrompt(clearCartBtn, cartItemsWrapper, popUpBack);
+    cartWrapper.addInnerElement([topWrapper, cartItemsWrapper, promptWindow, popUpBack]);
     clearCartBtn.getElement().addEventListener('click', async () => {
-      clearCartBtn.getElement().classList.add('no-show');
-      const getCartAPI = this.clientAPI.getActiveCartData();
-      this.CartAsideView.getChildren()[1].remove();
-      getCartAPI
-        .then((data) => {
-          this.cartQuantity.updateCartQuantity(data);
-          const { lineItems } = data.body;
-          const itemsArr: string[] = [];
-          lineItems.forEach((el) => {
-            itemsArr.push(el.id);
-            const removeItemAPI = this.clientAPI.removeAllItemsFromCart(itemsArr);
-            removeItemAPI.then((emptyCartData) => {
-              this.insertTotalCost(emptyCartData);
-            });
-          });
-          cartItemsWrapper.getChildren()[0].classList.remove('no-show');
-          cartItemsWrapper.getChildren()[1].replaceChildren();
-          // update total cart price
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      promptWindow.getElement().classList.remove('no-show');
+      popUpBack.getElement().classList.remove('no-show');
     });
+
     this.addInnerElement(this.CartAsideView);
   }
 
@@ -188,7 +173,8 @@ export default class CartView extends View {
           this.cartQuantity.updateCartQuantity(data);
           const { lineItems } = data.body;
           if (lineItems.length === 0) {
-            const cartWrapper = cartItem.getElement().parentNode as ParentNode;
+            this.getChildren()[0].children[0].children[1].classList.add('no-show');
+            const cartWrapper = cartItem.getElement().parentNode?.parentNode as ParentNode;
             cartWrapper.children[0].classList.remove('no-show');
           }
           cartItem.getElement().remove();
@@ -257,6 +243,54 @@ export default class CartView extends View {
     return deleteBtn;
   }
 
+  private createPrompt(
+    clearCartEl: ElementCreator,
+    cartItemsWrapper: ElementCreator,
+    popUpBack: ElementCreator
+  ): ElementCreator {
+    const promptWindow = new ElementCreator(cartParams.promptWindow);
+    const btnWrapper = new ElementCreator(cartParams.promptBtnWrapper);
+    const confirmBtn = new ElementCreator(cartParams.promptConfirmBtn);
+    confirmBtn.setAttribute('type', cartParams.promptConfirmBtn.type);
+    const cancelBtn = new ElementCreator(cartParams.promptCancelBtn);
+    cancelBtn.setAttribute('type', cartParams.promptConfirmBtn.type);
+    cancelBtn.getElement().addEventListener('click', () => {
+      promptWindow.getElement().classList.add('no-show');
+      popUpBack.getElement().classList.add('no-show');
+    });
+    btnWrapper.addInnerElement([confirmBtn, cancelBtn]);
+    confirmBtn.getElement().addEventListener('click', async () => {
+      clearCartEl.getElement().classList.add('no-show');
+      promptWindow.getElement().classList.add('no-show');
+      popUpBack.getElement().classList.add('no-show');
+      try {
+        const getCartAPI = await this.clientAPI.getActiveCartData();
+        this.CartAsideView.getChildren()[1].remove();
+        if (getCartAPI.statusCode === 200) {
+          this.cartQuantity.updateCartQuantity(getCartAPI);
+          const { lineItems } = getCartAPI.body;
+          const promises = lineItems.map((el) => el.id);
+          const itemsArr = await Promise.all(promises);
+          const emptyCartData = await this.clientAPI.removeAllItemsFromCart(itemsArr);
+          this.insertTotalCost(emptyCartData);
+          this.cartQuantity.updateCartQuantity();
+          cartItemsWrapper.getChildren()[0].classList.remove('no-show');
+          cartItemsWrapper.getChildren()[1].replaceChildren();
+          this.showNotyMessage(cartParams.clearCartMessage);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    });
+    promptWindow.addInnerElement([btnWrapper]);
+    return promptWindow;
+  }
+
+  private createPopUpBack() {
+    const popUpBack = new ElementCreator(cartParams.popUpBack);
+    return popUpBack;
+  }
+
   private createEmptyCartScreen(): ElementCreator {
     const emptyCartWrapper = new ElementCreator(cartParams.emptyCart);
     const emptyCartImg = new ElementCreator(cartParams.emptyCartImg);
@@ -267,11 +301,22 @@ export default class CartView extends View {
     emptyCartBtn.getElement().addEventListener('click', (e) => {
       e.preventDefault();
       if (e.target instanceof HTMLAnchorElement) {
-        this.router.navigate(e.target.href);
+        this.router.requestCatalogReset(true);
+        this.router.navigate(PAGES.CATALOG);
       }
     });
 
     emptyCartWrapper.addInnerElement([emptyCartImg, emptyCartHeading, emptyCartBtn]);
     return emptyCartWrapper;
+  }
+
+  private showNotyMessage(message: string): void {
+    new Noty({
+      theme: 'mint',
+      text: message,
+      timeout: 3000,
+      progressBar: true,
+      type: 'success',
+    }).show();
   }
 }
