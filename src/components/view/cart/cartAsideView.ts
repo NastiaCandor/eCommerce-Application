@@ -46,39 +46,35 @@ export default class CartAsideView extends View {
 
     formEl.addEventListener('submit', (el) => {
       el.preventDefault();
-      // const customerID = this.getCustomerIDCookie() as string;
       if (inputEl.value === '') {
         this.showWrongPromocodeMessage(cartParams.noPromocode);
         return;
       }
-      const getCartAPI = this.clientAPI.getActiveCartData();
       if (inputEl.value !== '') {
-        getCartAPI.then(async (data) => {
-          const sendDiscount = this.clientAPI.applyPromoCode(inputEl.value);
-          sendDiscount
-            .then(async (response) => {
-              const subtotal: number[] = [];
-              response.body.lineItems.forEach((cartItem) => {
-                if (cartItem.price.discounted) {
-                  subtotal.push((cartItem.price.discounted.value.centAmount / 100) * cartItem.quantity);
-                } else if (!cartItem.price.discounted) {
-                  subtotal.push((cartItem.price.value.centAmount / 100) * cartItem.quantity);
-                }
-              });
-              const subtotalSum = subtotal.reduce((acc, value) => acc + value, 0);
-              const totalSum = data.body.totalPrice.centAmount / 100;
-              const promoDiff = (subtotalSum - totalSum).toFixed(2);
-              this.getChildren()[2].remove();
-              this.addInnerElement(this.createTotalCost(subtotalSum.toFixed(2), promoDiff, totalSum.toFixed(2)));
-            })
-            .catch((error) => {
-              if (error.code === 400) {
-                this.showWrongPromocodeMessage(cartParams.wrongPromocode);
-              } else {
-                console.log(error.code, error.message);
+        const sendDiscount = this.clientAPI.applyPromoCode(inputEl.value);
+        sendDiscount
+          .then(async (response) => {
+            const subtotal: number[] = [];
+            response.body.lineItems.forEach((cartItem) => {
+              if (cartItem.price.discounted) {
+                subtotal.push((cartItem.price.discounted.value.centAmount / 100) * cartItem.quantity);
+              } else if (!cartItem.price.discounted) {
+                subtotal.push((cartItem.price.value.centAmount / 100) * cartItem.quantity);
               }
             });
-        });
+            const subtotalSum = subtotal.reduce((acc, value) => acc + value, 0);
+            const totalSum = response.body.totalPrice.centAmount / 100;
+            const promoDiff = (subtotalSum - totalSum).toFixed(2);
+            this.getChildren()[1].remove();
+            this.addInnerElement(this.createTotalCost(subtotalSum.toFixed(2), promoDiff, totalSum.toFixed(2)));
+          })
+          .catch((error) => {
+            if (error.code === 400) {
+              this.showWrongPromocodeMessage(cartParams.wrongPromocode);
+            } else {
+              console.log(error.code, error.message);
+            }
+          });
       }
     });
     promoWrapper.addInnerElement([promoText, promoInput, promoBtn]);
