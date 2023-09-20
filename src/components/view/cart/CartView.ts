@@ -3,7 +3,7 @@
 /* eslint-disable prefer-template */
 /* eslint-disable no-useless-escape */
 import { Cart, ClientResponse } from '@commercetools/platform-sdk';
-// import Noty from 'noty';
+import Noty from 'noty';
 import ElementCreator from '../../utils/ElementCreator';
 import View from '../View';
 import cartParams from './cart-params';
@@ -276,6 +276,7 @@ export default class CartView extends View {
           this.cartQuantity.updateCartQuantity();
           cartItemsWrapper.getChildren()[0].classList.remove('no-show');
           cartItemsWrapper.getChildren()[1].replaceChildren();
+          this.showNotyMessage(cartParams.clearCartMessage);
         }
       } catch (e) {
         console.log(e);
@@ -307,5 +308,15 @@ export default class CartView extends View {
 
     emptyCartWrapper.addInnerElement([emptyCartImg, emptyCartHeading, emptyCartBtn]);
     return emptyCartWrapper;
+  }
+
+  private showNotyMessage(message: string): void {
+    new Noty({
+      theme: 'mint',
+      text: message,
+      timeout: 3000,
+      progressBar: true,
+      type: 'success',
+    }).show();
   }
 }

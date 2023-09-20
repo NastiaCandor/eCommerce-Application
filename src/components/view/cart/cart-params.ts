@@ -304,6 +304,7 @@ const cartParams = {
 
   wrongPromocode: "This promocode doesn't exist. Please try again",
   noPromocode: 'Please enter a promocode',
+  clearCartMessage: 'Items are successfully removed!',
   noImageAvailablePath: '../assets/img/no-image-available.png',
 };
 
