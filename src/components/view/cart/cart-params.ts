@@ -272,6 +272,36 @@ const cartParams = {
     textContent: 'Checkout  ➞',
   },
 
+  promptWindow: {
+    tag: 'div',
+    cssClasses: ['prompt__window', 'no-show'],
+    textContent: 'Would you like to remove all items from your cart?',
+  },
+
+  promptBtnWrapper: {
+    tag: 'div',
+    cssClasses: ['prompt__btn__wrapper'],
+  },
+
+  promptConfirmBtn: {
+    tag: 'button',
+    cssClasses: ['prompt__window__confirm-btn'],
+    type: 'button',
+    textContent: 'OK',
+  },
+
+  promptCancelBtn: {
+    tag: 'button',
+    cssClasses: ['prompt__window__cancel-btn'],
+    type: 'button',
+    textContent: 'Cancel',
+  },
+
+  popUpBack: {
+    tag: 'div',
+    cssClasses: ['cart__popup-back', 'no-show'],
+  },
+
   wrongPromocode: "This promocode doesn't exist. Please try again",
   noPromocode: 'Please enter a promocode',
   noImageAvailablePath: '../assets/img/no-image-available.png',
