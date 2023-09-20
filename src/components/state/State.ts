@@ -51,6 +51,10 @@ export default class State {
     this.catalogState.set('url', data);
   }
 
+  public iconsUpdateState(isRequire: boolean) {
+    this.catalogState.set('iconsUpdateRequire', isRequire);
+  }
+
   public resetCatalogPage(isRequire = false) {
     this.catalogState.set('resetRequire', isRequire);
   }

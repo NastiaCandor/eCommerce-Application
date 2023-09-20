@@ -13,6 +13,7 @@ import '../../../assets/img/pencil.svg';
 import '../../../assets/img/shopping-basket-empty.svg';
 import Router from '../../router/Router';
 import CartQiantity from '../../utils/CartQuantity';
+import PAGES from '../../router/utils/pages';
 
 export default class CartView extends View {
   private clientAPI: ClientAPI;
@@ -64,6 +65,7 @@ export default class CartView extends View {
           const itemsArr = await Promise.all(promises);
           const emptyCartData = await this.clientAPI.removeAllItemsFromCart(itemsArr);
           this.insertTotalCost(emptyCartData);
+          this.cartQuantity.updateCartQuantity();
           cartItemsWrapper.getChildren()[0].classList.remove('no-show');
           cartItemsWrapper.getChildren()[1].replaceChildren();
         }
@@ -286,7 +288,8 @@ export default class CartView extends View {
     emptyCartBtn.getElement().addEventListener('click', (e) => {
       e.preventDefault();
       if (e.target instanceof HTMLAnchorElement) {
-        this.router.navigate(e.target.href);
+        this.router.requestCatalogReset(true);
+        this.router.navigate(PAGES.CATALOG);
       }
     });
 

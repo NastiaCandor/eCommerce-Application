@@ -125,7 +125,6 @@ export default class Routes {
         },
       }))
       .forEach((route) => routes.push(route));
-    console.log(routes);
     return routes;
   }
 

@@ -109,6 +109,10 @@ export default class Router {
     this.state.resetCatalogPage(isRequire);
   }
 
+  public userIconsUpdateRequired(isRequire = false) {
+    this.state.iconsUpdateState(isRequire);
+  }
+
   private startInit(): void {
     window.addEventListener('DOMContentLoaded', () => {
       this.urlChangeHandler();

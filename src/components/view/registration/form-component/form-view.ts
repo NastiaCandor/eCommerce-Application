@@ -496,6 +496,7 @@ export default class FormView extends View {
       if (loginAPI.statusCode === 200) {
         // await this.clientAPI.obtainUserAccessToken(email, password);
         this.clientAPI.setCustomerIDCookie(loginAPI.body.customer.id);
+        this.router.userIconsUpdateRequired(true);
         this.router.navigate(PAGES.MAIN);
       } else if (loginAPI.statusCode === undefined) {
         this.showLoginErrorMessage();
