@@ -387,6 +387,7 @@ input::-webkit-inner-spin-button {
 @media screen and (width < $tablet) {
   .cart {
     flex-direction: column;
+    min-height: calc(100vh - 12rem);
   }
 
   .cart__wrapper {
