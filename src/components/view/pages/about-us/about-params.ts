@@ -95,11 +95,41 @@ const aboutParams = {
   rsTitle2: {
     tag: 'span',
     cssClasses: ['about-us__rs-wrapper_title'],
-    textContent: '  whom made our study and collobaration possible!',
+    textContent: '  whom made our study and collaboration possible!',
   },
   rsLogo: {
     tag: 'a',
     cssClasses: ['about-us__rs-wrapper_rslogo', 'footer__wrapper_logo'],
+  },
+  teamWorkWrapper: {
+    tag: 'div',
+    cssClasses: ['team-work__wrapper'],
+  },
+  teamWorkHeading: {
+    tag: 'h4',
+    cssClasses: ['team-work__heading'],
+    textContent: 'Team collaboration',
+  },
+  teamWorkText: {
+    tag: 'p',
+    cssClasses: ['team-work__text'],
+    textContent:
+      'We joined together as a team for developing a RSSChool study project based on Commercetools API and decided to create an online store of vinyl records. During this work we tried our best to meat school dealines altogether with fulfilling all necessary technical task requirements. To achieve these goals we used the following means:',
+  },
+  teamWorkListItem: {
+    tag: 'li',
+    cssClasses: ['team-work__list-item'],
+  },
+
+  teamWorkList: {
+    tag: 'ul',
+    cssClasses: ['team-work__list'],
+    listItemsArr: [
+      '- Creating a Discord server with separate channels for storing all project materials such as images, links etc, for all Github information, for everyday project discussions;',
+      '- Creating a Kanban board in Notion application for keeping all tasks information, assigning tasks to team members and tracking their сurrent development status;',
+      '- Setting up weekly meeting for discussing current project work status, resolving issues and planning our next steps;',
+      '- Maintaining communication with our mentor, consulting about better approaches for project architechure and ways of sustaining effective everyday work',
+    ],
   },
 };
 

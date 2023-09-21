@@ -16,6 +16,7 @@ export default class AboutView extends View {
   protected configure(): void {
     this.assambleHeading();
     this.assamblePersons();
+    this.assambleTeamWorkDiv();
     this.assambleSchoolInfo();
   }
 
@@ -74,6 +75,21 @@ export default class AboutView extends View {
       personsArr.push(personWrapper.getElement());
     });
     return personsArr;
+  }
+
+  private assambleTeamWorkDiv(): void {
+    const teamWork = new ElementCreator(aboutParams.teamWorkWrapper);
+    const teamWorkHeading = new ElementCreator(aboutParams.teamWorkHeading);
+    const teamWorkText = new ElementCreator(aboutParams.teamWorkText);
+    const teamWorkList = new ElementCreator(aboutParams.teamWorkList);
+    aboutParams.teamWorkList.listItemsArr.forEach((item) => {
+      const listItem = new ElementCreator(aboutParams.teamWorkListItem);
+      listItem.setTextContent(item);
+      teamWorkList.addInnerElement(listItem);
+    });
+    teamWork.addInnerElement([teamWorkHeading, teamWorkText, teamWorkList]);
+
+    this.addInnerElement(teamWork);
   }
 
   private assambleSchoolInfo(): void {

@@ -30,7 +30,6 @@
   }
 }
 
-
 .about-us__persons-wrapper {
   display: flex;
   padding-bottom: 2rem;
@@ -64,6 +63,7 @@
   min-height: 7rem;
   padding-bottom: 3rem;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   column-gap: 1rem;
@@ -95,13 +95,13 @@
 }
 .about-us__person_img {
   display: block;
-  width: 5rem;
-  height: 5rem;
-  border-radius: 50%;
+  width: 15rem;
+  height: 15rem;
   background-size: 100%;
   background-position: 0 0;
   background-repeat: no-repeat;
-
+  margin-bottom: 1rem;
+  
   &.dev0-img {
     background: url('../assets/img/dev0.png');
     background-size: 110%;
@@ -123,7 +123,6 @@
 }
 
 .about-us__person_name {
-
 }
 
 .about-us__person_role {
@@ -172,4 +171,36 @@
     width: 8rem;
     height: 4rem;
   }
+}
+
+.team-work__wrapper {
+  display: flex;
+  flex-direction: column;
+  padding: 3rem;
+  column-gap: 1rem;
+  font-weight: 500;
+  border-radius: 5px;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.189);
+  background-color: #fff;
+  margin: 2rem;
+}
+
+.team-work__heading {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.164);
+  margin: 2rem 0;
+  padding-bottom: 2rem;
+}
+
+.team-work__text {
+  max-width: 57rem;
+  margin-bottom: 3rem;
+}
+.team-work__list {
+  max-width: 57rem;
+  font-weight: normal;
+}
+.team-work__list-item {
+  margin-bottom: 1rem;
 }
