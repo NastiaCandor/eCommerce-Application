@@ -2,8 +2,6 @@ import View from '../../View';
 import ElementCreator from '../../../utils/ElementCreator';
 import navigationParams from './nav-params';
 
-// TODO: Burger menu deserves his own class :)
-
 export default class NavigationView extends View {
   private navCollection: Map<string, HTMLElement>;
 

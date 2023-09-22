@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/comma-dangle */
-/* eslint-disable comma-dangle */
-/* eslint-disable prefer-template */
-/* eslint-disable no-useless-escape */
 import { Cart, ClientResponse } from '@commercetools/platform-sdk';
 import Noty from 'noty';
 import ElementCreator from '../../utils/ElementCreator';
@@ -96,8 +92,8 @@ export default class CartView extends View {
             element.quantity,
             element.variant.availability?.availableQuantity as number,
             currPrice,
-            element.id
-          )
+            element.id,
+          ),
         );
       });
       this.insertTotalCost(data);
@@ -130,7 +126,7 @@ export default class CartView extends View {
     quantity: number,
     maxQuantity: number,
     price: string,
-    lineItemId: string
+    lineItemId: string,
   ): ElementCreator {
     const cartItem = new ElementCreator(cartParams.cartItem);
     const itemImage = new ElementCreator(cartParams.img);
@@ -246,7 +242,7 @@ export default class CartView extends View {
   private createPrompt(
     clearCartEl: ElementCreator,
     cartItemsWrapper: ElementCreator,
-    popUpBack: ElementCreator
+    popUpBack: ElementCreator,
   ): ElementCreator {
     const promptWindow = new ElementCreator(cartParams.promptWindow);
     const btnWrapper = new ElementCreator(cartParams.promptBtnWrapper);
@@ -278,8 +274,8 @@ export default class CartView extends View {
           cartItemsWrapper.getChildren()[1].replaceChildren();
           this.showNotyMessage(cartParams.clearCartMessage);
         }
-      } catch (e) {
-        console.log(e);
+      } catch (error) {
+        console.log(error);
       }
     });
     promptWindow.addInnerElement([btnWrapper]);

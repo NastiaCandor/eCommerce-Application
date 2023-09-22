@@ -59,7 +59,6 @@ export default class ProfilePostcodeView extends View {
   }
 
   public getValuePostcode(element: HTMLInputElement): string {
-    console.log(element.value);
     return element.value;
   }
 

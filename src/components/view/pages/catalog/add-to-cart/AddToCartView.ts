@@ -65,9 +65,7 @@ export default class AddToCartView extends View {
     const items = activeCart.body.lineItems;
     const productInfo = items.filter((item) => item.productId === this.productID);
     if (productInfo.length > 0) {
-      // const { quantity } = productInfo[0];
       this.lineItemID = productInfo[0].id;
-      // console.log('quant', quantity);
       super.getElement().removeChild(addToCartBtn.getElement());
       super.addInnerElement(removeFromCartBtn);
       this.spinner.removeSelfFromNode();
@@ -121,8 +119,6 @@ export default class AddToCartView extends View {
           this.spinner.removeSelfFromNode();
           this.displayButtons(wrapper, addBtn, removeBtn);
           this.showSideBarMessage(`${this.productName}${REMOVE_ITEM_TO_CART_TEXT}`, 'remove');
-
-          // test
           this.cartQuantity.updateCartQuantity(data);
         })
         .catch((error) => console.log(`Error while fetching removing product to the cart: ${error}`));
@@ -150,11 +146,4 @@ export default class AddToCartView extends View {
   }
 
   // TODO: plus minus and items generation
-  private injectCartButtons() {
-    const plusBtn = new ElementCreator(addToCartParams.plusItemBtn);
-    const minusBtn = new ElementCreator(addToCartParams.minusItemBtn);
-    const quantitySpan = new ElementCreator(addToCartParams.itemsInCart);
-
-    console.log(plusBtn, minusBtn, quantitySpan);
-  }
 }

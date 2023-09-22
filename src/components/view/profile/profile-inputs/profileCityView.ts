@@ -49,12 +49,6 @@ export default class ProfileCityView extends View {
 
   public validateCity(element: HTMLInputElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
-    // if (element.validity.valid) {
-    //   errorSpan.textContent = '';
-    //   errorSpan.classList.add(CityInputParams.errorSpan.cssClasses);
-    // } else {
-    //   this.showError(element, errorMessage);
-    // }
     element.addEventListener('input', () => {
       if (element.validity.valid) {
         errorSpan.textContent = '';

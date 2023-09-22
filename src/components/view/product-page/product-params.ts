@@ -5,7 +5,7 @@ type ProductParamsType = {
   innerWrapper: ElementParamsType;
   productDisplay: ElementParamsType;
   photoSide: ElementParamsType;
-  // Info side with ditails about producr
+  // Info side with details about product
   infoSide: ElementParamsType;
   productTitle: ElementParamsType;
   productSubtitle: ElementParamsType;

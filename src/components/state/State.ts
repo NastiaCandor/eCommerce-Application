@@ -9,12 +9,15 @@ export default class State {
 
   public deleteAccessToken(): void {
     document.cookie = `${ACCESS_TOKEN}${COOKIE_RESET_DATE}`;
+
     document.cookie = `${CUSTOMER_ID}${COOKIE_RESET_DATE}`;
   }
 
   public isAccessTokenValid(): boolean {
     const allCookies = document.cookie.split(';');
+
     const isAccessTokenExist = allCookies.some((token) => token.startsWith(`${ACCESS_TOKEN}=`));
+
     return isAccessTokenExist;
   }
 
@@ -26,28 +29,47 @@ export default class State {
     window.history.replaceState(null, '', url);
   }
 
-  public setPageTitle(str: string, isFormated = false, isSlashPrefexed = false): void {
+  public setPageTitle(
+    str: string,
+
+    isFormated = false,
+
+    isSlashPrefexed = false,
+  ): void {
     if (isFormated) {
-      document.title = `Vinyl Vibe Store - ${str.slice(0, 1).toUpperCase()}${str.slice(1)}`;
+      document.title = `Vinyl Vibe Store - ${str
+
+        .slice(0, 1)
+
+        .toUpperCase()}${str.slice(1)}`;
+
       return;
     }
+
     document.title = this.formatPageTitle(str, isSlashPrefexed);
   }
 
   public saveCatalogState(data: string) {
     const url = this.catalogState.get('url');
+
     const prevurl = this.catalogState.get('prevurl');
+
     if (url && url !== data) {
       this.catalogState.set('prevurl', <string>url);
     }
+
     if (prevurl && url && data === 'catalog') {
       this.catalogState.set('prevurl', url);
+
       this.catalogState.set('url', prevurl);
+
       return;
     }
+
     if (!prevurl) {
       this.catalogState.set('prevurl', 'catalog/categories');
     }
+
     this.catalogState.set('url', data);
   }
 
@@ -61,10 +83,20 @@ export default class State {
 
   public formatPageTitle(url: string, isSlashPrefexed = false): string {
     if (!url || url === '/') return 'Vinyl Vibe Store';
+
     if (isSlashPrefexed) {
-      return `Vinyl Vibe Store - ${url.slice(1, 2).toUpperCase()}${url.slice(2).replace('_', ' ')}`;
+      return `Vinyl Vibe Store - ${url.slice(1, 2).toUpperCase()}${url
+
+        .slice(2)
+
+        .replace('_', ' ')}`;
     }
-    return `Vinyl Vibe Store - ${url.slice(0, 1).toUpperCase()}${url.replace('-', ' ').slice(1)}`;
+
+    return `Vinyl Vibe Store - ${url.slice(0, 1).toUpperCase()}${url
+
+      .replace('-', ' ')
+
+      .slice(1)}`;
   }
 
   public get getCatalogState() {

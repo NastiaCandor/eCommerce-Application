@@ -1,8 +1,3 @@
-/* eslint-disable no-useless-escape */
-/* eslint-disable prefer-template */
-/* eslint-disable comma-dangle */
-/* eslint-disable @typescript-eslint/comma-dangle */
-/* eslint-disable no-param-reassign */
 import { postcodeValidator } from 'postcode-validator';
 import Noty from 'noty';
 import View from '../../View';
@@ -58,7 +53,7 @@ export default class BillAddressItemView extends View {
     country: string,
     postcode: string,
     currAdrs: string,
-    defaultStatus: string
+    defaultStatus: string,
   ) {
     this.setAttribute('default', defaultStatus);
     const addressInnerWrapper = new ElementCreator(AddressItemParams.addressInnerWrapper);
@@ -143,7 +138,7 @@ export default class BillAddressItemView extends View {
       const deleteAdrsAPI = await this.clientAPI.deleteCustomerAddress(
         this.getCustomerIDCookie() as string,
         this.currentVersion,
-        this.currentAdrsID
+        this.currentAdrsID,
       );
       if (deleteAdrsAPI.statusCode === 200) {
         this.showDeleteAdrsMessage();
@@ -160,7 +155,7 @@ export default class BillAddressItemView extends View {
       const deleteAdrsAPI = await this.clientAPI.setDefaultBillingAddress(
         this.getCustomerIDCookie() as string,
         this.currentVersion,
-        this.currentAdrsID
+        this.currentAdrsID,
       );
       if (deleteAdrsAPI.statusCode === 200) {
         this.showSetDefaultAdrsMessage();
@@ -232,7 +227,6 @@ export default class BillAddressItemView extends View {
     try {
       this.checkPostcodeFunc(postcode.value, country.value, errorSpan, postcode);
     } catch (error) {
-      // eslint-disable-next-line no-param-reassign
       errorSpan.textContent = 'Please choose a country';
     }
   }
@@ -241,7 +235,6 @@ export default class BillAddressItemView extends View {
     const country = this.countryInput.getChildren()[1] as HTMLSelectElement;
     const postcode = this.postcodeInput.getChildren()[1] as HTMLInputElement;
     const errorPostcode = this.postcodeInput.getChildren()[2] as HTMLElement;
-    // this.checkPostcode(postcode, country, errorPostcode);
     postcode.addEventListener('input', () => {
       this.checkPostcode(postcode, country, errorPostcode);
     });
@@ -282,7 +275,7 @@ export default class BillAddressItemView extends View {
           this.getInputsArr()[0] as HTMLInputElement,
           this.getInputsArr()[1] as HTMLInputElement,
           this.getInputsArr()[2] as HTMLSelectElement,
-          this.getInputsArr()[3] as HTMLInputElement
+          this.getInputsArr()[3] as HTMLInputElement,
         );
       }
       this.getElement().replaceChildren();
@@ -293,7 +286,7 @@ export default class BillAddressItemView extends View {
     streetInput: HTMLInputElement,
     cityInput: HTMLInputElement,
     countryInput: HTMLSelectElement,
-    postalCode: HTMLInputElement
+    postalCode: HTMLInputElement,
   ) {
     try {
       const sendCustomerAPI = await this.clientAPI.updateCustomerAddress(
@@ -303,19 +296,16 @@ export default class BillAddressItemView extends View {
         streetInput.value,
         cityInput.value,
         countryInput.value,
-        postalCode.value
+        postalCode.value,
       );
       if (sendCustomerAPI.statusCode === 200) {
-        console.log(sendCustomerAPI.body);
-        const status = this.getElement();
-        console.log(status);
         this.renderInnerWrapper(
           streetInput.value,
           cityInput.value,
           countryInput.value,
           postalCode.value,
           this.currentAdrsID,
-          this.getElement().getAttribute('default') as string
+          this.getElement().getAttribute('default') as string,
         );
         this.showUpdateMessage();
       }
@@ -371,7 +361,7 @@ export default class BillAddressItemView extends View {
 
   private getCookie(name: string) {
     const matches = document.cookie.match(
-      new RegExp('(?:^|; )' + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)')
+      new RegExp(`(?:^|; )${name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1')}=([^;]*)`),
     );
     return matches ? decodeURIComponent(matches[1]) : undefined;
   }

@@ -114,7 +114,7 @@ export default class ElementCreator {
   }
 }
 
-/* here's how params may look like
+/* Here's how params may look like
 pagination = {
   container: {
     tag: 'div',
@@ -137,7 +137,7 @@ pagination = {
   },
 };
 
-usage:
+Usage:
 
 const newElement = new ElementCreator(pagination.container);
 const paginationLeftArrow = new ElementCreator(pagination.paginationArrowLeft);
@@ -147,5 +147,5 @@ newElement.addInnerElement(paginationLeftElement);
 
 body.append(newElement.getElement());
 
-if something broked down due refactoring, contact me asap :)
+if something broked down due refactoring, contact me ASAP :)
 */

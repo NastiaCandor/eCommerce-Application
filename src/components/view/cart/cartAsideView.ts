@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/comma-dangle */
-/* eslint-disable comma-dangle */
-/* eslint-disable prefer-template */
-/* eslint-disable no-useless-escape */
 import Noty from 'noty';
 import ElementCreator from '../../utils/ElementCreator';
 import View from '../View';

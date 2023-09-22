@@ -1,8 +1,6 @@
-// import { cartSpanParams } from '../../types';
 import { Cart, ClientResponse } from '@commercetools/platform-sdk';
 import HeaderView from '../view/header/HeaderView';
 import ClientAPI from './Client';
-// import ElementCreator from './ElementCreator';
 
 export default class CartQiantity {
   private header: HeaderView;

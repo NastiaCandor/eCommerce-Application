@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/comma-dangle */
-/* eslint-disable comma-dangle */
 import { Attribute, Price, ProductDiscount, ProductProjection, TypedMoney, Image } from '@commercetools/platform-sdk';
 import { Splide } from '@splidejs/splide';
 import { wrapperParams } from '../../constants';
@@ -34,7 +32,7 @@ export default class ProductView extends View {
     breadCrumb: HTMLElement,
     cartQuan: CartQiantity,
     router: Router,
-    state: State
+    state: State,
   ) {
     super(productParams.section);
     this.router = router;

@@ -1,6 +1,3 @@
-/* eslint-disable comma-dangle */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/comma-dangle */
 import { postcodeValidator } from 'postcode-validator';
 import { Address } from '@commercetools/platform-sdk';
 import Noty from 'noty';
@@ -126,7 +123,7 @@ export default class FormView extends View {
       this.countryShipSelect,
       this.postcodeShipInput,
       this.checkboxSameAdrs,
-      this.checkboxDefaultShip
+      this.checkboxDefaultShip,
     );
     this.addInnerElement(shipAdrsWrapper);
     this.cityShipInput.getChildren()[1].setAttribute('id', CityInputParams.forId.ship);
@@ -141,13 +138,13 @@ export default class FormView extends View {
     this.checkboxSameAdrs.createInput(CheckboxInputParams.input.type, CheckboxInputParams.forId.sameAdrs);
     this.checkboxSameAdrs.createLabel(
       CheckboxInputParams.forId.sameAdrs,
-      CheckboxInputParams.labelTextContent.sameAdrs
+      CheckboxInputParams.labelTextContent.sameAdrs,
     );
 
     this.checkboxDefaultShip.createInput(CheckboxInputParams.input.type, CheckboxInputParams.forId.defaultShip);
     this.checkboxDefaultShip.createLabel(
       CheckboxInputParams.forId.defaultShip,
-      CheckboxInputParams.labelTextContent.defaultShip
+      CheckboxInputParams.labelTextContent.defaultShip,
     );
 
     const billAdrsWrapper = this.createAdrsWrapper(
@@ -158,7 +155,7 @@ export default class FormView extends View {
       this.countryBillSelect,
       this.postcodeBillInput,
       this.checkboxSameAdrs,
-      this.checkboxDefaultBill
+      this.checkboxDefaultBill,
     );
     this.addInnerElement(billAdrsWrapper);
 
@@ -174,7 +171,7 @@ export default class FormView extends View {
     this.checkboxDefaultBill.createInput(CheckboxInputParams.input.type, CheckboxInputParams.forId.defaultBill);
     this.checkboxDefaultBill.createLabel(
       CheckboxInputParams.forId.defaultBill,
-      CheckboxInputParams.labelTextContent.defaultBill
+      CheckboxInputParams.labelTextContent.defaultBill,
     );
 
     const submitBtn = this.createSubmitBtn();
@@ -189,7 +186,7 @@ export default class FormView extends View {
     country: CountryInputView,
     postcode: PostcodeInputView,
     checkboxSameAdrs: CheckboxView,
-    checkboxDefault: CheckboxView
+    checkboxDefault: CheckboxView,
   ): ElementCreator {
     const wrapper = new ElementCreator(params);
     wrapper.setCssClasses(formParams.addressDiv.cssClasses);
@@ -235,7 +232,6 @@ export default class FormView extends View {
     try {
       this.checkPostcodeFunc(postcode.value, country.value, errorSpan, postcode);
     } catch (error) {
-      // eslint-disable-next-line no-param-reassign
       errorSpan.textContent = 'Please choose a country';
     }
   }
@@ -275,7 +271,7 @@ export default class FormView extends View {
     inputForShip: HTMLInputElement | HTMLSelectElement,
     inputForBill: HTMLInputElement | HTMLSelectElement,
     billError: HTMLElement,
-    checkbox: HTMLInputElement
+    checkbox: HTMLInputElement,
   ) {
     const inputBill = inputForBill;
 
@@ -385,7 +381,7 @@ export default class FormView extends View {
     cityInput: HTMLInputElement,
     streetInput: HTMLInputElement,
     countrySelect: HTMLSelectElement,
-    postcodeInput: HTMLInputElement
+    postcodeInput: HTMLInputElement,
   ) {
     const shipAdrsObj: Address = {
       city: cityInput.value,
@@ -403,14 +399,14 @@ export default class FormView extends View {
         this.getInputsArr()[5] as HTMLInputElement,
         this.getInputsArr()[6] as HTMLInputElement,
         this.getInputsArr()[7] as HTMLSelectElement,
-        this.getInputsArr()[8] as HTMLInputElement
+        this.getInputsArr()[8] as HTMLInputElement,
       ),
       this.makeAdrsObj(
         this.getInputsArr()[9] as HTMLInputElement,
         this.getInputsArr()[10] as HTMLInputElement,
         this.getInputsArr()[11] as HTMLSelectElement,
-        this.getInputsArr()[12] as HTMLInputElement
-      )
+        this.getInputsArr()[12] as HTMLInputElement,
+      ),
     );
     return adrsArr;
   }
@@ -447,7 +443,7 @@ export default class FormView extends View {
         [0],
         [1],
         defaultShipAdrs,
-        defaultBillAdrs
+        defaultBillAdrs,
       );
       if (signUpAPI.statusCode === 201) {
         this.showRegMessage();
@@ -494,7 +490,6 @@ export default class FormView extends View {
     try {
       const loginAPI = await this.clientAPI.loginClient(email, password);
       if (loginAPI.statusCode === 200) {
-        // await this.clientAPI.obtainUserAccessToken(email, password);
         this.clientAPI.setCustomerIDCookie(loginAPI.body.customer.id);
         this.router.userIconsUpdateRequired(true);
         this.router.navigate(PAGES.MAIN);

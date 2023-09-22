@@ -3,12 +3,10 @@ import View from '../View';
 import UserIconsView from './user-icons-component/UserIconsView';
 import headerParams from './header-params';
 import NavigationView from './nav-component/NavView';
-import '../../../assets/img/icons8-cheburashka-48.svg';
 import Router from '../../router/Router';
 import { PagesInterface } from '../../../types';
 import navigationParams from './nav-component/nav-params';
 import PAGES from '../../router/utils/pages';
-// import CartQiantity from '../../utils/CartQuantity';
 
 export default class HeaderView extends View {
   private navigationView: NavigationView;
@@ -165,7 +163,6 @@ export default class HeaderView extends View {
     const updatedIcons = new UserIconsView();
     const collection = updatedIcons.getIconsCollection;
     this.linksCallbackHandler(collection);
-    console.log(collection);
     collection.forEach((value, key) => this.linksCollection.set(key, value));
     if (previousIcons instanceof HTMLElement) {
       this.wrapper.getElement().replaceChild(updatedIcons.getElement(), previousIcons);

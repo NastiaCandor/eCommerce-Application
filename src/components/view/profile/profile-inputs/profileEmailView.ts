@@ -91,7 +91,6 @@ export default class ProfileEmailInputView extends View {
         .then(async (data) => {
           if (data.statusCode === 200) {
             if (currentEmail === element.value) {
-              console.log('this is my current email');
               return;
             }
             if (data.body.results.length !== 0) {

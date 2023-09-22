@@ -1,5 +1,3 @@
-// import { ACCESS_TOKEN, COOKIE_RESET_DATE } from '../constants';
-/* eslint-disable @typescript-eslint/return-await */
 import PAGES from '../router/utils/pages';
 import Router from '../router/Router';
 import CartView from '../view/cart/CartView';
@@ -108,15 +106,7 @@ export default class App {
 
   private async loadMainPage() {
     if (this.state.getCatalogState.get('resetRequire') === true) {
-      console.log('fff');
-      await this.catalogView.assambleCards().then((element) => {
-        const wrapper = this.catalogView.getWrapper;
-        if (wrapper) {
-          this.catalogView.replaceCardsAndReturnElement(wrapper, element);
-          this.setContent(PAGES.CATALOG, this.catalogView.getElement());
-        }
-        this.state.resetCatalogPage(false);
-      });
+      await this.replaceCatalogContent();
     }
     this.setContent(PAGES.MAIN, this.mainView.getElement());
   }
@@ -149,30 +139,28 @@ export default class App {
 
   private async loadCatalogPage() {
     if (this.state.getCatalogState.get('resetRequire') === true) {
-      await this.catalogView.assambleCards().then((element) => {
-        const wrapper = this.catalogView.getWrapper;
-        if (wrapper) {
-          this.catalogView.replaceCardsAndReturnElement(wrapper, element);
-          this.setContent(PAGES.CATALOG, this.catalogView.getElement());
-        }
-        this.state.resetCatalogPage(false);
-      });
+      await this.replaceCatalogContent();
       return;
     }
     if (!this.isCatalogLeaved) {
-      await this.catalogView.assambleCards().then((element) => {
-        const wrapper = this.catalogView.getWrapper;
-        if (wrapper) {
-          this.catalogView.replaceCardsAndReturnElement(wrapper, element);
-          this.setContent(PAGES.CATALOG, this.catalogView.getElement());
-        }
-      });
+      await this.replaceCatalogContent();
     } else {
       const url = this.state.getCatalogState.get('prevurl');
       if (url && typeof url === 'string' && url?.split('/').length > 1) {
         this.router.navigate(url);
       }
     }
+  }
+
+  private async replaceCatalogContent() {
+    await this.catalogView.assambleCards().then((element) => {
+      const wrapper = this.catalogView.getWrapper;
+      if (wrapper) {
+        this.catalogView.replaceCardsAndReturnElement(wrapper, element);
+        this.setContent(PAGES.CATALOG, this.catalogView.getElement());
+      }
+      this.state.resetCatalogPage(false);
+    });
   }
 
   private async loadCategoriesPage() {
@@ -187,9 +175,8 @@ export default class App {
       return;
     }
 
-    // failed to implement spinner while loading, can't figure out where i gone wrong. TODO:
-    // work something out or leave that idea
-    // this.setContent(PAGES.PRODUCT, this.spinner.getElement());
+    this.setContent(PAGES.PRODUCT, this.spinner.getElement());
+
     let cardData;
 
     this.prefetchedData.productsUrl.ids.forEach((key, value) => {
@@ -202,8 +189,7 @@ export default class App {
         this.catalogView.breadCrumbView,
         this.cartQuantity,
         this.router,
-        // eslint-disable-next-line @typescript-eslint/comma-dangle, comma-dangle
-        this.state
+        this.state,
       ).getElement();
       this.setContent(PAGES.CATALOG, product);
     } else {
@@ -217,7 +203,6 @@ export default class App {
     this.header.updateIcons();
     this.state.resetCatalogPage(true);
     this.router.navigate(PAGES.MAIN);
-    // this.cartQuantity.updateCartSpan();
     this.resetForms();
   }
 

@@ -18,7 +18,6 @@ export default class PasswordInputView extends View {
   }
 
   public insertFieldsetItems(): void {
-    // eslint-disable-next-line max-len
     const label = this.createLabel(passwordInputParams.label.for, passwordInputParams.label.textContent);
     this.addInnerElement(label);
     const input = this.createInput(passwordInputParams.input.type, passwordInputParams.input.id);
@@ -74,7 +73,6 @@ export default class PasswordInputView extends View {
       errorSpan.textContent = 'Enter your password';
     }
     if (!this.checkPassword(password.value)) {
-      // eslint-disable-next-line operator-linebreak
       errorSpan.textContent =
         'Minimum 8 characters, at least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special symbol';
     }

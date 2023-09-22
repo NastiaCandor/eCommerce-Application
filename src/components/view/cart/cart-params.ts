@@ -96,7 +96,6 @@ const cartParams = {
   counterBtnMinus: {
     tag: 'button',
     cssClasses: ['cart-item__counter-btn', 'minus-btn'],
-    // textContent: '‐',
   },
 
   counterInput: {
@@ -108,7 +107,6 @@ const cartParams = {
   counterBtnPlus: {
     tag: 'button',
     cssClasses: ['cart-item__counter-btn', 'plus-btn'],
-    // textContent: '+',
   },
 
   buttonsWrapper: {
@@ -251,12 +249,6 @@ const cartParams = {
     cssClasses: ['empty-cart__heading'],
     textContent: 'Your cart is currently empty',
   },
-
-  // emptyCartText: {
-  //   tag: 'div',
-  //   cssClasses: ['empty-cart__text'],
-  //   textContent: 'Fill Your Cart, Fill Your Soul: Start building your vinyl collection today!',
-  // },
 
   emptyCartBtn: {
     tag: 'a',

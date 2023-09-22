@@ -1,7 +1,3 @@
-/* eslint-disable newline-per-chained-call */
-/* eslint-disable @typescript-eslint/dot-notation */
-/* eslint-disable comma-dangle */
-/* eslint-disable @typescript-eslint/comma-dangle */
 import {
   Address,
   ApiRoot,
@@ -44,7 +40,9 @@ export default class ClientAPI {
 
   constructor() {
     this.apiBuilder = createApiBuilderFromCtpClient(ctpClient);
-    this.apiRoot = this.apiBuilder.withProjectKey({ projectKey: 'ecommerce-quantum' });
+    this.apiRoot = this.apiBuilder.withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     this.prefetchedData = {
       genres: [],
       attributes: {
@@ -74,7 +72,9 @@ export default class ClientAPI {
   public resetDefaultClientAPI() {
     this.userLogged = UserState.Observer;
     this.apiBuilder = createApiBuilderFromCtpClient(ctpClient);
-    this.apiRoot = this.apiBuilder.withProjectKey({ projectKey: 'ecommerce-quantum' });
+    this.apiRoot = this.apiBuilder.withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     this.anonymousId = '';
     this.anonymousCartId = '';
     this.cartId = '';
@@ -161,15 +161,15 @@ export default class ClientAPI {
         },
       })
       .execute();
-    await cartInfo
-      .then(async (data) => {
-        const anonumousId = data.body.anonymousId;
-        if (anonumousId !== undefined) this.anonymousId = anonumousId;
-        const anonymousCartId = data.body.id;
-        if (anonymousCartId !== undefined) this.anonymousCartId = anonymousCartId;
+    await cartInfo.then(async (data) => {
+      const anonumousId = data.body.anonymousId;
+      if (anonumousId !== undefined) this.anonymousId = anonumousId;
+      const anonymousCartId = data.body.id;
+      if (anonymousCartId !== undefined) {
+        this.anonymousCartId = anonymousCartId;
         await this.getCartId();
-      })
-      .catch(console.log);
+      }
+    });
   }
 
   private async obtainAnonymusAccessToken() {
@@ -333,7 +333,9 @@ export default class ClientAPI {
   }
 
   public async getProductById(productID: string) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const getProduct = apiRoot.productProjections().withId({ ID: productID }).get().execute();
     return getProduct;
   }
@@ -345,7 +347,9 @@ export default class ClientAPI {
   }
 
   public async getSearchProduct(search: string, limitNum: number) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const getProduct = apiRoot
       .productProjections()
       .search()
@@ -361,7 +365,9 @@ export default class ClientAPI {
   }
 
   public async getDiscountById(discountID: string) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const getProduct = apiRoot.productDiscounts().withId({ ID: discountID }).get().execute();
     return getProduct;
   }
@@ -435,7 +441,9 @@ export default class ClientAPI {
   }
 
   public getCustomerByEmail(customerEmail: string) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const args = {
       queryArgs: {
         where: `email="${customerEmail}"`,
@@ -446,7 +454,9 @@ export default class ClientAPI {
   }
 
   public getCustomerByID(customerID: string) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const args = {
       ID: customerID,
     };
@@ -460,9 +470,11 @@ export default class ClientAPI {
     newEmail: string,
     newFirstName: string,
     newLastName: string,
-    newDateOfBirth: string
+    newDateOfBirth: string,
   ) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const args = {
       ID: customerID,
     };
@@ -498,9 +510,11 @@ export default class ClientAPI {
     newStreet: string,
     newCity: string,
     newCountry: string,
-    newPostcode: string
+    newPostcode: string,
   ) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const args = {
       ID: customerID,
     };
@@ -524,7 +538,9 @@ export default class ClientAPI {
   }
 
   public async addBillingAddressID(customerID: string, customerVersion: number, lastAddressID: string) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const args = {
       ID: customerID,
     };
@@ -542,7 +558,9 @@ export default class ClientAPI {
   }
 
   public async addShippingAddressID(customerID: string, customerVersion: number, lastAddressID: string) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const args = {
       ID: customerID,
     };
@@ -560,7 +578,9 @@ export default class ClientAPI {
   }
 
   public async setDefaultBillingAddress(customerID: string, customerVersion: number, addressID: string) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const args = {
       ID: customerID,
     };
@@ -578,7 +598,9 @@ export default class ClientAPI {
   }
 
   public async setDefaultShippingAddress(customerID: string, customerVersion: number, addressID: string) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const args = {
       ID: customerID,
     };
@@ -601,9 +623,11 @@ export default class ClientAPI {
     newStreet: string,
     newCity: string,
     newCountry: string,
-    newPostcode: string
+    newPostcode: string,
   ) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const args = {
       ID: customerID,
     };
@@ -626,7 +650,9 @@ export default class ClientAPI {
   }
 
   public async deleteCustomerAddress(customerID: string, customerVersion: number, adrsID: string) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const args = {
       ID: customerID,
     };
@@ -644,7 +670,9 @@ export default class ClientAPI {
   }
 
   public changePassword(customerID: string, customerVersion: number, currentPassword: string, newPassword: string) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const body: CustomerChangePassword = {
       id: customerID,
       version: customerVersion,
@@ -665,7 +693,7 @@ export default class ClientAPI {
     newShipAdrs: number[],
     newBillAdrs: number[],
     defaultShip: number | undefined,
-    defaultBill: number | undefined
+    defaultBill: number | undefined,
   ) {
     const body: CustomerDraft = {
       email: newEmail,
@@ -885,7 +913,9 @@ export default class ClientAPI {
           const { attributes } = attribute.masterVariant;
           if (attributes) {
             attributes.forEach((attr) => {
-              if (attr.name === 'condition') conditionsSet.add(attr.value.trim());
+              if (attr.name === 'condition') {
+                conditionsSet.add(attr.value.trim());
+              }
               if (attr.name === 'label') labelSet.add(attr.value.trim());
               if (attr.name === 'LP') LpsSet.add(attr.value.key.trim());
             });

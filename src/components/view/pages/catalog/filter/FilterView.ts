@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import * as noUiSlider from 'nouislider';
 import { PipsMode } from 'nouislider';
 import wnumb from 'wnumb';

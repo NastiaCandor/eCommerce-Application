@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/comma-dangle */
-/* eslint-disable comma-dangle */
 import {
   Attribute,
   Cart,
@@ -168,7 +166,7 @@ export default class CatalogView extends View {
             attributesArray,
             data.masterVariant.images,
             activeCart,
-            data.masterVariant.prices
+            data.masterVariant.prices,
           );
         }
       });
@@ -234,7 +232,7 @@ export default class CatalogView extends View {
     attrArr: Attribute[],
     imagesArr: ImageArr[],
     activeCart: ClientResponse<Cart>,
-    prices?: Price[]
+    prices?: Price[],
   ) {
     const productCard = new ElementCreator(catalogParams.card.wrapper);
     productCard.setAttribute('data-id', id);
@@ -262,7 +260,6 @@ export default class CatalogView extends View {
       const { id } = target.dataset;
       if (id) {
         const productLink = this.prefetchedData.productsUrl.ids.get(id);
-        // console.log(this.prefetchedData.productsUrl.ids);
         const path = `${PAGES.PRODUCT}/${productLink || ''}`;
         this.router.navigate(path, id);
         this.createBreadCrumbs();
@@ -279,7 +276,7 @@ export default class CatalogView extends View {
       if (data[0].url !== undefined) {
         image.setImageLink(data[0].url, name['en-US']);
       } else {
-        console.log('not Found!');
+        console.log('Image link not found');
       }
     }
     return image.getElement();

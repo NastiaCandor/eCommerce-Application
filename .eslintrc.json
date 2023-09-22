@@ -24,9 +24,11 @@
     "class-methods-use-this": 0,
     "@typescript-eslint/no-explicit-any": 2,
     "consistent-return": "off",
-    "comma-dangle": [2, "always-multiline"],
+    "no-useless-escape": "off",
+    "comma-dangle": [2, "only-multiline"],
     "operator-linebreak": "off",
     "prettier/prettier" : 2,
+    "no-param-reassign":"off",
     "max-len": [2, { "code": 120, "ignoreUrls": true, "ignoreStrings": true, "ignoreTemplateLiterals": true }],
     "linebreak-style": [2, "windows"],
     "object-curly-newline": 0
