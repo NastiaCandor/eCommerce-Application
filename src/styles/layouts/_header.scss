@@ -1,12 +1,17 @@
 header {
   background-color: $color-body-background;
   white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 150;
 }
 
 .header__wrapper {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  max-width: 120rem;
+  margin: 0 auto;
 }
 
 .header__wrapper_logo {
@@ -19,6 +24,6 @@ header {
   @extend %font-add-Oswald;
   @include font(2rem, 150%, 700);
   text-transform: uppercase;
-  padding-left: 4rem;
+  padding-left: 5rem;
 }
 

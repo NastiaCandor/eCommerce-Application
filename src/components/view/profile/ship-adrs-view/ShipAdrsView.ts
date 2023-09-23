@@ -1,9 +1,3 @@
-/* eslint-disable no-plusplus */
-/* eslint-disable no-param-reassign */
-/* eslint-disable comma-dangle */
-/* eslint-disable @typescript-eslint/comma-dangle */
-/* eslint-disable no-useless-escape */
-/* eslint-disable prefer-template */
 import { postcodeValidator } from 'postcode-validator';
 import Noty from 'noty';
 import { Address } from '@commercetools/platform-sdk';
@@ -32,14 +26,14 @@ export default class ProfileShipAdrsView extends View {
 
   private currentVersion: number;
 
-  constructor() {
+  constructor(clientAPI: ClientAPI) {
     super(ShipAdrsParams.addressWrapper);
     this.streetInput = new StreetInputView();
     this.cityInput = new CityInputView();
     this.countryInput = new CountryInputView();
     this.postcodeInput = new PostcodeInputView();
     this.render();
-    this.clientAPI = new ClientAPI();
+    this.clientAPI = clientAPI;
     this.currentVersion = 0;
   }
 
@@ -90,7 +84,7 @@ export default class ProfileShipAdrsView extends View {
       const cityName = adrs.city as string;
       const countryName = adrs.country as string;
       const postalCode = adrs.postalCode as string;
-      const adrsItem = new ShipAddressItemView();
+      const adrsItem = new ShipAddressItemView(this.clientAPI);
       adrsItem.renderInnerWrapper(streetName, cityName, countryName, postalCode, adrsID, defaultStatus);
       adrsItemsWrapper.addInnerElement(adrsItem);
     });
@@ -99,14 +93,6 @@ export default class ProfileShipAdrsView extends View {
 
   private createAdrsItemsWrapper() {
     const adrsItemsWrapper = new ElementCreator(ShipAdrsParams.addressItemsWrapper);
-    // const element = adrsItemsWrapper.getElement() as Element;
-    // element.addEventListener('click', (el: Event) => {
-    //   const { target } = el;
-    //   if ((target as HTMLElement).classList.contains('default-adrs__wrapper')) {
-    //     this.getElement().replaceChildren();
-    //     this.renderInnerWrapper();
-    //   }
-    // });
     return adrsItemsWrapper;
   }
 
@@ -160,7 +146,7 @@ export default class ProfileShipAdrsView extends View {
     streetInput: HTMLInputElement,
     cityInput: HTMLInputElement,
     countryInput: HTMLSelectElement,
-    postcodeInput: HTMLInputElement
+    postcodeInput: HTMLInputElement,
   ) {
     try {
       const addAddressAPI = await this.clientAPI.addAddress(
@@ -169,10 +155,9 @@ export default class ProfileShipAdrsView extends View {
         streetInput.value,
         cityInput.value,
         countryInput.value,
-        postcodeInput.value
+        postcodeInput.value,
       );
       if (addAddressAPI.statusCode === 200) {
-        console.log(addAddressAPI.body);
         this.showAddAdrsMessage();
         const lastAddressID = addAddressAPI.body.addresses.at(-1)?.id as string;
         this.addshippingAddressID(lastAddressID);
@@ -188,10 +173,9 @@ export default class ProfileShipAdrsView extends View {
       const addshippingAddressAPI = await this.clientAPI.addShippingAddressID(
         this.getCustomerIDCookie() as string,
         this.currentVersion,
-        lastAddressID
+        lastAddressID,
       );
       if (addshippingAddressAPI.statusCode === 200) {
-        console.log(addshippingAddressAPI.body);
         const adrsArr = this.getshippingAddresses();
         (await adrsArr).forEach((adrs) => {
           const adrsID = adrs.id as string;
@@ -199,7 +183,7 @@ export default class ProfileShipAdrsView extends View {
           const cityName = adrs.city as string;
           const countryName = adrs.country as string;
           const postalCode = adrs.postalCode as string;
-          const adrsItem = new ShipAddressItemView();
+          const adrsItem = new ShipAddressItemView(this.clientAPI);
           adrsItem.renderInnerWrapper(streetName, cityName, countryName, postalCode, adrsID, 'false');
           this.getElement().replaceChildren();
           this.renderInnerWrapper();
@@ -234,7 +218,6 @@ export default class ProfileShipAdrsView extends View {
     try {
       this.checkPostcodeFunc(postcode.value, country.value, errorSpan, postcode);
     } catch (error) {
-      // eslint-disable-next-line no-param-reassign
       errorSpan.textContent = 'Please choose a country';
     }
   }
@@ -278,7 +261,7 @@ export default class ProfileShipAdrsView extends View {
 
   private getCookie(name: string) {
     const matches = document.cookie.match(
-      new RegExp('(?:^|; )' + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)')
+      new RegExp(`(?:^|; )${name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1')}=([^;]*)`),
     );
     return matches ? decodeURIComponent(matches[1]) : undefined;
   }
@@ -302,7 +285,7 @@ export default class ProfileShipAdrsView extends View {
       this.addInnerElement(this.noAddressesText());
     }
     if (adrsIDs.length !== 0) {
-      for (let i = 0; i < adrsIDs.length; i++) {
+      for (let i = 0; i < adrsIDs.length; i += 1) {
         addresses.forEach((element) => {
           if (element.id === adrsIDs[i]) {
             result.push(element);
@@ -366,7 +349,7 @@ export default class ProfileShipAdrsView extends View {
           this.getInputsArr()[0] as HTMLInputElement,
           this.getInputsArr()[1] as HTMLInputElement,
           this.getInputsArr()[2] as HTMLSelectElement,
-          this.getInputsArr()[3] as HTMLInputElement
+          this.getInputsArr()[3] as HTMLInputElement,
         );
       }
     });
@@ -375,7 +358,6 @@ export default class ProfileShipAdrsView extends View {
   private createSaveBtn(): ElementCreator {
     const btn = new ElementCreator(ShipAdrsParams.buttonSave);
     btn.setAttribute('type', ShipAdrsParams.buttonSave.type);
-    btn.setTextContent(ShipAdrsParams.buttonSave.textContent);
     return btn;
   }
 }

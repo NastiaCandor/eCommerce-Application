@@ -1,19 +1,23 @@
 .catalog__wrapper {
-  display: grid;
-  grid-template-areas: 'search bc bc'
-                        'catalog-aside cards cards';
-  grid-template-columns: 1fr 4fr auto;
-  padding: 2rem 0;
+  display: flex;
+  justify-content: center;
+  max-width: 120rem;
+  margin: 0 auto;
+  grid-template-areas: 'catalog-aside cards'
+                        'catalog-aside cards'
+                        'footer footer';
+  grid-template-columns: 30rem  fit-content(90rem);
   position: relative;
 }
 
 @media screen and (max-width: $tablet) {
- .catalog__wrapper {
-  display: flex;
-  flex-direction: column;
+  .catalog__wrapper {
+    display: flex;
+    flex-direction: column;
   .catalog__bc-nav {
     order: -1;
+    }
   }
- }
 }
+
 

@@ -60,7 +60,6 @@ export default class PostcodeInputView extends View {
   }
 
   public getValuePostcode(element: HTMLInputElement): string {
-    console.log(element.value);
     return element.value;
   }
 

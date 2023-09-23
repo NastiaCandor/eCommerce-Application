@@ -1,9 +1,3 @@
-/* eslint-disable no-plusplus */
-/* eslint-disable no-param-reassign */
-/* eslint-disable comma-dangle */
-/* eslint-disable @typescript-eslint/comma-dangle */
-/* eslint-disable no-useless-escape */
-/* eslint-disable prefer-template */
 import { postcodeValidator } from 'postcode-validator';
 import Noty from 'noty';
 import { Address } from '@commercetools/platform-sdk';
@@ -32,14 +26,14 @@ export default class ProfileBillAdrsView extends View {
 
   private currentVersion: number;
 
-  constructor() {
+  constructor(clientAPI: ClientAPI) {
     super(BillAdrsParams.addressWrapper);
+    this.clientAPI = clientAPI;
     this.streetInput = new StreetInputView();
     this.cityInput = new CityInputView();
     this.countryInput = new CountryInputView();
     this.postcodeInput = new PostcodeInputView();
     this.render();
-    this.clientAPI = new ClientAPI();
     this.currentVersion = 0;
   }
 
@@ -90,7 +84,7 @@ export default class ProfileBillAdrsView extends View {
       const cityName = adrs.city as string;
       const countryName = adrs.country as string;
       const postalCode = adrs.postalCode as string;
-      const adrsItem = new BillAddressItemView();
+      const adrsItem = new BillAddressItemView(this.clientAPI);
       adrsItem.renderInnerWrapper(streetName, cityName, countryName, postalCode, adrsID, defaultStatus);
       adrsItemsWrapper.addInnerElement(adrsItem);
     });
@@ -99,14 +93,6 @@ export default class ProfileBillAdrsView extends View {
 
   private createAdrsItemsWrapper() {
     const adrsItemsWrapper = new ElementCreator(BillAdrsParams.addressItemsWrapper);
-    // const element = adrsItemsWrapper.getElement() as Element;
-    // element.addEventListener('click', (el: Event) => {
-    //   const { target } = el;
-    //   if ((target as HTMLElement).classList.contains('default-adrs__wrapper')) {
-    //     this.getElement().replaceChildren();
-    //     this.renderInnerWrapper();
-    //   }
-    // });
     return adrsItemsWrapper;
   }
 
@@ -160,7 +146,7 @@ export default class ProfileBillAdrsView extends View {
     streetInput: HTMLInputElement,
     cityInput: HTMLInputElement,
     countryInput: HTMLSelectElement,
-    postcodeInput: HTMLInputElement
+    postcodeInput: HTMLInputElement,
   ) {
     try {
       const addAddressAPI = await this.clientAPI.addAddress(
@@ -169,7 +155,7 @@ export default class ProfileBillAdrsView extends View {
         streetInput.value,
         cityInput.value,
         countryInput.value,
-        postcodeInput.value
+        postcodeInput.value,
       );
       if (addAddressAPI.statusCode === 200) {
         console.log(addAddressAPI.body);
@@ -188,10 +174,9 @@ export default class ProfileBillAdrsView extends View {
       const addBillingAddressAPI = await this.clientAPI.addBillingAddressID(
         this.getCustomerIDCookie() as string,
         this.currentVersion,
-        lastAddressID
+        lastAddressID,
       );
       if (addBillingAddressAPI.statusCode === 200) {
-        console.log(addBillingAddressAPI.body);
         const adrsArr = this.getBillingAddresses();
         (await adrsArr).forEach((adrs) => {
           const adrsID = adrs.id as string;
@@ -199,7 +184,7 @@ export default class ProfileBillAdrsView extends View {
           const cityName = adrs.city as string;
           const countryName = adrs.country as string;
           const postalCode = adrs.postalCode as string;
-          const adrsItem = new BillAddressItemView();
+          const adrsItem = new BillAddressItemView(this.clientAPI);
           adrsItem.renderInnerWrapper(streetName, cityName, countryName, postalCode, adrsID, 'false');
           this.getElement().replaceChildren();
           this.renderInnerWrapper();
@@ -234,7 +219,6 @@ export default class ProfileBillAdrsView extends View {
     try {
       this.checkPostcodeFunc(postcode.value, country.value, errorSpan, postcode);
     } catch (error) {
-      // eslint-disable-next-line no-param-reassign
       errorSpan.textContent = 'Please choose a country';
     }
   }
@@ -278,7 +262,7 @@ export default class ProfileBillAdrsView extends View {
 
   private getCookie(name: string) {
     const matches = document.cookie.match(
-      new RegExp('(?:^|; )' + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)')
+      new RegExp(`(?:^|; )${name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1')}=([^;]*)`),
     );
     return matches ? decodeURIComponent(matches[1]) : undefined;
   }
@@ -302,7 +286,7 @@ export default class ProfileBillAdrsView extends View {
       this.addInnerElement(this.noAddressesText());
     }
     if (adrsIDs.length !== 0) {
-      for (let i = 0; i < adrsIDs.length; i++) {
+      for (let i = 0; i < adrsIDs.length; i += 1) {
         addresses.forEach((element) => {
           if (element.id === adrsIDs[i]) {
             result.push(element);
@@ -366,7 +350,7 @@ export default class ProfileBillAdrsView extends View {
           this.getInputsArr()[0] as HTMLInputElement,
           this.getInputsArr()[1] as HTMLInputElement,
           this.getInputsArr()[2] as HTMLSelectElement,
-          this.getInputsArr()[3] as HTMLInputElement
+          this.getInputsArr()[3] as HTMLInputElement,
         );
       }
     });
@@ -375,7 +359,6 @@ export default class ProfileBillAdrsView extends View {
   private createSaveBtn(): ElementCreator {
     const btn = new ElementCreator(BillAdrsParams.buttonSave);
     btn.setAttribute('type', BillAdrsParams.buttonSave.type);
-    btn.setTextContent(BillAdrsParams.buttonSave.textContent);
     return btn;
   }
 }

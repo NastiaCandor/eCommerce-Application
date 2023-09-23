@@ -1,9 +1,8 @@
 .profile {
   display: flex;
-  flex-direction: row;
+  min-height: 90vh;
   background-color: white;
   box-shadow: -1px -1px 0px 0px #e6e2a0;
-  min-height: 95vh;
 }
 
 .profile__wrapper {
@@ -49,7 +48,7 @@
 }
 
 .profile-section__wrapper {
-  border: 1px solid #f0f0f0;
+  border: 1px solid $color-borders-lightgrey;
   border-radius: 7px;
   padding: 2rem;
 }
@@ -72,7 +71,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #cacaca;
+  border-bottom: 1px solid $color-borders-grey;
   padding-bottom: 2rem;
 }
 
@@ -89,13 +88,13 @@
 
 .edit-profile__btn:hover,
 .delete-profile__btn:hover {
-  background-color: #f0f0f0;
+  background-color: $color-borders-lightgrey;
 }
 
 .edit-profile__btn:disabled,
 .delete-profile__btn:disabled {
   color: #8a8989;
-  background-color: #f0f0f0;
+  background-color: $color-borders-lightgrey;
   cursor: not-allowed;
 }
 
@@ -121,7 +120,7 @@
 }
 
 .save-profile__btn:disabled {
-  background-color: #cacaca;
+  background-color: $color-borders-grey;
   cursor: not-allowed;
 }
 
@@ -146,12 +145,11 @@
 .address-item__wrapper {
   padding: 1rem;
   margin-top: 1rem;
-  border: 1px solid #cacaca;
+  border: 1px solid $color-borders-grey;
   border-radius: $border-radius3;
 }
 
 .address-item__inner-wrapper {
-  // height: 3rem;
   display: flex;
   justify-content: space-between;
 }
@@ -191,7 +189,7 @@
 }
 
 .default-adrs__wrapper:hover {
-  background-color: #f0f0f0;
+  background-color: $color-borders-lightgrey;
 }
 
 .default-adrs__wrapper:disabled {
@@ -211,7 +209,7 @@
 
 .add-adrs__btn {
   background-color: transparent;
-  border: 1px solid #cacaca;
+  border: 1px solid $color-borders-grey;
   border-radius: $border-radius3;
   width: 100%;
   margin: 1.5rem auto;
@@ -223,7 +221,7 @@
 }
 
 .add-adrs__btn:hover {
-  background-color: #f0f0f0;
+  background-color: $color-borders-lightgrey;
 }
 .add-adrs__location__img {
   width: 5rem;
@@ -328,7 +326,7 @@
   .add-adrs-form {
     max-width: 90%;
     width: 90%;
-     top: 0;
+    top: 0;
     left: 5%;
     margin-left: 0;
   }

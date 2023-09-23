@@ -30,8 +30,6 @@ export default class ProfileDateView extends View {
       input.setAttribute('type', 'date');
       input.setAttribute('max', this.getDate13yo());
       input.removeAttribute('readonly');
-    } else {
-      // false for not mobile device
     }
 
     this.addInnerElement(input);

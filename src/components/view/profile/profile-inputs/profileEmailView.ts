@@ -8,9 +8,9 @@ import ClientAPI from '../../../utils/Client';
 export default class ProfileEmailInputView extends View {
   clientAPI: ClientAPI;
 
-  constructor() {
+  constructor(clientAPI: ClientAPI) {
     super(fieldsetParams.fieldset);
-    this.clientAPI = new ClientAPI();
+    this.clientAPI = clientAPI;
     this.render();
   }
 
@@ -91,7 +91,6 @@ export default class ProfileEmailInputView extends View {
         .then(async (data) => {
           if (data.statusCode === 200) {
             if (currentEmail === element.value) {
-              console.log('this is my current email');
               return;
             }
             if (data.body.results.length !== 0) {

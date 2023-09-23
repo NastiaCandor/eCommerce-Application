@@ -1,8 +1,3 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable comma-dangle */
-/* eslint-disable @typescript-eslint/comma-dangle */
-/* eslint-disable no-useless-escape */
-/* eslint-disable prefer-template */
 import Noty from 'noty';
 import View from '../../View';
 import ProfileEmailInputView from '../profile-inputs/profileEmailView';
@@ -27,14 +22,14 @@ export default class BasicInfoView extends View {
 
   private currentVersion: number;
 
-  constructor() {
+  constructor(clientAPI: ClientAPI) {
     super(BasicInfoParams.form);
-    this.emailInput = new ProfileEmailInputView();
+    this.clientAPI = clientAPI;
+    this.emailInput = new ProfileEmailInputView(this.clientAPI);
     this.firstNameInput = new ProfileFNameView();
     this.lastNameInput = new ProfileLNameView();
     this.dateInput = new ProfileDateView();
     this.render();
-    this.clientAPI = new ClientAPI();
     this.currentVersion = 0;
   }
 
@@ -89,7 +84,7 @@ export default class BasicInfoView extends View {
     emailInput: HTMLInputElement,
     fNameInput: HTMLInputElement,
     lNameInput: HTMLInputElement,
-    dateInput: HTMLInputElement
+    dateInput: HTMLInputElement,
   ) {
     try {
       const sendCustomerAPI = await this.clientAPI.updateCustomerBasicInfo(
@@ -98,10 +93,9 @@ export default class BasicInfoView extends View {
         emailInput.value,
         fNameInput.value,
         lNameInput.value,
-        dateInput.value
+        dateInput.value,
       );
       if (sendCustomerAPI.statusCode === 200) {
-        console.log(sendCustomerAPI.body);
         this.showUpdateMessage(BasicInfoParams.updateSuccessMessage);
       }
     } catch (error) {
@@ -188,7 +182,7 @@ export default class BasicInfoView extends View {
 
   private getCookie(name: string) {
     const matches = document.cookie.match(
-      new RegExp('(?:^|; )' + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)')
+      new RegExp(`(?:^|; )${name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1')}=([^;]*)`),
     );
     return matches ? decodeURIComponent(matches[1]) : undefined;
   }
@@ -239,7 +233,7 @@ export default class BasicInfoView extends View {
           this.getInputsArr()[0],
           this.getInputsArr()[1],
           this.getInputsArr()[2],
-          this.getInputsArr()[3]
+          this.getInputsArr()[3],
         );
       }
     });
@@ -249,7 +243,6 @@ export default class BasicInfoView extends View {
     const btn = new ElementCreator(BasicInfoParams.buttonSave);
     btn.setAttribute('type', BasicInfoParams.buttonSave.type);
     btn.setAttribute('disabled', 'true');
-    btn.setTextContent(BasicInfoParams.buttonSave.textContent);
     return btn;
   }
 }

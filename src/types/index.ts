@@ -40,7 +40,7 @@ export type NotFoundType = {
   title: ElementParamsType;
   subtitle: ElementParamsType;
   errorNumber: ElementParamsType;
-  backToMainBtn: ElementParamsType;
+  backToCatalogBtn: ElementParamsType;
 };
 
 // PAGE INTERFACES
@@ -59,11 +59,11 @@ export type PagesInterface = {
   PRODUCTS: string;
 
   FILTER: string;
+  SEARCH: string;
 
   MAIN: string;
   CATALOG: string;
-  SHIPPING: string;
-  CONTACTS: string;
+  ABOUT_US: string;
 
   CATEGORY: string;
   CATEGORIES: string;
@@ -117,13 +117,11 @@ export interface PrefetchedAttributes<T> {
   lp: T[];
 }
 
+// ENDPOINTS
+
 export type EndPointsObject = {
   filter: string[];
   sort: string[];
-};
-
-export type ImageArr = {
-  url?: string;
 };
 
 export interface QueryObject extends PrefetchedAttributes<string> {
@@ -131,19 +129,66 @@ export interface QueryObject extends PrefetchedAttributes<string> {
   sort: string[];
 }
 
+// IMAGE ARRAY TYPE
+
+export type ImageArr = {
+  url?: string;
+};
+
+// CALLBACK TYPES FOR ROUTING
+
 export type RouteCallbacks = {
   loadLoginPage: () => void;
   loadCartPage: () => void;
-  loadContactsPage: () => void;
+  loadAboutPage: () => void;
   loadSignupPage: () => void;
   loadProfilePage: () => void;
   loadMainPage: () => void;
-  loadShippingPage: () => void;
   loadNotFoundPage: () => void;
   loadCatalogPage: () => void;
   loadFilterPage: () => void;
   loadCategoriesPage: () => void;
+  loadSearchPage: () => void;
   logoutUser: () => void;
   loadProductPage: (id: string) => void;
   mountCategory: (id: string) => void;
+};
+
+// CATALOG STATE TYPE
+
+export type CatalogState = {
+  url: string;
+  nav: HTMLElement;
+};
+
+export type FiltersScroll = {
+  [key: string]: number;
+  condition: number;
+  label: number;
+  lp: number;
+};
+// CART QUANTITY
+export const cartSpanParams = {
+  span: {
+    tag: 'span',
+    cssClasses: ['cart-quant__span'],
+  },
+};
+
+// DEVELOPERS Data
+
+export type DevelopersData = {
+  [key: string]: DeveloperInfo;
+  dev0: DeveloperInfo;
+  dev1: DeveloperInfo;
+  dev2: DeveloperInfo;
+};
+
+export type DeveloperInfo = {
+  [key: string]: string | string[];
+  name: string;
+  role: string;
+  contributions: string[];
+  bio: string;
+  link: string;
 };

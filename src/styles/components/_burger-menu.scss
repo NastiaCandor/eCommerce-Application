@@ -1,19 +1,19 @@
 .header__menu {
   position: absolute;
   padding: 2em;
-  justify-content: space-around;
+  justify-content: flex-start;
   align-items: center;
   display: flex;
   flex-direction: column;
   background-color: $color-burger-background;
   max-width: 50%;
-  height: 100%;
+  height: 100vh;
   top: 0;
   right: 0;
-
   z-index: 50;
   opacity: 1;
   transition: all 0.3s ease-in-out;
+  box-shadow: 6px 1px 13px 2px rgba(0, 0, 0, 0.3);
 
   .header__wrapper_logo {
     padding: 0;
@@ -41,13 +41,15 @@
     align-items: center;
     width: 100%;
     height: 50%;
+    gap: 5rem;
+    padding-top: 6rem;
 
-    margin: 0;
     .nav_item {
       font-size: 2rem;
     }
     
     @media screen and (max-width: $tablet) {
+      justify-content: space-between;
       display: flex;
     }
 
@@ -59,6 +61,8 @@
 }
 
 .header__menu.hidden {
+  pointer-events: none;
+  display: flex;
   opacity: 0;
   top: -100%;
 }
@@ -78,6 +82,8 @@
     width: 1.8em;
     margin-bottom: 0.5em;
     background-color: $color-burger-span;
+    
+    pointer-events: none;
 
     transition: all 0.3s ease-in-out;
   }

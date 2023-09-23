@@ -1,4 +1,3 @@
-import flatpickr from 'flatpickr';
 import ElementCreator from '../../../../../utils/ElementCreator';
 import View from '../../../../View';
 import fieldsetParams from '../input-params';
@@ -22,17 +21,9 @@ export default class DateInputView extends View {
     const label = this.createLabel(DateInputParams.label.for, DateInputParams.label.textContent);
     this.addInnerElement(label);
     const input = this.createInput(DateInputParams.input.type, DateInputParams.input.id);
-    flatpickr(input, {
-      maxDate: this.getDate13yo(),
-      dateFormat: 'Y-m-d',
-    });
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-      input.setAttribute('type', 'date');
-      input.setAttribute('max', this.getDate13yo());
-      input.removeAttribute('readonly');
-    } else {
-      // false for not mobile device
-    }
+    input.setAttribute('type', 'date');
+    input.setAttribute('max', this.getDate13yo());
+    input.removeAttribute('readonly');
 
     this.addInnerElement(input);
     const errorSpan = this.createErrorText();
@@ -86,7 +77,6 @@ export default class DateInputView extends View {
   private validateDate(element: HTMLInputElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
     element.addEventListener('input', () => {
-      console.log(element.value);
       const checkRes = this.checkDate(element.value);
       if (element.validity.valid || checkRes) {
         errorSpan.textContent = '';

@@ -13,14 +13,13 @@ export default class SearchView extends View {
 
   public render() {
     this.configure();
-    return this.getElement();
   }
 
-  protected async configure() {
-    await this.renderWrapper();
+  protected configure() {
+    this.renderWrapper();
   }
 
-  private async renderWrapper(): Promise<void> {
+  private renderWrapper(): void {
     const wrapper = new ElementCreator(searchParams.searchBlock);
     this.injectSearchComponents(wrapper);
     this.addInnerElement(wrapper);

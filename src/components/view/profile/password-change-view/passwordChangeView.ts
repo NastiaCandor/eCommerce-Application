@@ -1,8 +1,3 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable comma-dangle */
-/* eslint-disable @typescript-eslint/comma-dangle */
-/* eslint-disable no-useless-escape */
-/* eslint-disable prefer-template */
 import Noty from 'noty';
 import View from '../../View';
 import ClientAPI from '../../../utils/Client';
@@ -11,7 +6,6 @@ import CurrentProfilePasswordView from '../profile-inputs/passwords-inputs/currP
 import NewProfilePasswordView from '../profile-inputs/passwords-inputs/newProfilePasswordView';
 import ConfirmProfilePasswordView from '../profile-inputs/passwords-inputs/confirmProfilePasswordView';
 import ElementCreator from '../../../utils/ElementCreator';
-// import { ACCESS_TOKEN, COOKIE_RESET_DATE } from '../../../constants';
 import '../../../../assets/img/pencil.svg';
 
 export default class ProfilePasswordFormView extends View {
@@ -25,13 +19,13 @@ export default class ProfilePasswordFormView extends View {
 
   private currentVersion: number;
 
-  constructor() {
+  constructor(clientAPI: ClientAPI) {
     super(PasswordChangeParams.form);
     this.currPasswordInput = new CurrentProfilePasswordView();
     this.newPasswordInput = new NewProfilePasswordView();
     this.confirmPasswordInput = new ConfirmProfilePasswordView();
     this.render();
-    this.clientAPI = new ClientAPI();
+    this.clientAPI = clientAPI;
     this.currentVersion = 0;
   }
 
@@ -82,17 +76,12 @@ export default class ProfilePasswordFormView extends View {
       this.getCustomerIDCookie() as string,
       this.currentVersion,
       currPassword.value,
-      newPassword.value
+      newPassword.value,
     );
     changePasswordAPI()
       .then(async (data) => {
         if (data.statusCode === 200) {
-          console.log(data.body);
           this.showUpdateMessage(PasswordChangeParams.updateSuccessMessage);
-          // document.cookie = `${ACCESS_TOKEN}${COOKIE_RESET_DATE}`;
-          // await this.clientAPI.obtainUserAccessToken(data.body.email, newPassword.value);
-          // wanted to set new token, but it trigerrs a bug - after receiving a new token,
-          // when you go to any other page, you end up unauthorised
         } else if (data.statusCode === 400) {
           this.showUpdateErrorMessage(PasswordChangeParams.wrongCurrPasswordErrorMessage);
         }
@@ -133,7 +122,7 @@ export default class ProfilePasswordFormView extends View {
 
   private getCookie(name: string) {
     const matches = document.cookie.match(
-      new RegExp('(?:^|; )' + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)')
+      new RegExp(`(?:^|; )${name.replace(/([.$?*|{}()[\]\\/+^])/g, '\\$1')}=([^;]*)`),
     );
     return matches ? decodeURIComponent(matches[1]) : undefined;
   }
@@ -188,7 +177,6 @@ export default class ProfilePasswordFormView extends View {
   private createSaveBtn(): ElementCreator {
     const btn = new ElementCreator(PasswordChangeParams.buttonSave);
     btn.setAttribute('type', PasswordChangeParams.buttonSave.type);
-    btn.setTextContent(PasswordChangeParams.buttonSave.textContent);
     return btn;
   }
 }

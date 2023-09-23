@@ -8,19 +8,39 @@ import productParams from './product-params';
 import sliderParams from './slider-params';
 import Modal from '../../utils/Modal';
 import PAGES from '../../router/utils/pages';
+import AddToCartView from '../pages/catalog/add-to-cart/AddToCartView';
+import Router from '../../router/Router';
+import CartQiantity from '../../utils/CartQuantity';
+import State from '../../state/State';
 
 export default class ProductView extends View {
   private clientAPI: ClientAPI;
 
-  private productKey: string;
+  private productID: string;
 
   private breadCrumb: HTMLElement;
 
-  constructor(clientAPI: ClientAPI, productKey: string, breadCrumb: HTMLElement) {
+  private router: Router;
+
+  private cartQuantity: CartQiantity;
+
+  private state: State;
+
+  constructor(
+    clientAPI: ClientAPI,
+    productKey: string,
+    breadCrumb: HTMLElement,
+    cartQuan: CartQiantity,
+    router: Router,
+    state: State,
+  ) {
     super(productParams.section);
-    this.productKey = productKey;
+    this.router = router;
+    this.state = state;
+    this.productID = productKey;
     this.breadCrumb = breadCrumb;
     this.clientAPI = clientAPI;
+    this.cartQuantity = cartQuan;
     this.render();
   }
 
@@ -47,14 +67,19 @@ export default class ProductView extends View {
   private injectBackToCatalog(wrapper: ElementCreator): void {
     const btn = new ElementCreator(productParams.toCatalogBtn);
     btn.getElement().addEventListener('click', () => {
-      window.history.back();
+      const url = this.state.getCatalogState.get('prevurl');
+      if (typeof url === 'string') {
+        this.router.navigate(url);
+      } else {
+        this.router.navigate(PAGES.CATALOG);
+      }
     });
     wrapper.addInnerElement(btn);
   }
 
   private injectProductSection(wrapper: ElementCreator): void {
     const productDisplay = new ElementCreator(productParams.productDisplay);
-    const getProduct = this.clientAPI.getProductById(this.productKey);
+    const getProduct = this.clientAPI.getProductById(this.productID);
     getProduct
       .then((data) => {
         const { body } = data;
@@ -216,16 +241,13 @@ export default class ProductView extends View {
       const { prices } = masterVariant;
       if (prices) this.priceDisplay(productSide, prices);
     }
-    const addCartBtn = new ElementCreator(productParams.addToCartBtn);
     if ('availability' in masterVariant) {
       const { availability } = masterVariant;
       if (availability !== undefined && availability.availableQuantity) {
         this.injectAviabilityInfo(productSide, availability.availableQuantity);
       }
-    } else {
-      addCartBtn.setAttribute('disabled', 'true');
     }
-    productSide.addInnerElement(addCartBtn);
+    this.addToCartFunctionality(productSide, body);
 
     wrapper.addInnerElement(productSide);
   }
@@ -360,5 +382,11 @@ export default class ProductView extends View {
     const text = new ElementCreator(productParams.errorText);
     error.addInnerElement([title, text]);
     wrapper.addInnerElement(error);
+  }
+
+  private addToCartFunctionality(wrapper: ElementCreator, body: ProductProjection): void {
+    const addToCartBtn = new AddToCartView(this.clientAPI, this.productID, this.cartQuantity);
+    addToCartBtn.render(body);
+    wrapper.addInnerElement(addToCartBtn);
   }
 }

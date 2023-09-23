@@ -26,7 +26,6 @@ export default class ProfileCountryView extends View {
     const errorSpan = this.createErrorText();
     this.addInnerElement(errorSpan);
     this.validateCountry(input, errorSpan);
-    // this.showError(input, errorSpan);
   }
 
   public createInput(): HTMLSelectElement {
@@ -64,12 +63,6 @@ export default class ProfileCountryView extends View {
   public validateCountry(element: HTMLSelectElement, errorMessage: HTMLElement) {
     const errorSpan = errorMessage;
     this.getValue(element);
-    // if (element.validity.valid) {
-    //   errorSpan.textContent = '';
-    //   errorSpan.classList.add(CountryInputParams.errorSpan.cssClasses);
-    // } else {
-    //   this.showError(element, errorMessage);
-    // }
     element.addEventListener('change', () => {
       this.getValue(element);
       if (element.validity.valid) {

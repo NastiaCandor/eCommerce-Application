@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/dot-notation */
-/* eslint-disable comma-dangle */
-/* eslint-disable @typescript-eslint/comma-dangle */
 import {
   Address,
   ApiRoot,
@@ -8,26 +5,44 @@ import {
   CustomerDraft,
   CustomerSignin,
   CustomerUpdate,
+  MyCartUpdate,
   createApiBuilderFromCtpClient,
-  // CategoryPagedQueryResponse,
+  MyCartUpdateAction,
 } from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
-import { ctpClient, ID, SECRET } from './BuildClient';
-import { ACCESS_TOKEN, CUSTOMER_ID } from '../constants';
-// import { ApiRequest } from '@commercetools/platform-sdk/dist/declarations/src/generated/shared/utils/requests-utils';
+import { ctpClient, getExistingTokenFlow, ID, SECRET } from './BuildClient';
+import { ACCESS_TOKEN, ANONYMOUS_TOKEN, COOKIE_RESET_DATE, CUSTOMER_ID } from '../constants';
 
 import { EndPointsObject, PrefetchedData, PrefetchedGenres } from '../../types';
 
+enum UserState {
+  Observer,
+  Logged,
+  Anonymous,
+}
+
 export default class ClientAPI {
-  apiBuilder: ApiRoot;
+  public prefetchedData: PrefetchedData;
 
-  apiRoot: ByProjectKeyRequestBuilder;
+  private apiBuilder: ApiRoot;
 
-  prefetchedData: PrefetchedData;
+  private apiRoot: ByProjectKeyRequestBuilder;
+
+  private anonymousId: string;
+
+  private userLogged: UserState;
+
+  private anonymousCartId: string;
+
+  private cartId: string;
+
+  private cartVersion: number;
 
   constructor() {
     this.apiBuilder = createApiBuilderFromCtpClient(ctpClient);
-    this.apiRoot = this.apiBuilder.withProjectKey({ projectKey: 'ecommerce-quantum' });
+    this.apiRoot = this.apiBuilder.withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     this.prefetchedData = {
       genres: [],
       attributes: {
@@ -47,25 +62,294 @@ export default class ClientAPI {
         keys: [],
       },
     };
+    this.userLogged = this.checkUserLogged();
+    this.anonymousId = '';
+    this.anonymousCartId = '';
+    this.cartId = '';
+    this.cartVersion = 1;
+  }
+
+  public resetDefaultClientAPI() {
+    this.userLogged = UserState.Observer;
+    this.apiBuilder = createApiBuilderFromCtpClient(ctpClient);
+    this.apiRoot = this.apiBuilder.withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
+    this.anonymousId = '';
+    this.anonymousCartId = '';
+    this.cartId = '';
+    this.cartVersion = 1;
+  }
+
+  private checkUserLogged() {
+    const loggedToken = this.getAccessToken(ACCESS_TOKEN);
+    const anonymToken = this.getAccessToken(ANONYMOUS_TOKEN);
+    if (loggedToken === '' && anonymToken === '') return UserState.Observer;
+    if (loggedToken !== '') {
+      this.apiRoot = createApiBuilderFromCtpClient(getExistingTokenFlow(`Bearer ${loggedToken}`)).withProjectKey({
+        projectKey: 'ecommerce-quantum',
+      });
+      return UserState.Logged;
+    }
+    this.apiRoot = createApiBuilderFromCtpClient(getExistingTokenFlow(`Bearer ${anonymToken}`)).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
+    return UserState.Anonymous;
+  }
+
+  private getAccessToken(tokenType: string) {
+    if (document.cookie === '') return '';
+    const allCookies = document.cookie.split(';');
+    const isAccessTokenExist = allCookies.some((token) => token.startsWith(tokenType));
+    if (!isAccessTokenExist) return '';
+    const token = document.cookie
+      .split('; ')
+      .filter((el) => el.includes(tokenType))
+      .map((el) => el.split('='))[0]
+      .filter((el) => !el.includes(tokenType))[0];
+    return token;
+  }
+
+  private deleteAnonymousToken() {
+    document.cookie = `${ANONYMOUS_TOKEN}${COOKIE_RESET_DATE}`;
+  }
+
+  private updateApiRoot(tokenType: string) {
+    const token = this.getAccessToken(tokenType);
+    this.apiRoot = createApiBuilderFromCtpClient(getExistingTokenFlow(`Bearer ${token}`)).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
+  }
+
+  private async getActiveCartAPI() {
+    if (this.userLogged === UserState.Observer) {
+      await this.obtainAnonymusAccessToken();
+      await this.updateApiRoot(ANONYMOUS_TOKEN);
+      this.userLogged = UserState.Anonymous;
+      await this.createCart();
+    } else {
+      const cartInfo = this.apiRoot.me().carts().get().execute();
+      await cartInfo
+        .then(async (data) => {
+          if (data.body.count === 0) {
+            await this.createCart();
+          } else {
+            await this.getCartId();
+          }
+        })
+        .catch(console.error);
+    }
+  }
+
+  private async getCartId() {
+    const cartInfo = this.apiRoot.me().activeCart().get().execute();
+    await cartInfo
+      .then(async (data) => {
+        this.cartId = data.body.id;
+        this.cartVersion = data.body.version;
+      })
+      .catch((error) => `Error while fetching cart ID: ${error}`);
+  }
+
+  private async createCart() {
+    const cartInfo = this.apiRoot
+      .me()
+      .carts()
+      .post({
+        body: {
+          currency: 'USD',
+        },
+      })
+      .execute();
+    await cartInfo.then(async (data) => {
+      const anonumousId = data.body.anonymousId;
+      if (anonumousId !== undefined) this.anonymousId = anonumousId;
+      const anonymousCartId = data.body.id;
+      if (anonymousCartId !== undefined) {
+        this.anonymousCartId = anonymousCartId;
+        await this.getCartId();
+      }
+    });
+  }
+
+  private async obtainAnonymusAccessToken() {
+    const url = 'https://auth.europe-west1.gcp.commercetools.com/oauth/ecommerce-quantum/anonymous/token';
+    const credentials = {
+      clientId: ID,
+      clientSecret: SECRET,
+    };
+    const authString = btoa(`${credentials.clientId}:${credentials.clientSecret}`);
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Basic ${authString}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: 'grant_type=client_credentials',
+    });
+
+    try {
+      const data = await response.json();
+      this.setAnonymousTokenCookie(data.access_token, data.expires_in);
+    } catch (e) {
+      console.log(`${e} occured when fetching access token!`);
+    }
+  }
+
+  private setAnonymousTokenCookie(token: string, time: number): void {
+    const expirationTime = new Date(Date.now() + time * 1000).toUTCString();
+    document.cookie = `${ANONYMOUS_TOKEN}=${token}; expires=${expirationTime}; path=/;`;
   }
 
   public async loginClient(clientEmail: string, clientPassword: string) {
-    const body: CustomerSignin = {
-      email: clientEmail,
-      password: clientPassword,
-    };
-    const loginAPI = await this.apiRoot.login().post({ body }).execute();
+    let body: CustomerSignin;
+    if (this.anonymousId !== '' && this.anonymousCartId !== '') {
+      body = {
+        email: clientEmail,
+        password: clientPassword,
+        anonymousId: this.anonymousId,
+        anonymousCartId: this.anonymousCartId,
+        anonymousCartSignInMode: 'MergeWithExistingCustomerCart',
+        updateProductData: true,
+      };
+    } else {
+      body = {
+        email: clientEmail,
+        password: clientPassword,
+        anonymousCartSignInMode: 'MergeWithExistingCustomerCart',
+      };
+    }
+    const loginAPI = this.apiRoot.me().login().post({ body }).execute();
+    await this.obtainUserAccessToken(clientEmail, clientPassword);
+    this.userLogged = UserState.Logged;
+    await this.deleteAnonymousToken();
+    await this.updateApiRoot(ACCESS_TOKEN);
+    await this.getActiveCartAPI();
     return loginAPI;
   }
 
+  public async updateItemInCart(lineItemID: string, quantity: number) {
+    await this.getActiveCartAPI();
+    const body: MyCartUpdate = {
+      version: this.cartVersion,
+      actions: [
+        {
+          action: 'changeLineItemQuantity',
+          lineItemId: lineItemID,
+          quantity,
+        },
+      ],
+    };
+    const updateCartAPI = this.apiRoot
+      .me()
+      .carts()
+      .withId({ ID: this.cartId })
+      .post({
+        body,
+      })
+      .execute();
+    return updateCartAPI;
+  }
+
+  public async removeItemFromCart(lineItemID: string) {
+    await this.getActiveCartAPI();
+    const body: MyCartUpdate = {
+      version: this.cartVersion,
+      actions: [
+        {
+          action: 'removeLineItem',
+          lineItemId: lineItemID,
+        },
+      ],
+    };
+    const removeItemAPI = this.apiRoot
+      .me()
+      .carts()
+      .withId({ ID: this.cartId })
+      .post({
+        body,
+      })
+      .execute();
+    return removeItemAPI;
+  }
+
+  public async removeAllItemsFromCart(itemIDArr: string[]) {
+    await this.getActiveCartAPI();
+
+    const actionsArr: MyCartUpdateAction[] = [];
+    itemIDArr.forEach((item) => {
+      const actionObj: MyCartUpdateAction = {
+        action: 'removeLineItem',
+        lineItemId: item,
+      };
+      actionsArr.push(actionObj);
+    });
+    const body: MyCartUpdate = {
+      version: this.cartVersion,
+      actions: actionsArr,
+    };
+    const removeAllItemsAPI = await this.apiRoot
+      .me()
+      .carts()
+      .withId({ ID: this.cartId })
+      .post({
+        body,
+      })
+      .execute();
+    return removeAllItemsAPI;
+  }
+
+  public async applyPromoCode(promocode: string) {
+    await this.getActiveCartAPI();
+    const body: MyCartUpdate = {
+      version: this.cartVersion,
+      actions: [
+        {
+          action: 'addDiscountCode',
+          code: promocode,
+        },
+      ],
+    };
+    const promocodeAPI = this.apiRoot
+      .me()
+      .carts()
+      .withId({ ID: this.cartId })
+      .post({
+        body,
+      })
+      .execute();
+    return promocodeAPI;
+  }
+
+  public getDiscountCodes() {
+    const discountCodes = this.apiRoot.discountCodes().get().execute();
+    return discountCodes;
+  }
+
+  public getCartDiscountByID(id: string) {
+    const cartDiscounts = this.apiRoot.cartDiscounts().withId({ ID: id }).get().execute();
+    return cartDiscounts;
+  }
+
   public async getProductById(productID: string) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const getProduct = apiRoot.productProjections().withId({ ID: productID }).get().execute();
     return getProduct;
   }
 
+  public async getActiveCartData() {
+    await this.getActiveCartAPI();
+    const activeCartData = this.apiRoot.me().activeCart().get().execute();
+    return activeCartData;
+  }
+
   public async getSearchProduct(search: string, limitNum: number) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const getProduct = apiRoot
       .productProjections()
       .search()
@@ -81,9 +365,69 @@ export default class ClientAPI {
   }
 
   public async getDiscountById(discountID: string) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const getProduct = apiRoot.productDiscounts().withId({ ID: discountID }).get().execute();
     return getProduct;
+  }
+
+  public async addItemCart(productID: string) {
+    await this.getActiveCartAPI();
+    const addProduct = this.apiRoot
+      .me()
+      .carts()
+      .withId({ ID: this.cartId })
+      .post({
+        body: {
+          version: this.cartVersion,
+          actions: [
+            {
+              action: 'addLineItem',
+              quantity: 1,
+              productId: productID,
+            },
+          ],
+        },
+      })
+      .execute();
+    return addProduct;
+  }
+
+  public async removeItemCart(productID: string, quantityItem?: number) {
+    await this.getActiveCartAPI();
+    let body: MyCartUpdate;
+    if (quantityItem) {
+      body = {
+        version: this.cartVersion,
+        actions: [
+          {
+            action: 'removeLineItem',
+            quantity: quantityItem,
+            lineItemId: productID,
+          },
+        ],
+      };
+    } else {
+      body = {
+        version: this.cartVersion,
+        actions: [
+          {
+            action: 'removeLineItem',
+            lineItemId: productID,
+          },
+        ],
+      };
+    }
+    const addProduct = this.apiRoot
+      .me()
+      .carts()
+      .withId({ ID: this.cartId })
+      .post({
+        body,
+      })
+      .execute();
+    return addProduct;
   }
 
   public getCustomers() {
@@ -97,7 +441,9 @@ export default class ClientAPI {
   }
 
   public getCustomerByEmail(customerEmail: string) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const args = {
       queryArgs: {
         where: `email="${customerEmail}"`,
@@ -108,7 +454,9 @@ export default class ClientAPI {
   }
 
   public getCustomerByID(customerID: string) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const args = {
       ID: customerID,
     };
@@ -122,9 +470,11 @@ export default class ClientAPI {
     newEmail: string,
     newFirstName: string,
     newLastName: string,
-    newDateOfBirth: string
+    newDateOfBirth: string,
   ) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const args = {
       ID: customerID,
     };
@@ -160,9 +510,11 @@ export default class ClientAPI {
     newStreet: string,
     newCity: string,
     newCountry: string,
-    newPostcode: string
+    newPostcode: string,
   ) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const args = {
       ID: customerID,
     };
@@ -186,7 +538,9 @@ export default class ClientAPI {
   }
 
   public async addBillingAddressID(customerID: string, customerVersion: number, lastAddressID: string) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const args = {
       ID: customerID,
     };
@@ -204,7 +558,9 @@ export default class ClientAPI {
   }
 
   public async addShippingAddressID(customerID: string, customerVersion: number, lastAddressID: string) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const args = {
       ID: customerID,
     };
@@ -222,7 +578,9 @@ export default class ClientAPI {
   }
 
   public async setDefaultBillingAddress(customerID: string, customerVersion: number, addressID: string) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const args = {
       ID: customerID,
     };
@@ -240,7 +598,9 @@ export default class ClientAPI {
   }
 
   public async setDefaultShippingAddress(customerID: string, customerVersion: number, addressID: string) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const args = {
       ID: customerID,
     };
@@ -263,9 +623,11 @@ export default class ClientAPI {
     newStreet: string,
     newCity: string,
     newCountry: string,
-    newPostcode: string
+    newPostcode: string,
   ) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const args = {
       ID: customerID,
     };
@@ -288,7 +650,9 @@ export default class ClientAPI {
   }
 
   public async deleteCustomerAddress(customerID: string, customerVersion: number, adrsID: string) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const args = {
       ID: customerID,
     };
@@ -306,7 +670,9 @@ export default class ClientAPI {
   }
 
   public changePassword(customerID: string, customerVersion: number, currentPassword: string, newPassword: string) {
-    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({ projectKey: 'ecommerce-quantum' });
+    const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+      projectKey: 'ecommerce-quantum',
+    });
     const body: CustomerChangePassword = {
       id: customerID,
       version: customerVersion,
@@ -327,7 +693,7 @@ export default class ClientAPI {
     newShipAdrs: number[],
     newBillAdrs: number[],
     defaultShip: number | undefined,
-    defaultBill: number | undefined
+    defaultBill: number | undefined,
   ) {
     const body: CustomerDraft = {
       email: newEmail,
@@ -359,11 +725,17 @@ export default class ClientAPI {
     return `Unable to fetch ${category}`;
   }
 
-  public async getAllCardsData() {
+  public async getAllCardsData(offsetCount?: number) {
+    const body = {
+      queryArgs: {
+        limit: 8,
+        offset: offsetCount,
+      },
+    };
     try {
-      const data = await this.apiRoot.productProjections().search().get().execute();
+      const data = await this.apiRoot.productProjections().get(body).execute();
       if (data.statusCode === 200) {
-        return data.body.results;
+        return data.body;
       }
     } catch (e) {
       console.log(`Error occured while fetching cards data: ${e}`);
@@ -441,15 +813,16 @@ export default class ClientAPI {
     }
   }
 
-  public async getSpecificGenreById(id: string) {
+  public async getSpecificGenreById(id: string, offsetCount?: number, limitCount = 8) {
     const query = {
       queryArgs: {
-        filter: `categories.id:"${id}"`,
-        limit: 100,
+        limit: limitCount,
+        where: `categories(id="${id}")`,
+        offset: offsetCount,
       },
     };
     try {
-      const data = await this.apiRoot.productProjections().search().get(query).execute();
+      const data = await this.apiRoot.productProjections().get(query).execute();
       if (data.statusCode === 200) {
         const response = data.body;
         return response;
@@ -540,7 +913,9 @@ export default class ClientAPI {
           const { attributes } = attribute.masterVariant;
           if (attributes) {
             attributes.forEach((attr) => {
-              if (attr.name === 'condition') conditionsSet.add(attr.value.trim());
+              if (attr.name === 'condition') {
+                conditionsSet.add(attr.value.trim());
+              }
               if (attr.name === 'label') labelSet.add(attr.value.trim());
               if (attr.name === 'LP') LpsSet.add(attr.value.key.trim());
             });
@@ -586,22 +961,21 @@ export default class ClientAPI {
     }
   }
 
-  public async fetchFilterQuary(endPoints: EndPointsObject) {
+  public async fetchFilterQuary(endPoints: EndPointsObject, offsetCount?: number) {
     const query = {
       queryArgs: {
         filter: endPoints.filter,
         priceCurrency: 'USD',
         sort: endPoints.sort,
-
-        limit: 100,
+        offset: offsetCount,
+        limit: 8,
       },
     };
 
     try {
       const data = await this.apiRoot.productProjections().search().get(query).execute();
       if (data.statusCode === 200) {
-        console.log(data.body.results);
-        return data.body.results;
+        return data.body;
       }
     } catch (e) {
       console.error(`Unable to fetch filter quary: ${e}`);
@@ -639,8 +1013,6 @@ export default class ClientAPI {
   }
 
   public setCustomerIDCookie(id: string): void {
-    console.log(document.cookie);
-
     const expirationTime = new Date(Date.now() + 172800 * 1000).toUTCString();
     document.cookie = `${CUSTOMER_ID}=${id}; expires=${expirationTime}; path=/;`;
   }

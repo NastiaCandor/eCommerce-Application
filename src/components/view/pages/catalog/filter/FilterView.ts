@@ -1,9 +1,8 @@
-/* eslint-disable prettier/prettier */
 import * as noUiSlider from 'nouislider';
 import { PipsMode } from 'nouislider';
 import wnumb from 'wnumb';
 import 'nouislider/dist/nouislider.css';
-import { EndPointsObject, PrefetchedData, QueryObject } from '../../../../../types';
+import { EndPointsObject, FiltersScroll, PrefetchedData, QueryObject } from '../../../../../types';
 import ClientAPI from '../../../../utils/Client';
 import ElementCreator from '../../../../utils/ElementCreator';
 import View from '../../../View';
@@ -15,11 +14,15 @@ export default class FilterView extends View {
 
   private labelBoxes: HTMLElement[];
 
-  private endPoints: EndPointsObject;
+  public endPoints: EndPointsObject;
 
   private allElements: ElementCreator[];
 
-  private queryObject: QueryObject;
+  public queryObject: QueryObject;
+
+  private scrollData: FiltersScroll;
+
+  private scollElements: Map<string, HTMLElement>;
 
   constructor(private clientApi: ClientAPI) {
     super(filterParams.wrapper);
@@ -28,7 +31,13 @@ export default class FilterView extends View {
     this.labelBoxes = [];
     this.allElements = [];
     this.queryObject = <QueryObject>{};
+    this.scollElements = new Map();
     this.endPoints = <EndPointsObject>{};
+    this.scrollData = {
+      condition: 0,
+      label: 0,
+      lp: 0,
+    };
   }
 
   public render() {
@@ -65,18 +74,21 @@ export default class FilterView extends View {
     const userSelectWrapper = new ElementCreator(filterParams.userSelect.wrapper);
     userSelectNames.forEach((item) => {
       const el = new ElementCreator(filterParams.userSelect.elements);
-      el.setTextContent(item);
-      const [dataName, value] = item.split(' ');
+      const [name, value] = item.split(' ');
       if (value) {
-        el.setAttribute(`data-${dataName.toLowerCase()}`, value.toLowerCase());
+        const [dataName, dataValue] = [name.toLowerCase(), value.toLowerCase()];
+        el.setAttribute(`data-${dataName.toLowerCase()}`, dataValue.toLowerCase());
         el.setCssClasses(['hidden']);
+        const arrow = dataValue === 'asc' ? `${name}↑` : `${name}↓`;
+        el.setTextContent(arrow);
         if (el instanceof ElementCreator) {
           innerElements.push(el);
           this.allElements.push(el);
         }
         return;
       }
-      el.setAttribute(`data-${dataName.toLowerCase()}`, 'default');
+      el.setAttribute(`data-${name.toLowerCase()}`, 'default');
+      el.setTextContent(name);
       this.allElements.push(el);
     });
     orderHeading.getElement().addEventListener('click', () => {
@@ -163,6 +175,8 @@ export default class FilterView extends View {
     labelHeading.setTextContent(filterHeading);
     filterBox.addInnerElement(labelHeading);
     const list = new ElementCreator(filterParams.filterBoxList);
+    list.setAttribute('data-filter', filterHeading.toLowerCase());
+    this.scollElements.set(filterHeading.toLowerCase(), list.getElement());
     filterItems.forEach((item, i) => {
       const listItem = new ElementCreator(filterParams.filterBoxItem);
       const label = new ElementCreator(filterParams.filterLabel);
@@ -173,8 +187,8 @@ export default class FilterView extends View {
       checkbox.setAttribute('id', `${filterHeading.toLowerCase()}-${i}`);
       checkbox.setAttribute(`data-${filterHeading}`, item);
       labelText.setTextContent(item);
-      label.addInnerElement(checkbox);
       label.addInnerElement(labelText);
+      label.addInnerElement(checkbox);
       listItem.addInnerElement(label);
       const listItemElement = <HTMLInputElement>listItem.getElement();
       this.checkboxHandler(listItemElement);
@@ -182,7 +196,16 @@ export default class FilterView extends View {
       list.addInnerElement(listItem);
     });
     filterBox.addInnerElement(list);
+    list.getElement().addEventListener('scroll', this.listScrollHandler.bind(this));
     return filterBox.getElement();
+  }
+
+  private listScrollHandler(evt: Event): void {
+    if (evt.target instanceof HTMLElement) {
+      if (evt.target.dataset.filter) {
+        this.scrollData[evt.target.dataset.filter] = evt.target.scrollTop;
+      }
+    }
   }
 
   public resetInputs() {
@@ -202,6 +225,15 @@ export default class FilterView extends View {
     this.resetEndpoints();
   }
 
+  public restoreScrollPosition() {
+    const scrollPositions = Object.entries(this.scrollData);
+    scrollPositions.forEach(([key, value]) => {
+      if (this.scollElements.has(key)) {
+        this.scollElements.get(key)?.scrollTo(0, value);
+      }
+    });
+  }
+
   public resetEndpoints() {
     this.endPoints = <EndPointsObject>{
       sort: [],
@@ -211,9 +243,7 @@ export default class FilterView extends View {
 
   public createQuaryString() {
     const valuePairs = Object.entries(this.queryObject);
-    if (!this.endPoints.filter) {
-      this.endPoints.filter = [];
-    }
+    this.endPoints.filter = [];
     valuePairs.forEach(([key, values]) => {
       if (key === 'LP') {
         const lpValues = values.map((value) => `"${value}"`).join(',');
@@ -248,7 +278,7 @@ export default class FilterView extends View {
     }
   }
 
-  private removeWriteFromqueryObject(key: string, value: string): void {
+  private removeWriteFromQueryObject(key: string, value: string): void {
     const formatKey = this.formatKey(key);
     if (this.queryObject[formatKey].some((item) => item === value)) {
       this.queryObject[formatKey] = this.queryObject[formatKey].filter((item) => item !== value);
@@ -272,17 +302,17 @@ export default class FilterView extends View {
         } else {
           target.parentElement?.classList.remove('active');
           if (datasetId) {
-            this.removeWriteFromqueryObject(datasetId, <string>target.dataset[datasetId]);
+            this.removeWriteFromQueryObject(datasetId, <string>target.dataset[datasetId]);
           }
         }
       }
     });
   }
 
-  public async getFilterData() {
+  public async getFilterData(endpoints?: EndPointsObject, offset?: number) {
     this.createQuaryString();
     try {
-      const data = await this.clientApi.fetchFilterQuary(this.endPoints);
+      const data = await this.clientApi.fetchFilterQuary(endpoints || this.endPoints, offset);
       if (data) {
         return data;
       }

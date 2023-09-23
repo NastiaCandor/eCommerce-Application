@@ -67,7 +67,8 @@
   position: relative;
   display: flex;
   justify-content: center;
-  max-width: 15%;
+  margin-top: 0.2rem;
+  max-width: 30%;
   z-index: 40;
   @media screen and (max-width: 1200px) {
     max-width: 25%;
@@ -80,8 +81,28 @@
   }
 }
 
-// delete after cross-check
+// CART SPAN PRODUCT QUANTITY
 
-section > .user-icon_item {
-  max-width: 10%;
+.user-icon_item {
+  position: relative;
+}
+
+.cart-span {
+  position: absolute;
+  left: -1rem;
+  top: -0.5rem;
+  background-color: #f3923ed5;
+  color: #FFFFFF;
+  padding: 0.25rem 0.5rem;
+  border-radius: 50%;
+  @include font(1.2rem, 100%, 500);
+  @include media-tablet {
+    left: 1rem;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .cart-span { 
+    left: 0;
+  }
 }

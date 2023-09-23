@@ -19,7 +19,6 @@ export default class LastNameInputView extends View {
   }
 
   public insertFieldsetItems(): void {
-    // eslint-disable-next-line max-len
     const label = this.createLabel(nameInputParams.label.lastName.for, nameInputParams.label.lastName.textContent);
     this.addInnerElement(label);
     const input = this.createInput(nameInputParams.input.type, nameInputParams.input.lastName.id);

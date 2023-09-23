@@ -17,5 +17,4 @@ describe('PasswordClass', () => {
     expect(passwordInput.checkPassword('12345678V')).toBeFalsy();
     expect(passwordInput.checkPassword('12345678V!v')).toBeTruthy();
   });
-
 });

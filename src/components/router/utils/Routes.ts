@@ -75,15 +75,15 @@ export default class Routes {
         },
       },
       {
-        path: `${PAGES.CONTACTS}`,
+        path: `${PAGES.ABOUT_US}`,
         callback: () => {
-          this.callbacks.loadContactsPage();
+          this.callbacks.loadAboutPage();
         },
       },
       {
-        path: `${PAGES.SHIPPING}`,
+        path: `${PAGES.SEARCH}`,
         callback: () => {
-          this.callbacks.loadShippingPage();
+          this.callbacks.loadSearchPage();
         },
       },
       {
@@ -114,26 +114,17 @@ export default class Routes {
         },
       }))
       .forEach((item) => routes.push(item));
-    this.prefetchedData.genres
-      .map((route) => ({
-        path: `${PAGES.CATEGORY}/${route.key}`,
-        callback: () => {
-          this.callbacks.mountCategory(route.key);
-        },
-      }))
-      .forEach((item) => routes.push(item));
 
     const { keys } = this.prefetchedData.productsUrl;
     const productRoutes = this.linkNamesHelper(keys);
     productRoutes
-      .map(([route, ,]) => ({
+      .map(([route]) => ({
         path: `${PAGES.PRODUCT}/${route}`,
         callback: () => {
           this.callbacks.loadProductPage(route);
         },
       }))
       .forEach((route) => routes.push(route));
-
     return routes;
   }
 
