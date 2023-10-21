@@ -58,7 +58,9 @@ export default class FilterView extends View {
     this.addInnerElement(this.createFilterBox(condition, this.prefetchedData.attributes.condition));
     this.addInnerElement(this.createFilterBox(label, this.prefetchedData.attributes.label));
     this.addInnerElement(this.createFilterBox(lp, this.prefetchedData.attributes.lp));
-    this.addInnerElement(rangeInput);
+    if (rangeInput) {
+      this.addInnerElement(rangeInput);
+    }
     this.addInnerElement(this.createSortBox());
   }
 
@@ -103,7 +105,7 @@ export default class FilterView extends View {
         if (evt.target instanceof HTMLElement) {
           this.queryObject.sort = [];
           if (evt.target.dataset.price) {
-            this.queryObject.sort.push(`variants.scopedPrice.currentValue.centAmount ${evt.target.dataset.price}`);
+            this.queryObject.sort.push(`variants.scopedPrice.value.centAmount ${evt.target.dataset.price}`);
           }
           if (evt.target.dataset.name) {
             this.queryObject.sort.push(`name.en-US ${evt.target.dataset.name}`);
@@ -144,7 +146,7 @@ export default class FilterView extends View {
           min: this.formatPrice(this.prefetchedData.prices.min),
           max: this.formatPrice(this.prefetchedData.prices.max),
         },
-        tooltips: [wnumb({ decimals: 2, prefix: '$' }), true],
+        tooltips: [wnumb({ decimals: 2, prefix: '$' }), wnumb({ decimals: 2, prefix: '$' })],
         pips: {
           mode: PipsMode.Steps,
           density: 10,

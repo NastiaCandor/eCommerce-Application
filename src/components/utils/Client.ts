@@ -8,6 +8,7 @@ import {
   MyCartUpdate,
   createApiBuilderFromCtpClient,
   MyCartUpdateAction,
+  Price,
 } from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 import { ctpClient, getExistingTokenFlow, ID, SECRET } from './BuildClient';
@@ -41,7 +42,7 @@ export default class ClientAPI {
   constructor() {
     this.apiBuilder = createApiBuilderFromCtpClient(ctpClient);
     this.apiRoot = this.apiBuilder.withProjectKey({
-      projectKey: 'ecommerce-quantum',
+      projectKey: 'vinyl-vibe-store',
     });
     this.prefetchedData = {
       genres: [],
@@ -73,7 +74,7 @@ export default class ClientAPI {
     this.userLogged = UserState.Observer;
     this.apiBuilder = createApiBuilderFromCtpClient(ctpClient);
     this.apiRoot = this.apiBuilder.withProjectKey({
-      projectKey: 'ecommerce-quantum',
+      projectKey: 'vinyl-vibe-store',
     });
     this.anonymousId = '';
     this.anonymousCartId = '';
@@ -87,12 +88,12 @@ export default class ClientAPI {
     if (loggedToken === '' && anonymToken === '') return UserState.Observer;
     if (loggedToken !== '') {
       this.apiRoot = createApiBuilderFromCtpClient(getExistingTokenFlow(`Bearer ${loggedToken}`)).withProjectKey({
-        projectKey: 'ecommerce-quantum',
+        projectKey: 'vinyl-vibe-store',
       });
       return UserState.Logged;
     }
     this.apiRoot = createApiBuilderFromCtpClient(getExistingTokenFlow(`Bearer ${anonymToken}`)).withProjectKey({
-      projectKey: 'ecommerce-quantum',
+      projectKey: 'vinyl-vibe-store',
     });
     return UserState.Anonymous;
   }
@@ -117,7 +118,7 @@ export default class ClientAPI {
   private updateApiRoot(tokenType: string) {
     const token = this.getAccessToken(tokenType);
     this.apiRoot = createApiBuilderFromCtpClient(getExistingTokenFlow(`Bearer ${token}`)).withProjectKey({
-      projectKey: 'ecommerce-quantum',
+      projectKey: 'vinyl-vibe-store',
     });
   }
 
@@ -173,7 +174,7 @@ export default class ClientAPI {
   }
 
   private async obtainAnonymusAccessToken() {
-    const url = 'https://auth.europe-west1.gcp.commercetools.com/oauth/ecommerce-quantum/anonymous/token';
+    const url = 'https://auth.europe-west1.gcp.commercetools.com/oauth/vinyl-vibe-store/anonymous/token';
     const credentials = {
       clientId: ID,
       clientSecret: SECRET,
@@ -334,7 +335,7 @@ export default class ClientAPI {
 
   public async getProductById(productID: string) {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
-      projectKey: 'ecommerce-quantum',
+      projectKey: 'vinyl-vibe-store',
     });
     const getProduct = apiRoot.productProjections().withId({ ID: productID }).get().execute();
     return getProduct;
@@ -348,7 +349,7 @@ export default class ClientAPI {
 
   public async getSearchProduct(search: string, limitNum: number) {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
-      projectKey: 'ecommerce-quantum',
+      projectKey: 'vinyl-vibe-store',
     });
     const getProduct = apiRoot
       .productProjections()
@@ -366,7 +367,7 @@ export default class ClientAPI {
 
   public async getDiscountById(discountID: string) {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
-      projectKey: 'ecommerce-quantum',
+      projectKey: 'vinyl-vibe-store',
     });
     const getProduct = apiRoot.productDiscounts().withId({ ID: discountID }).get().execute();
     return getProduct;
@@ -442,7 +443,7 @@ export default class ClientAPI {
 
   public getCustomerByEmail(customerEmail: string) {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
-      projectKey: 'ecommerce-quantum',
+      projectKey: 'vinyl-vibe-store',
     });
     const args = {
       queryArgs: {
@@ -455,7 +456,7 @@ export default class ClientAPI {
 
   public getCustomerByID(customerID: string) {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
-      projectKey: 'ecommerce-quantum',
+      projectKey: 'vinyl-vibe-store',
     });
     const args = {
       ID: customerID,
@@ -473,7 +474,7 @@ export default class ClientAPI {
     newDateOfBirth: string,
   ) {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
-      projectKey: 'ecommerce-quantum',
+      projectKey: 'vinyl-vibe-store',
     });
     const args = {
       ID: customerID,
@@ -513,7 +514,7 @@ export default class ClientAPI {
     newPostcode: string,
   ) {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
-      projectKey: 'ecommerce-quantum',
+      projectKey: 'vinyl-vibe-store',
     });
     const args = {
       ID: customerID,
@@ -539,7 +540,7 @@ export default class ClientAPI {
 
   public async addBillingAddressID(customerID: string, customerVersion: number, lastAddressID: string) {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
-      projectKey: 'ecommerce-quantum',
+      projectKey: 'vinyl-vibe-store',
     });
     const args = {
       ID: customerID,
@@ -559,7 +560,7 @@ export default class ClientAPI {
 
   public async addShippingAddressID(customerID: string, customerVersion: number, lastAddressID: string) {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
-      projectKey: 'ecommerce-quantum',
+      projectKey: 'vinyl-vibe-store',
     });
     const args = {
       ID: customerID,
@@ -579,7 +580,7 @@ export default class ClientAPI {
 
   public async setDefaultBillingAddress(customerID: string, customerVersion: number, addressID: string) {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
-      projectKey: 'ecommerce-quantum',
+      projectKey: 'vinyl-vibe-store',
     });
     const args = {
       ID: customerID,
@@ -599,7 +600,7 @@ export default class ClientAPI {
 
   public async setDefaultShippingAddress(customerID: string, customerVersion: number, addressID: string) {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
-      projectKey: 'ecommerce-quantum',
+      projectKey: 'vinyl-vibe-store',
     });
     const args = {
       ID: customerID,
@@ -626,7 +627,7 @@ export default class ClientAPI {
     newPostcode: string,
   ) {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
-      projectKey: 'ecommerce-quantum',
+      projectKey: 'vinyl-vibe-store',
     });
     const args = {
       ID: customerID,
@@ -651,7 +652,7 @@ export default class ClientAPI {
 
   public async deleteCustomerAddress(customerID: string, customerVersion: number, adrsID: string) {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
-      projectKey: 'ecommerce-quantum',
+      projectKey: 'vinyl-vibe-store',
     });
     const args = {
       ID: customerID,
@@ -671,7 +672,7 @@ export default class ClientAPI {
 
   public changePassword(customerID: string, customerVersion: number, currentPassword: string, newPassword: string) {
     const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
-      projectKey: 'ecommerce-quantum',
+      projectKey: 'vinyl-vibe-store',
     });
     const body: CustomerChangePassword = {
       id: customerID,
@@ -761,35 +762,54 @@ export default class ClientAPI {
     return console.error('Unable to fetch');
   }
 
-  public async getMaxPrice() {
+  private async getMaxDiscountedPrice() {
     const discountedPricesQuary = {
       queryArgs: {
-        where: 'masterVariant(prices(discounted(value(centAmount > 1))))',
+        filter: ['variants.prices.discounted.value:exists'],
         limit: 100,
       },
     };
+    try {
+      const discounted = await this.apiRoot.productProjections().search().get(discountedPricesQuary).execute();
+      if (discounted.statusCode === 200 && discounted.body.results.length) {
+        const prices = discounted.body.results.flatMap((value) => value.masterVariant.prices) as Price[];
+        return Math.max(...prices.map((item) => item.value.centAmount));
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  private async getMaxDiscountlessPrice() {
     const discountlessPricesQuary = {
       queryArgs: {
-        sort: ['price asc'],
+        sort: ['price desc'],
         limit: 1,
       },
     };
     try {
-      const discounted = await this.apiRoot.productProjections().get(discountedPricesQuary).execute();
       const discountless = await this.apiRoot.productProjections().search().get(discountlessPricesQuary).execute();
-      if (discounted.statusCode === 200 && discountless.statusCode === 200) {
-        const pricesArray = discounted.body.results.map((item) => {
-          if (item.masterVariant.prices) {
-            return item.masterVariant.prices[0].discounted?.value.centAmount || 0;
-          }
-          return 0;
-        });
-        let maxPrice = Math.max(...pricesArray);
-        if (discountless.body.results[0].masterVariant.price) {
-          maxPrice = Math.max(discountless.body.results[0].masterVariant.price.value.centAmount, maxPrice);
-        }
-        return maxPrice;
+      if (discountless.statusCode === 200 && discountless.body.results.length) {
+        const prices = discountless.body.results.flatMap((value) => value.masterVariant.prices) as Price[];
+        return Math.max(...prices.map((item) => item.value.centAmount));
       }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  public async getMaxPrice() {
+    try {
+      const discounted = await this.getMaxDiscountedPrice();
+      const discountless = await this.getMaxDiscountlessPrice();
+      console.log(discounted, discountless);
+      if (discounted && discountless) {
+        return Math.max(discounted, discountless);
+      }
+      if (!discounted && discountless) {
+        return Math.max(discountless);
+      }
+      throw new Error();
     } catch (e) {
       console.log(`An error has occured ${e}`);
     }
@@ -983,7 +1003,7 @@ export default class ClientAPI {
   }
 
   public async obtainUserAccessToken(clientEmail: string, clientPassword: string) {
-    const url = 'https://auth.europe-west1.gcp.commercetools.com/oauth/ecommerce-quantum/customers/token';
+    const url = 'https://auth.europe-west1.gcp.commercetools.com/oauth/vinyl-vibe-store/customers/token';
     const credentials = {
       clientId: ID,
       clientSecret: SECRET,

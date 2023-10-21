@@ -158,7 +158,6 @@ export default class ProfileBillAdrsView extends View {
         postcodeInput.value,
       );
       if (addAddressAPI.statusCode === 200) {
-        console.log(addAddressAPI.body);
         this.showAddAdrsMessage();
         const lastAddressID = addAddressAPI.body.addresses.at(-1)?.id as string;
         this.addBillingAddressID(lastAddressID);
