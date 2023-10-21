@@ -142,7 +142,7 @@ Usage:
 const newElement = new ElementCreator(pagination.container);
 const paginationLeftArrow = new ElementCreator(pagination.paginationArrowLeft);
 const paginationLeftElement = paginationLeftArrow.getElement();
-paginationLeftElement.setMouseEvent(() => console.log('Hello world'));
+paginationLeftElement.setMouseEvent(() => ('Hello world'));
 newElement.addInnerElement(paginationLeftElement);
 
 body.append(newElement.getElement());
