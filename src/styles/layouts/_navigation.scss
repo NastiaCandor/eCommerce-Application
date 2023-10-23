@@ -1,0 +1,60 @@
+
+.header__nav {
+  display: flex;
+  width: 40%;
+  column-gap: 2rem;
+  margin: 0.2rem 0 0;
+
+  @media screen and (max-width: $tablet) {
+    display: none;
+  }
+}
+
+.nav_item {
+  display: inline-block;
+  position: relative;
+  color: $color-primary-text;
+  white-space: nowrap;
+  user-select: none;
+
+  @extend %font-add-Inter;
+  @include font(1.6rem,120%, 500);
+  text-transform: uppercase;
+
+  transition: color 0.3s ease-in-out;
+  &:hover {
+    color: $color-hover-link;
+  }
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    display: block;
+    height: 2px;
+    background: $color-hover-link;
+    width: 0;
+    left: 50%;
+    transition: width 0.3s ease 0s, left 0.3s ease 0s;
+  }
+
+  &:hover::after {
+    width: 100%;
+    left: 0;
+  }
+
+  &.active {
+    position: relative;
+    color: $color-active-link;
+    pointer-events: none;
+    &::after {
+      content: "";
+      left: 0;
+      position: absolute;
+      bottom: -6px;
+      display: block;
+      height: 2px;
+      width: 100%;
+      background: $color-active-link;
+    }
+  }
+}

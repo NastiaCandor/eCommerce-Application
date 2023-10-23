@@ -1,0 +1,30 @@
+@mixin font ($size, $height, $weight: 400, $style: normal) {
+  font-size: $size;
+  font-style: $style;
+  font-weight: $weight;
+  line-height: $height;
+}
+
+@mixin media-laptop {
+  @media (max-width: $laptop-width) { @content; }
+}
+
+@mixin media-tablet {
+  @media (max-width: $tablet-width) { @content; }
+}
+
+@mixin media-tablet-540-width {
+  @media (max-width: $tablet-540-width) { @content; }
+}
+
+@mixin media-mobile-L {
+  @media (max-width: $mobile-L-width) { @content; }
+}
+
+// ANIMATION
+
+@keyframes saleAnimatedBgColor {
+  0%   { background: #E7557C; }
+  50% { background: #e489a1; }
+  100% { background: #E7557C; }
+}

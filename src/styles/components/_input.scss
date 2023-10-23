@@ -1,0 +1,104 @@
+select {
+  outline: none;
+}
+input {
+  border: none;
+}
+
+.reg-form__input {
+  outline: none;
+  width: 100%;
+  padding: 2px 1rem;
+  font-size: 2rem;
+  height: 5.2rem;
+  border-radius: 2px;
+  caret-color: darkslategray;
+  border: 0.5px solid rgba(128, 128, 128, 0.604);
+  margin: 3px 0;
+}
+
+.reg-form__input:valid,
+.reg-form__input-valid,
+.reg-form__select:valid {
+  border-color: darkgreen;
+  border-width: 1px;
+  background-color: rgb(221, 241, 221);
+}
+
+.reg-form__input:invalid:focus,
+.reg-form__input-invalid:focus {
+  border-color: $color-input-error;
+  background-color: #fdd;
+}
+
+.reg-form__input:invalid:not(:focus),
+.reg-form__input-invalid:not(:focus) {
+  border-color: $color-input-error;
+  background-color: white;
+}
+
+.name-input {
+  width: calc(($form-width - 6rem) / 2);
+}
+
+.reg-form__error {
+  padding: 0;
+  font-size: 1.5rem;
+  color: $color-input-error;
+}
+
+.checkbox-adrs__span {
+  background-color: transparent;
+  color: $color-input-error;
+  font-size: 1.1rem;
+}
+
+.reg-form__select {
+  width: 100%;
+  padding: 2px 5px;
+  outline: none;
+  width: 100%;
+  font-size: 2rem;
+  height: 5.2rem;
+  border-radius: 2px;
+  border: 0.5px solid rgba(128, 128, 128, 0.604);
+  margin: 3px 0;
+}
+
+.country__option {
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+}
+
+.checkbox-adrs {
+  width: 2rem;
+  height: 2rem;
+}
+
+.fieldset-chbx {
+  display: flex;
+  gap: 1rem;
+}
+
+.no-display {
+  display: none;
+}
+
+.show-display {
+  display: block;
+}
+
+@media screen and (max-width: 500px) {
+  .reg-form__input, 
+  .reg-form__select {
+    height: 4rem;
+    font-size: 1.5rem;
+  }
+  .reg-form__error {
+    font-size: 1.2rem;
+  }
+  .name-input {
+    width: 100%;
+  }
+}

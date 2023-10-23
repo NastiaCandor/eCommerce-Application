@@ -1,0 +1,147 @@
+.login__title {
+  text-align: center;
+  padding: 2rem 0;
+  font-size: 3rem;
+  text-transform: uppercase;
+}
+
+.login__form {
+  display: flex;
+  flex-direction: column;
+  max-width: 40rem;
+  margin: 0 auto;
+  background-color: $color-login-background;
+  color: $color-login-text;
+  padding: 3rem 2rem;
+  position: relative;
+  row-gap: 2rem;
+  transition: all 0.4s ease-in-out;
+  border-radius: 1.0rem;
+}
+
+.login__box {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  align-items: center;
+  column-gap: 0.75rem;
+  padding: 0.5rem 0;
+  position: relative;
+  transition: all 0.4s ease-in-out;
+}
+
+.login__icon {
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  filter: invert(1);
+  &_user {
+    background: no-repeat url('../assets/img/user-login-svgrepo-com.svg');
+    background-size: 100% 100%;
+  }
+  &_lock {
+    background: no-repeat url('../assets/img/lock-on-svgrepo-com.svg');
+    background-size: 100% 100%;
+  }
+}
+
+.login__input-box {
+  position: relative;
+  &::after {
+    content: '';
+    width: 107%;
+    position: absolute;
+    left: -2.5rem;
+    display: block;
+    height: 3px;
+    border-bottom: solid 3px $color-login-text;
+  }
+}
+
+.login__form-label {
+  padding: 0.5rem 0;
+  text-transform: capitalize;
+  font-size: 2rem;
+  position: absolute;
+  left: 0rem;
+  top: 0;
+  transition: top 0.3s, font-size 0.3s;
+}
+
+.login__input {
+  padding-block: 0.5rem;
+  font-size: 1.8rem;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  background: none;
+  border: none;
+  color: $color-login-text;
+  &:focus {
+    outline: none;
+  }
+  &._invalid {
+    color: $color-input-error;
+  }
+}
+
+.login__password-input {
+  padding-right: 3rem;
+}
+
+.login__password-eye {
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  position: absolute;
+  right: 0.5rem;
+  top: 0.5rem;
+  z-index: 10;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  filter: invert(1);
+  &_closed {
+    background: no-repeat url('../assets/img/eye-closed.svg');
+    background-size: 100% 100%;
+  }
+  &_open {
+    background: no-repeat url('../assets/img/eye-open.svg');
+    background-size: 100% 100%;
+  }
+}
+
+.login__new-customer {
+  &-text {
+    text-align: center;
+    padding: 1rem 0;
+    @include font(1.8rem, 150%);
+  }
+  &-link {
+    @extend %transition;
+    color: $color-login-link-text;
+    &:hover {
+      color: $color-login-link-text-hover;
+    }
+  }
+}
+
+// LABEL MOVING
+
+.login__input:focus + .login__form-label {
+  top: -2.5rem;
+  font-size: 1.5rem;
+}
+
+.login__input:not(:placeholder-shown).login__input:not(:focus) + .login__form-label {
+  top: -2.5rem;
+  font-size: 1.5rem;
+}
+
+// INPUT ERROR
+
+.login__input-error {
+  margin-top: 1rem;
+  font-size: 1.3rem;
+  color: $color-login-error;
+  grid-row: 2;
+  grid-column: 1 / 3;
+}

@@ -1,0 +1,48 @@
+.search__wrapper {
+  background-color: #fff;
+  border-bottom-right-radius: 5px;
+  padding-bottom: 0;
+  margin-bottom: 1rem;
+}
+
+.search__box {
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+.search__input {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.8rem;
+  &:focus {
+    outline: none;
+  }
+}
+
+.search__btn {
+  width: 20%;
+  background-image: url('../assets/img/search-svgrepo-com.svg');
+  background-size: 80% 80%;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  border-radius: 0;
+  border-top-right-radius: 5px;
+}
+
+// NO RESULT
+
+.no-res__container {
+  padding: 1rem;
+}
+
+.no-res__title {
+  @include font(2rem, 150%, 600);
+}
+
+.no-res__text {
+  @include font(1.8rem, 150%, 400);
+  span {
+    color: $color-input-error;
+  }
+}

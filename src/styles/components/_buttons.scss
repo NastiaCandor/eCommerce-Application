@@ -1,0 +1,19 @@
+.button {
+  background-color: $color-button-background;
+  border: none;
+  cursor: pointer;
+  padding: 1.5rem;
+  text-decoration: none;
+  transition: background-color 0.3s ease-in-out;
+  @include font(2.0rem,120%, 500);
+  border-radius: 1.0rem;
+  color: $color-button-text;
+  text-transform: uppercase;
+  &:hover {
+    background-color: $color-button-background-hover;
+  }
+  &:disabled {
+    background-color: $color-button-background-disabled;
+    cursor: default;
+  }
+}
